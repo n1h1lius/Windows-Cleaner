@@ -1,6 +1,7 @@
 import os
 import shutil
 import time
+import msvcrt
 from colorama import Fore, Style, init
 
 init(autoreset=True)
@@ -18,9 +19,14 @@ VERBOSE_MODE = False
 
 USER_PROFILE = os.environ.get("USERPROFILE")
 APPDATA_LOCAL = "\\AppData\\Local"
+APPDATA_LOCALLOW = "\\AppData\\LocalLow"
+APPDATA_ROAMING = "\\AppData\\Roaming"
 
 EDGE_PATH = USER_PROFILE + APPDATA_LOCAL + "\\Microsoft\\Edge"
 BRAVE_PATH = USER_PROFILE + APPDATA_LOCAL + "\\BraveSoftware\\Brave-Browser"
+CHROME_PATH = USER_PROFILE + APPDATA_LOCAL + "\\Google\\Chrome"
+
+DISCORD_PATH = USER_PROFILE +  APPDATA_ROAMING + "\\discord"
 
 # Configuración avanzada
 DAYS_THRESHOLD = 3  # Antigüedad máxima en días para eliminar archivos None for none
@@ -29,6 +35,15 @@ SIZE_THRESHOLD_MB = None  # Tamaño máximo permitido en MB para archivos None f
 # =================================================================================================================
 #                                                   UTILITIES
 # =================================================================================================================
+
+def wait_before_continue(timeout=10):
+    for remaining in range(timeout, 0, -1):
+        print(Fore.MAGENTA + Style.BRIGHT + f"\n///// -> \rAll set. Press any key to continue or wait {remaining} seconds...", end="", flush=True)
+        time.sleep(1)
+
+        if msvcrt.kbhit():  # Si el usuario pulsa una tecla
+            msvcrt.getch()  # Consumir la tecla
+            return
 
 def is_file_old(file_path, days_threshold):
     """Verifica si un archivo no se ha modificado en un tiempo específico."""
@@ -46,13 +61,25 @@ def get_file_size(file_path):
     return round(os.path.getsize(file_path) / (1024 * 1024), 2)  # Convertir bytes a MB
 
 def get_paths_to_clean():
+    
     paths = [
         "C:\\Windows\\Temp",
         "C:\\Windows\\Prefetch",
         "C:\\$Recycle.Bin",
         USER_PROFILE + APPDATA_LOCAL + "\\Temp",
+        USER_PROFILE + APPDATA_LOCALLOW + "\\Temp",
         USER_PROFILE + APPDATA_LOCAL + "\\CrashDumps",
+        USER_PROFILE + APPDATA_LOCAL + "\\D3DSCache",
+        USER_PROFILE + APPDATA_LOCAL + "\\Microsoft\\Windows\\Explorer"
     ]
+
+    browsers_paths = [
+            "\\Cache",
+            "\\File System",
+            "\\IndexedDB",
+            "\\Code Cache",
+            "\\Service Worker"
+        ]
 
     print(Fore.CYAN + f"\n///// -> DETECTING INSTALLED PROGRAMS\n")
     
@@ -62,8 +89,9 @@ def get_paths_to_clean():
         default_path = EDGE_PATH + "\\User Data\\Default"
         
         paths.append(default_path)
-        paths.append(default_path + "\\File System")
-        paths.append(default_path + "\\IndexedDB")
+        
+        for path in browsers_paths:
+            paths.append(default_path + path)
 
         print(Fore.LIGHTGREEN_EX + "///// -> Microsoft Edge Detected")
     
@@ -74,25 +102,40 @@ def get_paths_to_clean():
         
         counter = 0
 
-        brave_delete_folders = [
-            "\\Cache\\Cache_Data",
-            "\\File System",
-            "\\IndexedDB",
-            "\\Code Cache",
-            "\\Service Worker"
-        ]
-
         for dir in os.listdir(userData_path):
             if dir.startswith("Profile"):
                 profile_path = userData_path + f"\\{dir}"
 
-                for path in brave_delete_folders:
+                for path in browsers_paths:
                     paths.append(profile_path + path)
 
                 counter += 1
         
         print(Fore.LIGHTGREEN_EX + f"///// -> Brave Browser Detected - [{counter}] Profiles Detected")
     
+    # Google Chrome
+
+    if os.path.isdir(CHROME_PATH):
+        userData_path = CHROME_PATH + "\\User Data\\Default"
+
+        for path in browsers_paths:
+            paths.append(userData_path + path)
+
+    # Discord
+
+    if os.path.isdir(DISCORD_PATH):
+        discord_delete_folders = [
+            "\\Cache\\Cache_Data",
+            "\\Code Cache",
+            "\\GPU_Cache"
+        ]
+
+        for path in discord_delete_folders:
+            paths.append(DISCORD_PATH + path)
+        
+        print(Fore.LIGHTGREEN_EX + "///// -> Discord Detected")
+    
+    wait_before_continue(5)
     return paths
 
 
@@ -126,10 +169,12 @@ def cleaner(path, days_threshold=None, size_threshold_mb=None):
 
                 # Limpiar carpetas
                 elif os.path.isdir(file_path):
+                    size = get_file_size(file_path)
                     shutil.rmtree(file_path)
-                    print(Fore.RED + Style.BRIGHT + "///// [+] - Deleting Folder  ///// -> " + Fore.BLUE, file_path)
+                    print(Fore.RED + Style.BRIGHT + "///// [+] - Deleting Folder  ///// " + Fore.LIGHTYELLOW_EX + f"[{size} Mb] " +  Fore.RED + Style.BRIGHT + "-> " + Fore.BLUE, file_path)
 
                     numVars["Del_Folders"] += 1
+                    numVars["MB"] += size
 
             except PermissionError:
                 if VERBOSE_MODE:
