@@ -97,8 +97,6 @@ def get_paths_to_clean():
         USER_PROFILE + APPDATA_LOCAL + "\\Microsoft\\Windows\\Explorer"
     ]
 
-
-
     print(Fore.CYAN + f"\n///// -> DETECTING INSTALLED PROGRAMS\n")
     
     # Microsoft Edge
@@ -116,7 +114,12 @@ def get_paths_to_clean():
 
     if os.path.isdir(BRAVE_PATH):
         userData_path = BRAVE_PATH + "\\User Data"
+        default_path = userData_path + "\\Default"
         
+        # Basic Folder
+        for path in BROWSERS_PATHS:
+            paths.append(default_path + path)
+
         # Profile Folders
         profiles = get_browser_profiles(userData_path)
         paths.extend(profiles[0])
@@ -144,7 +147,7 @@ def get_paths_to_clean():
     # ---------------------------------------------------------------------
 
     if os.path.isdir(DISCORD_PATH):
-        
+
         discord_delete_folders = [
             "\\Cache\\Cache_Data",
             "\\Code Cache",
