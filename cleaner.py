@@ -28,6 +28,14 @@ CHROME_PATH = USER_PROFILE + APPDATA_LOCAL + "\\Google\\Chrome"
 
 DISCORD_PATH = USER_PROFILE +  APPDATA_ROAMING + "\\discord"
 
+BROWSERS_PATHS = [
+        "\\Cache",
+        "\\File System",
+        "\\IndexedDB",
+        "\\Code Cache",
+        "\\Service Worker"
+    ]
+
 # Configuración avanzada
 DAYS_THRESHOLD = 3  # Antigüedad máxima en días para eliminar archivos None for none
 SIZE_THRESHOLD_MB = None  # Tamaño máximo permitido en MB para archivos None for none
@@ -60,6 +68,22 @@ def is_file_large(file_path, size_threshold_mb):
 def get_file_size(file_path):
     return round(os.path.getsize(file_path) / (1024 * 1024), 2)  # Convertir bytes a MB
 
+def get_browser_profiles(userData_path):
+    paths = []
+    counter = 0
+
+    # Profile Folders
+    for dir in os.listdir(userData_path):
+        if dir.startswith("Profile"):
+            profile_path = userData_path + f"\\{dir}"
+
+            for path in BROWSERS_PATHS:
+                paths.append(profile_path + path)
+
+            counter += 1
+
+    return [paths, counter]
+
 def get_paths_to_clean():
     
     paths = [
@@ -73,57 +97,54 @@ def get_paths_to_clean():
         USER_PROFILE + APPDATA_LOCAL + "\\Microsoft\\Windows\\Explorer"
     ]
 
-    browsers_paths = [
-            "\\Cache",
-            "\\File System",
-            "\\IndexedDB",
-            "\\Code Cache",
-            "\\Service Worker"
-        ]
+
 
     print(Fore.CYAN + f"\n///// -> DETECTING INSTALLED PROGRAMS\n")
     
     # Microsoft Edge
+    # ---------------------------------------------------------------------
 
     if os.path.isdir(EDGE_PATH):
         default_path = EDGE_PATH + "\\User Data\\Default"
         
         paths.append(default_path)
-        
-        for path in browsers_paths:
-            paths.append(default_path + path)
 
         print(Fore.LIGHTGREEN_EX + "///// -> Microsoft Edge Detected")
     
     # Brave
+    # ---------------------------------------------------------------------
 
     if os.path.isdir(BRAVE_PATH):
         userData_path = BRAVE_PATH + "\\User Data"
         
-        counter = 0
-
-        for dir in os.listdir(userData_path):
-            if dir.startswith("Profile"):
-                profile_path = userData_path + f"\\{dir}"
-
-                for path in browsers_paths:
-                    paths.append(profile_path + path)
-
-                counter += 1
+        # Profile Folders
+        profiles = get_browser_profiles(userData_path)
+        paths.extend(profiles[0])
         
-        print(Fore.LIGHTGREEN_EX + f"///// -> Brave Browser Detected - [{counter}] Profiles Detected")
+        print(Fore.LIGHTGREEN_EX + f"///// -> Brave Browser Detected - [{profiles[1]}] Profiles Detected")
     
     # Google Chrome
+    # ---------------------------------------------------------------------
 
     if os.path.isdir(CHROME_PATH):
-        userData_path = CHROME_PATH + "\\User Data\\Default"
+        userData_path = CHROME_PATH + "\\User Data"
+        default_path = userData_path + "\\Default"
 
-        for path in browsers_paths:
-            paths.append(userData_path + path)
+        # Basic Folder
+        for path in BROWSERS_PATHS:
+            paths.append(default_path + path)
+        
+        # Profile Folders
+        profiles = get_browser_profiles(userData_path)
+        paths.extend(profiles[0])
+
+        print(Fore.LIGHTGREEN_EX + f"///// -> Google Chrome Browser Detected - [{profiles[1]}] Profiles Detected")
 
     # Discord
+    # ---------------------------------------------------------------------
 
     if os.path.isdir(DISCORD_PATH):
+        
         discord_delete_folders = [
             "\\Cache\\Cache_Data",
             "\\Code Cache",
