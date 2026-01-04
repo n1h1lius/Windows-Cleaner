@@ -14,12 +14,21 @@ numVars = {
     "MB": 0
 }
 
-verbose = False
+VERBOSE_MODE = False
+
+USER_PROFILE = os.environ.get("USERPROFILE")
+APPDATA_LOCAL = "\\AppData\\Local"
+
+EDGE_PATH = USER_PROFILE + APPDATA_LOCAL + "\\Microsoft\\Edge"
+BRAVE_PATH = USER_PROFILE + APPDATA_LOCAL + "\\BraveSoftware\\Brave-Browser"
 
 # Configuración avanzada
 DAYS_THRESHOLD = 3  # Antigüedad máxima en días para eliminar archivos None for none
 SIZE_THRESHOLD_MB = None  # Tamaño máximo permitido en MB para archivos None for none
 
+# =================================================================================================================
+#                                                   UTILITIES
+# =================================================================================================================
 
 def is_file_old(file_path, days_threshold):
     """Verifica si un archivo no se ha modificado en un tiempo específico."""
@@ -36,11 +45,65 @@ def is_file_large(file_path, size_threshold_mb):
 def get_file_size(file_path):
     return round(os.path.getsize(file_path) / (1024 * 1024), 2)  # Convertir bytes a MB
 
+def get_paths_to_clean():
+    paths = [
+        "C:\\Windows\\Temp",
+        "C:\\Windows\\Prefetch",
+        "C:\\$Recycle.Bin",
+        USER_PROFILE + APPDATA_LOCAL + "\\Temp",
+        USER_PROFILE + APPDATA_LOCAL + "\\CrashDumps",
+    ]
+
+    print(Fore.CYAN + f"\n///// -> DETECTING INSTALLED PROGRAMS\n")
+    
+    # Microsoft Edge
+
+    if os.path.isdir(EDGE_PATH):
+        default_path = EDGE_PATH + "\\User Data\\Default"
+        
+        paths.append(default_path)
+        paths.append(default_path + "\\File System")
+        paths.append(default_path + "\\IndexedDB")
+
+        print(Fore.LIGHTGREEN_EX + "///// -> Microsoft Edge Detected")
+    
+    # Brave
+
+    if os.path.isdir(BRAVE_PATH):
+        userData_path = BRAVE_PATH + "\\User Data"
+        
+        counter = 0
+
+        brave_delete_folders = [
+            "\\Cache\\Cache_Data",
+            "\\File System",
+            "\\IndexedDB",
+            "\\Code Cache",
+            "\\Service Worker"
+        ]
+
+        for dir in os.listdir(userData_path):
+            if dir.startswith("Profile"):
+                profile_path = userData_path + f"\\{dir}"
+
+                for path in brave_delete_folders:
+                    paths.append(profile_path + path)
+
+                counter += 1
+        
+        print(Fore.LIGHTGREEN_EX + f"///// -> Brave Browser Detected - [{counter}] Profiles Detected")
+    
+    return paths
+
+
+# =================================================================================================================
+#                                                   CLEANER
+# =================================================================================================================
 
 def cleaner(path, days_threshold=None, size_threshold_mb=None):
     """Elimina archivos y carpetas basándose en antigüedad o tamaño."""
     global numVars
-    global verbose
+    global VERBOSE_MODE
     try:
         list_dir = os.listdir(path)
         for filename in list_dir:
@@ -69,35 +132,28 @@ def cleaner(path, days_threshold=None, size_threshold_mb=None):
                     numVars["Del_Folders"] += 1
 
             except PermissionError:
-                if verbose:
+                if VERBOSE_MODE:
                     print(Fore.YELLOW + "///// [-] - Skipped (Permission Denied) ->" + Fore.MAGENTA, file_path)
             except Exception as e:
-                if verbose:
+                if VERBOSE_MODE:
                     print(Fore.YELLOW + "///// [!] - Error -> " + Fore.MAGENTA, ":", e)
 
     except FileNotFoundError:
-        if verbose:
-            print(Fore.YELLOW + "///// [-] - Path not found -> " + Fore.MAGENTA, path)
+        if VERBOSE_MODE:
+            print(Fore.YELLOW + "///// [-] - Path not found -> " + Fore.MAGENTA, path)       
 
+# =================================================================================================================
+#                                                      MAIN
+# =================================================================================================================
 
 def main():
     """Limpia carpetas temporales comunes con configuraciones avanzadas."""
-    user_profile = os.environ.get("USERPROFILE")
-    appdata_local = "\\AppData\\Local"
-
-    paths_to_clean = [
-        user_profile + appdata_local + "\\Temp",
-        user_profile + appdata_local + "\\CrashDumps",
-        user_profile + appdata_local + "\\Microsoft\\Edge\\User Data\\Default",
-        user_profile + appdata_local + "\\Microsoft\\Edge\\User Data\\Default\\File System",
-        "C:\\Windows\\Temp",
-        "C:\\Windows\\Prefetch",
-        "C:\\$Recycle.Bin",
-    ]
-
+    
     global numVars
 
     print(Fore.GREEN + Style.BRIGHT + "\n///// -> STARTING WINDOWS CLEANER\n\n///// - **********************************************************")
+
+    paths_to_clean = get_paths_to_clean()
 
     for path in paths_to_clean:
 
