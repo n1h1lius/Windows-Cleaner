@@ -264,6 +264,7 @@ class CleanerApp(App):
         color: $text-muted;
         background: $panel-darken-1;
         margin: 0 0 2 0;
+        margin-left: 11;
     }
 
     #tasks {

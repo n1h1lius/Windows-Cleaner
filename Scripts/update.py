@@ -1,11 +1,14 @@
 import os
 import sys
+import time
 import requests
 import zipfile
 import shutil
 import tempfile
 import configparser
 import subprocess
+
+from Scripts import messages as msg
 
 REPO_URL = "https://github.com/n1h1lius/Windows-Cleaner/archive/refs/heads/main.zip"
 LOCAL_VERSION_FILE = "Data/version.txt"  # Crea este archivo local con "1.1"
@@ -35,7 +38,7 @@ def update_app():
     # Descarga ZIP
     response = requests.get(REPO_URL)
     if response.status_code != 200:
-        print("Error descargando actualización.")
+        print("  ///// Update failed: Could not download the update package. /////\n")
         return False
     
     with tempfile.TemporaryDirectory() as tmp_dir:
@@ -74,7 +77,7 @@ def update_app():
             else:
                 shutil.copy2(src, dst)
     
-    print("Actualización completada.")
+    print("\n  ///// Update completed successfully! /////\n")
     return True
 
 def get_remote_version():
@@ -89,6 +92,10 @@ def get_remote_version():
         return None
     
 def main():
+    print(msg.updater_intro)
+    print("  ///// Checking for updates... /////\n")
+
+    time.sleep(3)  # Pequeña pausa para mejor UX
     if not os.path.exists(LOCAL_VERSION_FILE):
         return False
     
@@ -98,13 +105,13 @@ def main():
     remote_version = get_remote_version()
 
     if remote_version is None:
-        print("No se pudo comprobar versión remota. Continuando con versión local.")
+        print("  ///// Remote Version could not be fetched. Proceeding without update. /////\n")
         return False
         
     elif remote_version != local_version:
-        print(f"Nueva versión disponible: {remote_version} (local: {local_version})")
+        print(f"  ///// New Version Available: {remote_version} (local: {local_version})")
         # Opcional: Preguntar al usuario
-        if input("¿Actualizar? [Y/n]: ").lower() != "n":
+        if input("  ///// Do you wish to update? [Y/n]: ").lower() != "n":
             if update_app():
                 # Actualiza la versión local
                 with open(LOCAL_VERSION_FILE, "w") as f:
@@ -113,7 +120,7 @@ def main():
                 subprocess.call(BAT_FILE)
                 sys.exit(0)
             else:
-                print("Actualización fallida. Continuando con versión actual.")
+                print("  ///// Updating Failed. Proceeding with current version.")
                 return False
     
     # Si no actualiza o ya está al día, lanza main.py (o el bat si prefieres)
