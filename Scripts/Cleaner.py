@@ -86,10 +86,12 @@ def detect_and_get_paths():
 
     detected = []
 
+    # ── Microsoft Edge ───────────────────────────────────────────────────────
     if os.path.isdir(p := USER_PROFILE + "\\AppData\\Local\\Microsoft\\Edge"):
         detected.append("Microsoft Edge Detected")
         paths.append(p + "\\User Data\\Default")
 
+    # ── Brave Browser ────────────────────────────────────────────────────────
     if os.path.isdir(p := USER_PROFILE + "\\AppData\\Local\\BraveSoftware\\Brave-Browser"):
         detected.append("Brave Browser Detected")
         ud = p + "\\User Data"
@@ -104,6 +106,7 @@ def detect_and_get_paths():
         except:
             pass
 
+    # ── Google Chrome ────────────────────────────────────────────────────────
     if os.path.isdir(p := USER_PROFILE + "\\AppData\\Local\\Google\\Chrome"):
         detected.append("Google Chrome Detected")
         ud = p + "\\User Data"
@@ -118,9 +121,21 @@ def detect_and_get_paths():
         except:
             pass
 
+    # ── Discord ──────────────────────────────────────────────────────────────
     if os.path.isdir(p := USER_PROFILE + "\\AppData\\Roaming\\discord"):
         detected.append("Discord Detected")
         for suf in ["\\Cache\\Cache_Data", "\\Code Cache", "\\GPU_Cache"]:
             paths.append(p + suf)
+
+    # ── Spotify (Official Desktop Version) ────────────────────────────────────
+    if os.path.isdir(p := USER_PROFILE + "\\AppData\\Roaming\\Spotify"):
+        detected.append("Spotify Detected")
+
+        for suf in ["\\Storage", "\\Cache", "\\Browser"]:
+            paths.append(p + suf)
+
+        local_spotify = USER_PROFILE + "\\AppData\\Local\\Spotify"
+        if os.path.isdir(local_spotify):
+            paths.append(local_spotify)
 
     return [p for p in paths if os.path.exists(p)], detected

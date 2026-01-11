@@ -1,6 +1,6 @@
 import sys
-from Scripts.config import *
 
+CURRENT_VERSION = 1.1
 
 def cleaner_v1():
     from Versions.cleaner_v1 import main
@@ -21,6 +21,9 @@ def cleaner_v2():
     app.run()
 
 if __name__ == "__main__":
+
+
+    from Scripts.config import APP_VERSION
 
     if APP_VERSION == 1:
         cleaner_v1()
