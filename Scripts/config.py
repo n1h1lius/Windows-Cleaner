@@ -2,7 +2,7 @@ import os
 
 import configparser
 
-from colorama import Fore, Style, init
+from colorama import Fore, Style, init, just_fix_windows_console
 
 init(autoreset=True)
 
@@ -54,4 +54,7 @@ stats = {
     "total_mb": 0.0
 }
 
+# UI Variables
+
+BOX_MAX_WIDTH = 195
 

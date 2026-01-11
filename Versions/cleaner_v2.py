@@ -5,9 +5,15 @@ Run as Admin!
 """
 
 from Scripts.config import *
-
 from Scripts import messages as msg
 from Scripts.Cleaner import *
+from Scripts.utils.ui_helpers import (
+    get_terminal_width,
+    make_boxed_message,
+    make_dynamic_boxed_message,
+    strip_ansi,
+    truncate_ansi
+)
 
 import asyncio
 import sys
@@ -24,7 +30,6 @@ from textual.screen import ModalScreen
 from rich.text import Text as RichText
 
 
-
 log_buffer = StringIO()
 
 @contextmanager
@@ -36,45 +41,7 @@ def capture_logs():
     finally:
         sys.stdout = old_stdout
 
-# ── Helpers para output responsive ────────────────────────────────────────────
-def get_terminal_width(self, default=120):
-    """Obtiene el ancho actual de la consola usando self.console.width"""
-    try:
-        return self.console.width
-    except:
-        try:
-            return shutil.get_terminal_size(fallback=(default, 24)).columns
-        except:
-            return default
 
-def make_boxed_message(self, title, content_lines, border_color, content_color=""):
-    """Genera un cuadro adaptado al ancho actual de la consola"""
-    width = get_terminal_width(self, 120) - 4 - 35 # Margen de seguridad
-    width = max(80, min(width, 190))  # Límites razonables para no romper el layout
-
-    head = f"╔{'─' * (width - 2)}╗"
-    foot = f"╚{'─' * (width - 2)}╝"
-    body_empty = f"│{' ' * (width - 2)}│"
-
-    lines = [f"{border_color}{head}"]
-    lines.append(f"{border_color}{body_empty}")
-
-    if title:
-        title_padded = title.center(width - 2)
-        lines.append(f"{border_color}│{title_padded}│")
-        lines.append(f"{border_color}{body_empty}")
-
-    for line in content_lines:
-        # Ajusta la línea al ancho, truncando si es necesario
-        padded = (content_color + line).ljust(width - 2)[:width - 2]
-        lines.append(f"{border_color}│{padded}{border_color}│")
-
-    lines.append(f"{border_color}{body_empty}")
-    lines.append(f"{border_color}{foot}")
-
-    return "\n".join(lines)
-
-# ── Textual App ───────────────────────────────────────────────────────────────
 class SettingsModal(ModalScreen):
     CSS = """
     Screen {
@@ -123,7 +90,7 @@ class SettingsModal(ModalScreen):
 
     #booleans, #integers {
         background: $panel 70%;
-        border: round $primary 60%;       # <-- El cambio clave aquí
+        border: round $primary 60%;
         padding: 2 3;
         margin: 1 2 1 0;
         height: auto;
@@ -179,7 +146,7 @@ class SettingsModal(ModalScreen):
         with Container(id="sidebar"):
             yield Static(id="logo-small")
             yield Label("By N1h1lius", id="credit")
-            yield Tree("Tasks", id="tasks")  # Aunque no se usa, se mantiene por estética
+            yield Tree("Tasks", id="tasks")
             with Vertical(id="buttons-container"):
                 yield Button("Back", id="btn-back")
                 yield Button("Github", id="btn-github")
@@ -214,10 +181,9 @@ class SettingsModal(ModalScreen):
                                         value=str(val),
                                         id=f"{section}-{key}",
                                         placeholder=str(val),
-                                        type="integer"  # Ayuda a la validación visual
+                                        type="integer"
                                     )
                             except ValueError:
-                                # Si en el futuro añades strings, podrías poner aquí un Input normal
                                 pass
 
         yield Static("Settings - Changes are saved automatically", id="status-bar")
@@ -251,7 +217,6 @@ class SettingsModal(ModalScreen):
 
     @on(Input.Changed)
     def on_input_changed(self, event: Input.Changed) -> None:
-        """Guardamos al cambiar (más inmediato que solo Submitted)"""
         if event.input.id:
             section, key = event.input.id.split("-")
             value = event.value.strip()
@@ -263,12 +228,12 @@ class SettingsModal(ModalScreen):
                 with open(ini_file_path, "w") as configfile:
                     config.write(configfile)
             except ValueError:
-                pass  # No guardamos si no es número válido
+                pass
 
-    # Mantenemos también Submitted por si el usuario pulsa Enter
     @on(Input.Submitted)
     def on_input_submitted(self, event: Input.Submitted) -> None:
         self.on_input_changed(event)
+
 
 class CleanerApp(App):
     CSS = """
@@ -278,7 +243,7 @@ class CleanerApp(App):
 
     #sidebar {
         dock: left;
-        width: 30%;  # Adaptado para ser más responsive
+        width: 30%;
         max-width: 35;
         min-width: 20;
         height: 100%;
@@ -307,7 +272,6 @@ class CleanerApp(App):
         max-height: 12;
         margin-top: 1;
     }
-
 
     #buttons-container {
         dock: bottom;
@@ -349,7 +313,6 @@ class CleanerApp(App):
     current_app = reactive("Preparing...")
 
     def compose(self) -> ComposeResult:
-        # Header doesn't accept a `title` kwarg — set the App title instead
         self.title = f"CleanerApp - v{RELEASE_VERSION}"
         yield Header(show_clock=True)
         yield Footer()
@@ -364,19 +327,18 @@ class CleanerApp(App):
                 yield Button("Twitter", id="btn-twitter")
                 yield Button("Exit", id="btn-exit")
 
-        yield VerticalScroll(RichLog(highlight=False, markup=False, wrap=True), id="main-log")
+        yield VerticalScroll(RichLog(highlight=True, markup=True, wrap=False), id="main-log")
 
         yield Static("Status: Starting...", id="status-bar")
 
     def on_mount(self) -> None:
-
         self.query_one("#logo-small", Static).update(RichText(msg.logo_ascii, style="bold magenta"))
 
         tree = self.query_one(Tree)
         tree.root.expand()
         self.app_nodes = {}
         for cat in folder_categories:
-            node = tree.root.add(f"[red][ - ][/] {cat}")
+            node = tree.root.add(f"[bright_red][ - ][/] {cat}")
             self.app_nodes[cat] = node
 
         self.run_worker(self.do_cleaning, exclusive=True)
@@ -398,11 +360,9 @@ class CleanerApp(App):
         self.exit()
 
     def on_resize(self) -> None:
-        """Manejador para refrescar al cambiar tamaño de consola"""
         log = self.query_one(RichLog)
         log.refresh()
         self.query_one("#status-bar").refresh()
-        # Opcional: refrescar otros elementos si es necesario
 
     async def do_cleaning(self):
         self.current_app = "Initializing..."
@@ -412,26 +372,26 @@ class CleanerApp(App):
 
         log = self.query_one(RichLog)
 
-        # Mensaje inicial adaptado
         log.write(msg.starting_message)
+        log.refresh()
         await asyncio.sleep(1.0)
 
         paths, detected = detect_and_get_paths()
 
-        # Mensaje de programas detectados adaptado
-        '''
         detected_lines = []
         for m in detected:
-            detected_lines.append(f"{Fore.LIGHTGREEN_EX}[+] {Fore.LIGHTMAGENTA_EX}-> {Fore.LIGHTCYAN_EX}{m} {Fore.LIGHTGREEN_EX + Style.BRIGHT}Detected - [{detected_folders[m]}] Folders{Fore.LIGHTWHITE_EX + Style.NORMAL}")
-        log.write(make_boxed_message(self, "DETECTING INSTALLED PROGRAMS", detected_lines, Fore.LIGHTWHITE_EX))
-        '''
-        msg.print_installed_message(detected, log)
+            detected_lines.append(
+                f"   [bright_green][+] [bright_magenta]-> "
+                f"[bright_cyan]{m} [bright_green]"
+                f"Detected - [{detected_folders[m]}] Folders"
+            )
+        log.write(make_boxed_message(self, "DETECTING INSTALLED PROGRAMS", detected_lines, "bright_white"))
+        log.refresh()
 
         await asyncio.sleep(1.0)
 
         for path in paths:
             app_name = "System Temps"
-
             for key in PROGRAMS_PATH_NAMES.keys():
                 if key in path:
                     app_name = PROGRAMS_PATH_NAMES[key]
@@ -440,23 +400,19 @@ class CleanerApp(App):
             self.current_app = app_name
             self.query_one("#status-bar").update(f"Status: Cleaning {app_name}...")
 
-            # Mensaje de limpieza adaptado
-            cleaning_lines = [f"CLEANING: {path}"]
-            log.write(make_boxed_message(self, "", cleaning_lines, Fore.CYAN))
+            cleaning_lines = [f"     CLEANING: {path}"]
+            log.write(make_boxed_message(self, "", cleaning_lines, "bright_cyan"))
+            log.refresh()
 
-            log_buffer.truncate(0)
-            log_buffer.seek(0)
-            
-            with capture_logs():
-                cleaner(path, log)
+            cleaner(path, log)
 
-            captured = log_buffer.getvalue()
-            for line in captured.splitlines():
-                log.write(line)
-
-            # Mensaje de sección limpiada adaptado
-            cleaned_line = f"CLEANED || Deleted Files [{stats['current_files']}] || Deleted Folders [{stats['current_folders']}] || Deleted Size in Mb [{stats['current_mb']:.2f}]"
-            log.write(make_boxed_message(self, "", [cleaned_line], Fore.LIGHTGREEN_EX))
+            cleaned_line = (
+                f"     CLEANED || Deleted Files [{stats['current_files']}] || "
+                f"Deleted Folders [{stats['current_folders']}] || "
+                f"Deleted Size in Mb [{stats['current_mb']:.2f}]"
+            )
+            log.write(make_boxed_message(self, "", [cleaned_line], "bright_green"))
+            log.refresh()
 
             tree = self.query_one(Tree)
             if app_name in self.app_nodes:
@@ -471,15 +427,18 @@ class CleanerApp(App):
 
         await asyncio.sleep(1.5)
 
-        # Mensaje final adaptado
         final_lines = []
-        final_lines.append(f"TOTAL CLEANED || Files [{stats['total_files']}] || Folders [{stats['total_folders']}] || Size [{stats['total_mb']:.2f} Mb]")
-        final_lines.append(f"{Fore.LIGHTWHITE_EX}PRESS ANY KEY TO EXIT{Fore.LIGHTYELLOW_EX}")
-        log.write(make_boxed_message(self, "PROCESS COMPLETED", final_lines, Fore.LIGHTYELLOW_EX))
+        final_lines.append(
+            f"TOTAL CLEANED || Files [{stats['total_files']}] || "
+            f"Folders [{stats['total_folders']}] || Size [{stats['total_mb']:.2f} Mb]"
+        )
+        final_lines.append(f"[bright_white]PRESS ANY KEY TO EXIT[/bright_white]")
+        log.write(make_boxed_message(self, "PROCESS COMPLETED", final_lines, "bright_yellow"))
+        log.refresh()
 
         self.query_one("#btn-settings", Button).disabled = False
 
-    def key_any(self): 
+    def key_any(self):
         self.exit()
 
     def key_escape(self):

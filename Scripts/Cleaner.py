@@ -1,20 +1,32 @@
-from Scripts.config import *
+# -*- coding: utf-8 -*-
+"""
+Funciones de limpieza y detección de carpetas temporales
+"""
 
+from Scripts.config import *
+from Scripts.utils.ui_helpers import make_dynamic_boxed_message
+
+import os
+import time
 import shutil
 
-# ── Cleaner original ──────────────────────────────────────────────────────────
+
 def is_file_old(file_path, days_threshold):
     file_age = time.time() - os.path.getmtime(file_path)
     return file_age > days_threshold * 86400
 
+
 def get_file_size(file_path):
-    return round(os.path.getsize(file_path) / (1024 * 1024), 2)
+    try:
+        return round(os.path.getsize(file_path) / (1024 * 1024), 2)
+    except:
+        return 0.0
+
 
 def manage_general_vars(mode, size=0):
     global stats
 
     if mode == "reset":
-
         stats["total_files"] += stats["current_files"]
         stats["total_folders"] += stats["current_folders"]
         stats["total_mb"] += stats["current_mb"]
@@ -24,26 +36,37 @@ def manage_general_vars(mode, size=0):
         stats["current_mb"] = 0.0
 
     elif mode == "folder":
-    
         stats["current_folders"] += 1
         stats["current_mb"] += size
 
     elif mode == "file":
-    
         stats["current_files"] += 1
         stats["current_mb"] += size
 
+
 def cleaner(path, log):
+    """
+    Limpieza con caja dinámica que crece línea a línea
+    """
     global stats
 
     manage_general_vars("reset")
 
-    log.write(f"\n{Fore.LIGHTRED_EX}{Fore.LIGHTRED_EX}   ╔───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╗")
-    log.write(f"{Fore.LIGHTRED_EX}   │                                                                                                                                                                                               │")
+    BORDER = "bright_red"
+    CONTENT = "bright_white"
+
+    header = make_dynamic_boxed_message(
+        self=log.app,
+        state="header",
+        title=f" Cleaning {os.path.basename(path)} ",
+        border_color=BORDER,
+        content_color=CONTENT
+    )
+    log.write(header)
 
     try:
         list_dir = os.listdir(path)
-        for filename in list_dir:
+        for filename in sorted(list_dir):
             file_path = os.path.join(path, filename)
             try:
                 if os.path.isfile(file_path) or os.path.islink(file_path):
@@ -51,26 +74,51 @@ def cleaner(path, log):
                         continue
                     size = get_file_size(file_path)
                     os.unlink(file_path)
-                    total = 38
-                    total += 1 if size >= 0 else 2 if size >= 10 else 3 if size >= 100 else 0
-                    log.write(f"{Fore.LIGHTRED_EX}   │ {Fore.LIGHTGREEN_EX}[+]{Fore.LIGHTRED_EX} - Deleting file  ///// {Fore.LIGHTYELLOW_EX}[{size} Mb] {Fore.LIGHTMAGENTA_EX}-> {Fore.CYAN}{file_path}{Fore.LIGHTRED_EX}     │")
+                    
+                    content_line = (
+                        f" [bright_green][+][bright_red] - Deleting file   "
+                        f"[bright_yellow][{size:.2f} Mb] [bright_magenta]-> "
+                        f"[bright_cyan]{file_path}"
+                    )
+                    log.write(make_dynamic_boxed_message(
+                        self=log.app,
+                        state="content",
+                        line=content_line,
+                        border_color=BORDER,
+                        content_color=CONTENT
+                    ))
                     manage_general_vars("file", size)
 
                 elif os.path.isdir(file_path):
                     size = get_file_size(file_path)
                     shutil.rmtree(file_path, ignore_errors=True)
-                    total = 40
-                    total += 1 if size >= 0 else 2 if size >= 10 else 3 if size >= 100 else 0
-                    log.write(f"{Fore.LIGHTRED_EX}   │ {Fore.LIGHTGREEN_EX}[+]{Fore.LIGHTRED_EX} - Deleting Folder  ///// {Fore.LIGHTYELLOW_EX}[{size} Mb] {Fore.LIGHTMAGENTA_EX}-> {Fore.CYAN}{file_path}{Fore.LIGHTRED_EX}     │")
+                    
+                    content_line = (
+                        f" [bright_green][+][bright_red] - Deleting folder "
+                        f"[bright_yellow][{size:.2f} Mb] [bright_magenta]-> "
+                        f"[bright_cyan]{file_path}"
+                    )
+                    log.write(make_dynamic_boxed_message(
+                        self=log.app,
+                        state="content",
+                        line=content_line,
+                        border_color=BORDER,
+                        content_color=CONTENT
+                    ))
                     manage_general_vars("folder", size)
-            except:
+
+            except Exception:
                 pass
-    except:
+
+    except Exception:
         pass
-    log.write(f"{Fore.LIGHTRED_EX}{Fore.LIGHTRED_EX}   │                                                                                                                                                                                                │")
-    log.write(f"{Fore.LIGHTRED_EX}{Fore.LIGHTRED_EX}   ╚────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╝\n")
 
-
+    footer = make_dynamic_boxed_message(
+        self=log.app,
+        state="footer",
+        border_color=BORDER
+    )
+    log.write(footer)
 # ── Detección ─────────────────────────────────────────────────────────────────
 def detect_and_get_paths():
     paths = [
