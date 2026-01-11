@@ -22,7 +22,6 @@ def cleaner_v2():
 
 if __name__ == "__main__":
 
-
     from Scripts.config import APP_VERSION
 
     if APP_VERSION == 1:
