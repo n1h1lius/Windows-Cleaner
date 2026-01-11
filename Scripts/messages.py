@@ -1,4 +1,4 @@
-from Scripts.config import Fore, stats
+from Scripts.config import Fore, Style, stats, detected_folders
 
 logo_ascii = r"""
   |\  /|      |\    /| 
@@ -35,7 +35,7 @@ def print_installed_message(detected, log):
     log.write(f"{Fore.LIGHTWHITE_EX}     ╚──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╝")
     log.write(f"{Fore.LIGHTWHITE_EX}     │                                                                                                                                                                                                  │")
     for msg in detected:
-        log.write(f"{Fore.LIGHTWHITE_EX}     │ {Fore.LIGHTGREEN_EX}[+] {Fore.LIGHTMAGENTA_EX}-> {Fore.LIGHTCYAN_EX}{msg}{' ' * (175 - len(msg))}{Fore.LIGHTWHITE_EX}│")
+        log.write(f"{Fore.LIGHTWHITE_EX}     │ {Fore.LIGHTGREEN_EX}[+] {Fore.LIGHTMAGENTA_EX}-> {Fore.LIGHTCYAN_EX}{msg} {Fore.LIGHTGREEN_EX + Style.BRIGHT}Detected - [{detected_folders[msg]}] Folders{' ' * (130 - len(msg))}{Fore.LIGHTWHITE_EX + Style.NORMAL}│")
         #await asyncio.sleep(0.4)
 
     log.write(f"{Fore.LIGHTWHITE_EX}     │                                                                                                                                                                                                  │")

@@ -88,58 +88,76 @@ def detect_and_get_paths():
 
     # ── Microsoft Edge ───────────────────────────────────────────────────────
     if os.path.isdir(p := USER_PROFILE + "\\AppData\\Local\\Microsoft\\Edge"):
+        counter = 0
         detected.append("Microsoft Edge")
         paths.append(p + "\\User Data\\Default")
+        counter += 1
 
         try:
             ud = p + "\\User Data"
             for d in os.listdir(ud):
                 if d.startswith("Profile"):
                     prof_path = os.path.join(ud, d)
-                    if os.path.isdir(prof_path): paths.append(prof_path)
+                    if os.path.isdir(prof_path): 
+                        paths.append(prof_path)
+                        counter += 1
         except:
             pass
 
+        detected_folders["Edge"] = counter
+
     # ── Brave Browser ────────────────────────────────────────────────────────
     if os.path.isdir(p := USER_PROFILE + "\\AppData\\Local\\BraveSoftware\\Brave-Browser"):
+        counter = 0
         detected.append("Brave Browser")
         ud = p + "\\User Data"
         default = ud + "\\Default"
         for bp in BROWSER_FOLDERS:
-            if os.path.isdir(default + bp): paths.append(default + bp)
+            if os.path.isdir(default + bp): 
+                paths.append(default + bp)
+                counter += 1
         try:
             for d in os.listdir(ud):
                 if d.startswith("Profile"):
                     for bp in BROWSER_FOLDERS:
-                        if os.path.isdir(os.path.join(ud, d) + bp): paths.append(os.path.join(ud, d) + bp)
+                        if os.path.isdir(os.path.join(ud, d) + bp): 
+                            paths.append(os.path.join(ud, d) + bp)
+                            counter += 1
         except:
             pass
 
     # ── Google Chrome ────────────────────────────────────────────────────────
     if os.path.isdir(p := USER_PROFILE + "\\AppData\\Local\\Google\\Chrome"):
+        counter = 0
         detected.append("Google Chrome")
         ud = p + "\\User Data"
         default = ud + "\\Default"
 
         for bp in BROWSER_FOLDERS:
-            if os.path.isdir(default + bp): paths.append(default + bp)
+            if os.path.isdir(default + bp): paths.append(default + bp) & counter += 1
 
         try:
             for d in os.listdir(ud):
                 if d.startswith("Profile"):
                     for bp in BROWSER_FOLDERS:
-                        if os.path.isdir(os.path.join(ud, d) + bp): paths.append(os.path.join(ud, d) + bp)
+                        if os.path.isdir(os.path.join(ud, d) + bp): paths.append(os.path.join(ud, d) + bp) & counter += 1
         except:
             pass
 
+        detected_folders["Chrome"] = counter
+
     # ── Discord ──────────────────────────────────────────────────────────────
     if os.path.isdir(p := USER_PROFILE + "\\AppData\\Roaming\\discord"):
+        counter = 0
         detected.append("Discord")
         for suf in ["\\Cache\\Cache_Data", "\\Code Cache", "\\GPU_Cache"]:
             paths.append(p + suf)
+            counter += 1
+        detected_folders["discord"] = counter
 
     # ── Spotify (Official Desktop Version) ────────────────────────────────────
     if os.path.isdir(p := USER_PROFILE + "\\AppData\\Roaming\\Spotify"):
+        counter = 0
         detected.append("Spotify")
 
         ud = p + "\\User Data"
@@ -147,18 +165,19 @@ def detect_and_get_paths():
 
         for suf in BROWSER_FOLDERS:
 
-            if os.path.isdir(p + suf): paths.append(p + suf)
-            if os.path.isdir(ud + suf): paths.append(ud + suf)
-            if os.path.isdir(default + suf): paths.append(default + suf)
+            if os.path.isdir(p + suf): paths.append(p + suf) & counter += 1
+            if os.path.isdir(ud + suf): paths.append(ud + suf) & counter += 1
+            if os.path.isdir(default + suf): paths.append(default + suf) & counter += 1
         
         try:
             for d in os.listdir(p):
                 if d.startswith("Profile"):
                     for suf in BROWSER_FOLDERS:
                         prof_path = os.path.join(p, d) + suf
-                        if os.path.isdir(prof_path): paths.append(prof_path)
+                        if os.path.isdir(prof_path): paths.append(prof_path) & counter += 1
         except:
             pass
-
+        
+        detected_folders["Spotify"] = counter
 
     return [p for p in paths if os.path.exists(p)], detected

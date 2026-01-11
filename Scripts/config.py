@@ -2,7 +2,7 @@ import os
 
 import configparser
 
-from colorama import Fore, init
+from colorama import Fore, Style, init
 
 init(autoreset=True)
 
@@ -33,6 +33,8 @@ PROGRAMS_PATH_NAMES ={
     "discord": "Discord",
     "Spotify": "Spotify"
 }
+
+detected_folders = {}
 
 
 # Cleaner Stats
