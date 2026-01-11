@@ -2,10 +2,6 @@ import os
 
 import configparser
 
-from colorama import Fore, Style, init, just_fix_windows_console
-
-init(autoreset=True)
-
 
 # INI
 ini_file_path = "Data/config.ini"

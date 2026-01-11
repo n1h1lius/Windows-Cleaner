@@ -8,7 +8,7 @@ import tempfile
 import configparser
 import subprocess
 
-from Scripts import messages as msg
+from Scripts.utils import messages as msg
 
 REPO_URL = "https://github.com/n1h1lius/Windows-Cleaner/archive/refs/heads/main.zip"
 LOCAL_VERSION_FILE = "Data/version.txt"  # Crea este archivo local con "1.1"

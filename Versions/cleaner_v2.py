@@ -5,20 +5,13 @@ Run as Admin!
 """
 
 from Scripts.config import *
-from Scripts import messages as msg
-from Scripts.Cleaner import *
-from Scripts.utils.ui_helpers import (
-    get_terminal_width,
-    make_boxed_message,
-    make_dynamic_boxed_message,
-    strip_ansi,
-    truncate_ansi
-)
+from Scripts.utils import messages as msg
+from Scripts.core.Cleaner import *
+from Scripts.utils.ui_helpers import make_boxed_message
 
 import asyncio
 import sys
 import webbrowser
-import shutil
 from io import StringIO
 from contextlib import contextmanager
 
