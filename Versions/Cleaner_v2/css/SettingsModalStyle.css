@@ -1,62 +1,62 @@
-    #settings-container {
-        height: 100%;
-        background: $surface;
-        border: tall $accent;
-        padding: 1;
-    }
+#settings-container {
+    height: 100%;
+    background: $surface;
+    border: tall $accent;
+    padding: 1;
+}
 
-    #booleans, #integers, #special-actions {
-        background: $panel;
-        border: tall $primary;
-        padding: 2;
-        margin: 1;
-        height: auto;
-    }
-
-
-    .section-title {
-        content-align: center middle;
-        text-style: bold;
-        color: $accent;
-        margin-bottom: 1;
-        padding: 1 0;
-        background: $panel-darken-1;
-        border-bottom: heavy $accent;
-    }
+#booleans, #integers, #special-actions {
+    background: $panel;
+    border: tall $primary;
+    padding: 2;
+    margin: 1;
+    height: auto;
+}
 
 
-    .setting-row {
-        layout: horizontal;
-        height: auto;
-        margin: 1 0;
-        align: center middle;
-    }
+.section-title {
+    content-align: center middle;
+    text-style: bold;
+    color: $accent;
+    margin-bottom: 1;
+    padding: 1 0;
+    background: $panel-darken-1;
+    border-bottom: heavy $accent;
+}
 
-    .setting-label {
-        width: 25;
-        min-width: 25;
-        content-align: right middle;
-        margin-right: 2;
-        color: $text;
-    }
 
-    Input {
-        width: 18;
-        min-width: 12;
-    }
+.setting-row {
+    layout: horizontal;
+    height: auto;
+    margin: 1 0;
+    align: center middle;
+}
 
-    Checkbox {
-        margin: 0 0 0 1;
-    }
+.setting-label {
+    width: 25;
+    min-width: 25;
+    content-align: right middle;
+    margin-right: 2;
+    color: $text;
+}
 
-    Button {
-        margin: 1;
-        width: 100%;
-    }
+Input {
+    width: 18;
+    min-width: 12;
+}
 
-    #btn-exit {
-        margin-top: 2;
-        width: 100%;
-        background: $error;
-        color: white;
-    }
+Checkbox {
+    margin: 0 0 0 1;
+}
+
+Button {
+    margin: 1;
+    width: 100%;
+}
+
+#btn-exit {
+    margin-top: 2;
+    width: 100%;
+    background: $error;
+    color: white;
+}

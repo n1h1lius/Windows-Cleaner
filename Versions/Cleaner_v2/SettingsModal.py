@@ -22,7 +22,7 @@ class SettingsModal(ModalScreen):
         with Container(id="sidebar"):
             yield Static(id="logo-small")
             yield Label("By N1h1lius", id="credit")
-            yield Tree("Tasks", id="tasks")
+            with VerticalScroll(id="tasks-scroll"): yield Tree("Tasks", id="tasks")
             with Vertical(id="buttons-container"):
                 yield Button("Back", id="btn-back")
                 yield Button("Github", id="btn-github")
@@ -34,7 +34,7 @@ class SettingsModal(ModalScreen):
                 with Vertical(id="booleans"):
                     yield Label("BOOLEAN SETTINGS", classes="section-title")
 
-                    for section in ["Deployment", "MainVars"]:
+                    for section in INI_SECTIONS:
                         for key in config.options(section):
 
                             if section == "Deployment" and key == "runonstart":
@@ -60,7 +60,7 @@ class SettingsModal(ModalScreen):
 
                 with Vertical(id="integers"):
                     yield Label("INPUT SETTINGS", classes="section-title")
-                    for section in ["Deployment", "MainVars"]:
+                    for section in INI_SECTIONS:
                         for key in config.options(section):
                             try:
                                 val = config.getint(section, key)
@@ -149,9 +149,6 @@ class SettingsModal(ModalScreen):
         shortcut.WorkingDirectory = project_root
         shortcut.save()
 
-        # To run as admin, this requires additional steps like modifying the link file
-        # For simplicity, assume the bat requests admin or use a VBS wrapper
-
     @on(Button.Pressed, "#btn-runstart")
     def toggle_run_on_start(self) -> None:
         startup_folder = os.path.join(os.environ['APPDATA'], 'Microsoft\\Windows\\Start Menu\\Programs\\Startup')
@@ -170,6 +167,7 @@ class SettingsModal(ModalScreen):
             with open(startup_bat_path, 'w') as f:
                 for line in template_content:
                     if "python main.py" in line:
+                        f.write(f'{project_root[0]}: \n')  # Change drive if necessary
                         f.write(f'cd "{project_root}"\n')
                         f.write(line)
                     else:

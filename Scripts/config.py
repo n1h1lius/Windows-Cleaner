@@ -14,15 +14,16 @@ RELEASE_VERSION = "1.1"
 with open("Data/version.txt", "r") as vf:
     RELEASE_VERSION = str(vf.read().strip())
 
-AUTOUPDATE = config.getboolean("MainVars", "autoupdate", fallback=True)
-DEBUG_MODE = config.getboolean("MainVars", "debugmode", fallback=False)
+AUTOUPDATE = config.getboolean("MainVars", "AutoUpdate", fallback=True)
+DEBUG_MODE = config.getboolean("MainVars", "DebugMode", fallback=False)
+INI_SECTIONS = ["Deployment", "MainVars"]
 
 
 # GENERAL VARIABLES
 
 APP_VERSION = int(config["Deployment"]["Version"])
 USER_PROFILE = os.environ.get("USERPROFILE")
-DAYS_THRESHOLD = 3
+DAYS_THRESHOLD = config.getint("MainVars", "DaysThreshold", fallback=3)
 
 
 # Folder Categories

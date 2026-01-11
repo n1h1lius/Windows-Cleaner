@@ -48,7 +48,9 @@ class CleanerApp(App):
         with Container(id="sidebar"):
             yield Static(id="logo-small")
             yield Label("By N1h1lius", id="credit")
-            yield Tree("Tasks", id="tasks")
+            
+            with VerticalScroll(id="tasks-scroll"): yield Tree("Tasks", id="tasks")
+
             with Vertical(id="buttons-container"):
                 yield Button("Settings", id="btn-settings", disabled=True)
                 yield Button("Github", id="btn-github")
