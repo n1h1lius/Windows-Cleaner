@@ -24,6 +24,16 @@ DAYS_THRESHOLD = 3
 
 folder_categories = ["System Temps", "Edge", "Brave", "Chrome", "Discord"]
 
+BROWSER_FOLDERS = ["\\Cache", "\\File System", "\\IndexedDB", "\\Code Cache", "\\Service Worker", "\\GPU_Cache", "\\blob_storage"]
+
+PROGRAMS_PATH_NAMES ={
+    "Edge": "Microsoft Edge",
+    "Brave": "Brave Browser",
+    "Chrome": "Google Chrome",
+    "discord": "Discord",
+    "Spotify": "Spotify"
+}
+
 
 # Cleaner Stats
 

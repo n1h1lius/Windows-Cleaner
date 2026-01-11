@@ -349,10 +349,11 @@ class CleanerApp(App):
 
         for path in paths:
             app_name = "System Temps"
-            if "Edge" in path: app_name = "Edge"
-            elif "Brave" in path: app_name = "Brave"
-            elif "Chrome" in path: app_name = "Chrome"
-            elif "discord" in path: app_name = "Discord"
+
+            for key in PROGRAMS_PATH_NAMES.keys():
+                if PROGRAMS_PATH_NAMES[key] in path:
+                    app_name = PROGRAMS_PATH_NAMES[key]
+                    break
 
             self.current_app = app_name
             self.query_one("#status-bar").update(f"Status: Cleaning {app_name}...")
