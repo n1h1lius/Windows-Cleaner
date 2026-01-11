@@ -15,10 +15,11 @@ import webbrowser
 from io import StringIO
 from contextlib import contextmanager
 
-from textual.app import App, ComposeResult, on
+from textual.app import ComposeResult, on
 from textual.containers import Container, Vertical, VerticalScroll
 from textual.widgets import Header, Footer, Static, RichLog, Tree, Label, Button
 from textual.reactive import reactive
+from textual.screen import ModalScreen
 from rich.text import Text as RichText
 
 from Versions.Cleaner_v2.modals.SettingsModal import SettingsModal
@@ -35,17 +36,13 @@ def capture_logs():
     finally:
         sys.stdout = old_stdout
 
-class CleanerApp(App):
+class CleanerModal(ModalScreen):
 
-    CSS_PATH = ["css/style.css", "css/CleanerAppStyle.css"]
+    CSS_PATH = ["../css/style.css", "../css/CleanerAppStyle.css"]
     current_app = reactive("Preparing...")
 
     def compose(self) -> ComposeResult:
-        global APP_TITLE
-
         self.title = f"CleanerApp - v{RELEASE_VERSION}"
-        APP_TITLE = self.title
-
         yield Header(show_clock=True)
         yield Footer()
 
@@ -56,6 +53,7 @@ class CleanerApp(App):
             with VerticalScroll(id="tasks-scroll"): yield Tree("Tasks", id="tasks")
 
             with Vertical(id="buttons-container"):
+                yield Button("Back", id="btn-back", disabled=True)
                 yield Button("Settings", id="btn-settings", disabled=True)
                 yield Button("Github", id="btn-github")
                 yield Button("Twitter", id="btn-twitter")
@@ -78,9 +76,13 @@ class CleanerApp(App):
 
         self.run_worker(self.do_cleaning, exclusive=True)
 
+    @on(Button.Pressed, "#btn-back")
+    def on_back(self) -> None:
+        self.dismiss()
+
     @on(Button.Pressed, "#btn-settings")
     def open_settings(self) -> None:
-        self.push_screen(SettingsModal())
+        self.app.push_screen(SettingsModal())
 
     @on(Button.Pressed, "#btn-github")
     def open_github(self):
@@ -92,7 +94,7 @@ class CleanerApp(App):
 
     @on(Button.Pressed, "#btn-exit")
     def exit_app(self):
-        self.exit()
+        self.app.exit()
 
     def on_resize(self) -> None:
         log = self.query_one(RichLog)
@@ -171,13 +173,19 @@ class CleanerApp(App):
         log.write(make_boxed_message(self, "PROCESS COMPLETED", final_lines, "bright_yellow"))
         log.refresh()
 
+        self.query_one("#btn-back", Button).disabled = False
         self.query_one("#btn-settings", Button).disabled = False
 
     def key_any(self):
-        self.exit()
+        self.app.exit()
 
     def key_escape(self):
-        self.exit()
+        self.app.exit()
 
     def key_q(self):
-        self.exit()
+        self.app.exit()
+
+    def on_unmount(self) -> None:
+        # Restore main app title when modal is dismissed
+
+        self.title = APP_TITLE

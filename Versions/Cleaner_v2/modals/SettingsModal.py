@@ -13,9 +13,10 @@ from textual.screen import ModalScreen
 from rich.text import Text as RichText
 
 class SettingsModal(ModalScreen):
-    CSS_PATH = ["css/style.css", "css/SettingsModalStyle.css"]
+    CSS_PATH = ["../css/style.css", "../css/SettingsModalStyle.css"]
 
     def compose(self) -> ComposeResult:
+        self.title = f"[ SETTINGS ] - {APP_TITLE}"
         yield Header(show_clock=True)
         yield Footer()
 
@@ -180,3 +181,8 @@ class SettingsModal(ModalScreen):
             config.write(configfile)
 
         self.query_one("#Deployment-runonstart").value = runonstart_val
+
+    def on_unmount(self) -> None:
+        # Restore main app title when modal is dismissed
+
+        self.title = APP_TITLE

@@ -68,6 +68,12 @@ def cleaner_v2():
     app = CleanerApp()
     app.run()
 
+def cleaner_v2_1():
+    from Versions.Cleaner_v2.MainMenu import MainMenu
+
+    app = MainMenu()
+    app.run()
+
 # ╔═════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╗
 # ║                                                       MAIN FUNCTIONS                                                            ║
 # ╚═════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╝
@@ -109,9 +115,7 @@ def launch_app(mode):
         if mode == "startup":
             cleaner_v2()
         elif mode == "default":
-            print("DEFAULT MODE")
-            input("")
-            sys.exit(0)
+            cleaner_v2_1()
 
 
 if __name__ == "__main__":

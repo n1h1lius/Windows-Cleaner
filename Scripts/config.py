@@ -10,6 +10,7 @@ config.read(ini_file_path, encoding="utf-8")
 
 
 RELEASE_VERSION = "1.1"
+APP_TITLE = ""
 
 with open("Data/version.txt", "r") as vf:
     RELEASE_VERSION = str(vf.read().strip())
@@ -58,3 +59,9 @@ stats = {
 
 BOX_MAX_WIDTH = 195
 
+# EXTRA
+
+QUOTES = [
+    "All gates before one goes forward, one ought to look around, one ought to peer around.",
+    "'Hail to the hosts!' A guest has come inside. Where shall this one sit?"
+]
