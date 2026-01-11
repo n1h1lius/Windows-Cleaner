@@ -12,24 +12,38 @@ LOCAL_VERSION_FILE = "Data/version.txt"  # Crea este archivo local con "1.1"
 CONFIG_FILE = "Data/config.ini"
 BAT_FILE = "cleaner.bat"  # Ajusta si se llama diferente o path
 
-def merge_configs(local_ini, remote_ini):
-    local_config = configparser.ConfigParser()
-    local_config.read(local_ini)
-    
-    remote_config = configparser.ConfigParser()
-    remote_config.read(remote_ini)
-    
-    # Añade secciones/keys nuevas del remote al local
-    for section in remote_config.sections():
-        if not local_config.has_section(section):
-            local_config.add_section(section)
-        for key in remote_config.options(section):
-            if not local_config.has_option(section, key):
-                local_config.set(section, key, remote_config.get(section, key))
-    
-    # Sobrescribe el local con el mergeado
-    with open(local_ini, "w") as configfile:
-        local_config.write(configfile)
+def merge_configs(local_path, remote_path):
+    local = configparser.ConfigParser(allow_no_value=True)
+    local.optionxform = str
+    local.read(local_path)
+
+    remote = configparser.ConfigParser(allow_no_value=True)
+    remote.optionxform = str
+    remote.read(remote_path)
+
+    updated = False
+
+    # Añadir secciones nuevas
+    for section in remote.sections():
+        if not local.has_section(section):
+            local.add_section(section)
+            updated = True
+
+    # Añadir solo keys que no existen en local
+    for section in remote.sections():
+        for key in remote.options(section):
+            if not local.has_option(section, key):
+                value = remote.get(section, key, raw=True)
+                local.set(section, key, value)
+                updated = True
+                print(f"[Merge] Nueva clave añadida: [{section}] {key} = {value}")
+
+    if updated:
+        with open(local_path, 'w', encoding='utf-8') as f:
+            local.write(f)
+        print("Config.ini actualizado con nuevas claves (valores antiguos preservados)")
+    else:
+        print("No se añadieron claves nuevas al config.ini")
 
 def update_app():
     # Descarga ZIP
