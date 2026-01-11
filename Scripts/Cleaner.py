@@ -33,13 +33,13 @@ def manage_general_vars(mode, size=0):
         stats["current_files"] += 1
         stats["current_mb"] += size
 
-def cleaner(path):
+def cleaner(path, log):
     global stats
 
     manage_general_vars("reset")
 
-    print(f"\n{Fore.LIGHTRED_EX}     ╔──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╗")
-    print(f"{Fore.LIGHTRED_EX}     │                                                                                                                                                                                                  │")
+    log.write(f"\n{Fore.LIGHTRED_EX}{Fore.LIGHTRED_EX}   ╔───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╗")
+    log.write(f"{Fore.LIGHTRED_EX}   │                                                                                                                                                                                               │")
 
     try:
         list_dir = os.listdir(path)
@@ -53,7 +53,7 @@ def cleaner(path):
                     os.unlink(file_path)
                     total = 38
                     total += 1 if size >= 0 else 2 if size >= 10 else 3 if size >= 100 else 0
-                    print(f"{Fore.LIGHTRED_EX}     │ {Fore.LIGHTGREEN_EX}[+]{Fore.LIGHTRED_EX} - Deleting file  ///// {Fore.LIGHTYELLOW_EX}[{size} Mb] {Fore.LIGHTMAGENTA_EX}-> {Fore.CYAN}{file_path}{' ' * (170 - (total + len(file_path)))}{Fore.LIGHTRED_EX}│")
+                    log.write(f"{Fore.LIGHTRED_EX}   │ {Fore.LIGHTGREEN_EX}[+]{Fore.LIGHTRED_EX} - Deleting file  ///// {Fore.LIGHTYELLOW_EX}[{size} Mb] {Fore.LIGHTMAGENTA_EX}-> {Fore.CYAN}{file_path}{Fore.LIGHTRED_EX}     │")
                     manage_general_vars("file", size)
 
                 elif os.path.isdir(file_path):
@@ -61,14 +61,14 @@ def cleaner(path):
                     shutil.rmtree(file_path, ignore_errors=True)
                     total = 40
                     total += 1 if size >= 0 else 2 if size >= 10 else 3 if size >= 100 else 0
-                    print(f"{Fore.LIGHTRED_EX}     │ {Fore.LIGHTGREEN_EX}[+]{Fore.LIGHTRED_EX} - Deleting Folder  ///// {Fore.LIGHTYELLOW_EX}[{size} Mb] {Fore.LIGHTMAGENTA_EX}-> {Fore.CYAN}{file_path}{' ' * (170 - (total + len(file_path)))}{Fore.LIGHTRED_EX}│")
+                    log.write(f"{Fore.LIGHTRED_EX}   │ {Fore.LIGHTGREEN_EX}[+]{Fore.LIGHTRED_EX} - Deleting Folder  ///// {Fore.LIGHTYELLOW_EX}[{size} Mb] {Fore.LIGHTMAGENTA_EX}-> {Fore.CYAN}{file_path}{Fore.LIGHTRED_EX}     │")
                     manage_general_vars("folder", size)
             except:
                 pass
     except:
         pass
-    print(f"{Fore.LIGHTRED_EX}     │                                                                                                                                                                                                  │")
-    print(f"{Fore.LIGHTRED_EX}     ╚──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╝\n")
+    log.write(f"{Fore.LIGHTRED_EX}{Fore.LIGHTRED_EX}   │                                                                                                                                                                                                │")
+    log.write(f"{Fore.LIGHTRED_EX}{Fore.LIGHTRED_EX}   ╚────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╝\n")
 
 
 # ── Detección ─────────────────────────────────────────────────────────────────

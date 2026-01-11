@@ -13,8 +13,14 @@ config = configparser.ConfigParser()
 config.read(ini_file_path, encoding="utf-8")
 
 
+RELEASE_VERSION = "1.1"
+
+with open("Data/version.txt", "r") as vf:
+    RELEASE_VERSION = str(vf.read().strip())
+
 
 # GENERAL VARIABLES
+
 APP_VERSION = int(config["Deployment"]["Version"])
 USER_PROFILE = os.environ.get("USERPROFILE")
 DAYS_THRESHOLD = 3
