@@ -12,25 +12,6 @@ LOCAL_VERSION_FILE = "Data/version.txt"  # Crea este archivo local con "1.1"
 CONFIG_FILE = "Data/config.ini"
 BAT_FILE = "cleaner.bat"  # Ajusta si se llama diferente o path
 
-def get_remote_version():
-    # Descarga el ZIP temporalmente
-    with tempfile.TemporaryDirectory() as tmp_dir:
-        zip_path = os.path.join(tmp_dir, "repo.zip")
-        response = requests.get(REPO_URL)
-        if response.status_code != 200:
-            return None
-        with open(zip_path, "wb") as f:
-            f.write(response.content)
-        
-        # Extrae solo version.txt
-        with zipfile.ZipFile(zip_path, "r") as zip_ref:
-            for file in zip_ref.namelist():
-                if file.endswith("version.txt"):
-                    zip_ref.extract(file, tmp_dir)
-                    with open(os.path.join(tmp_dir, file), "r") as vf:
-                        return vf.read().strip()
-    return None
-
 def merge_configs(local_ini, remote_ini):
     local_config = configparser.ConfigParser()
     local_config.read(local_ini)
@@ -96,6 +77,17 @@ def update_app():
     print("Actualización completada.")
     return True
 
+def get_remote_version():
+    url = "https://raw.githubusercontent.com/n1h1lius/Windows-Cleaner/main/Data/version.txt"
+    try:
+        response = requests.get(url, timeout=5)
+        if response.status_code == 200:
+            return response.text.strip()
+        else:
+            return None
+    except Exception:
+        return None
+    
 def main():
     if not os.path.exists(LOCAL_VERSION_FILE):
         return False
@@ -104,9 +96,11 @@ def main():
         local_version = f.read().strip()
     
     remote_version = get_remote_version()
+
     if remote_version is None:
         print("No se pudo comprobar versión remota. Continuando con versión local.")
         return False
+    
     elif remote_version != local_version:
         print(f"Nueva versión disponible: {remote_version} (local: {local_version})")
         # Opcional: Preguntar al usuario
