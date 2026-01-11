@@ -1,0 +1,43 @@
+Screen {
+    background: $background;
+}
+
+#sidebar {
+    dock: left;
+    width: 30%;
+    max-width: 35;
+    min-width: 20;
+    height: 100%;
+    background: $panel;
+    border: tall $primary;
+}
+
+#logo-small {
+    height: 12;
+    content-align: center middle;
+    background: $panel-darken-1;
+    margin-bottom: 2;
+}
+
+#credit {
+    height: 1;
+    content-align: center middle;
+    color: $text-muted;
+    background: $panel-darken-1;
+    margin: 0 0 2 0;
+    margin-left: 11;
+}
+
+#tasks {
+    height: 40%;
+    min-height: 6;
+    max-height: 12;
+    margin-top: 1;
+}
+
+#buttons-container {
+    dock: bottom;
+    height: auto;
+    padding: 1;
+}
+

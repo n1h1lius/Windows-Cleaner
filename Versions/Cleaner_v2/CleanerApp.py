@@ -36,81 +36,8 @@ def capture_logs():
         sys.stdout = old_stdout
 
 class CleanerApp(App):
-    CSS = """
-    Screen {
-        background: $background;
-    }
 
-    #sidebar {
-        dock: left;
-        width: 30%;
-        max-width: 35;
-        min-width: 20;
-        height: 100%;
-        background: $panel;
-        border: tall $primary;
-    }
-
-    #logo-small {
-        height: 12;
-        content-align: center middle;
-        background: $panel-darken-1;
-        margin-bottom: 2;
-    }
-
-    #credit {
-        height: 1;
-        content-align: center middle;
-        color: $text-muted;
-        background: $panel-darken-1;
-        margin: 0 0 2 0;
-        margin-left: 11;
-    }
-
-    #tasks {
-        height: 40%;
-        min-height: 6;
-        max-height: 12;
-        margin-top: 1;
-    }
-
-    #buttons-container {
-        dock: bottom;
-        height: auto;
-        padding: 1;
-    }
-
-    #main-log {
-        height: 100%;
-        background: $surface;
-        border: tall $accent;
-        overflow-x: hidden;
-    }
-
-    #status-bar {
-        dock: bottom;
-        height: 1;
-        background: $primary-darken-2;
-        content-align: center middle;
-        color: white;
-    }
-
-    Button {
-        margin: 1;
-        width: 100%;
-    }
-
-    #btn-exit {
-        margin-top: 2;
-        margin-bottom: 1;
-        margin-left: 1;
-        margin-right: 1;
-        width: 100%;
-        background: $error;
-        color: white;
-    }
-    """
-
+    CSS_PATH = ["css/style.css", "css/CleanerAppStyle.css"]
     current_app = reactive("Preparing...")
 
     def compose(self) -> ComposeResult:
@@ -133,6 +60,7 @@ class CleanerApp(App):
         yield Static("Status: Starting...", id="status-bar")
 
     def on_mount(self) -> None:
+
         self.query_one("#logo-small", Static).update(RichText(msg.logo_ascii, style="bold magenta"))
 
         tree = self.query_one(Tree)
