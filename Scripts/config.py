@@ -14,6 +14,9 @@ RELEASE_VERSION = "1.1"
 with open("Data/version.txt", "r") as vf:
     RELEASE_VERSION = str(vf.read().strip())
 
+AUTOUPDATE = config.getboolean("MainVars", "autoupdate", fallback=True)
+DEBUG_MODE = config.getboolean("MainVars", "debugmode", fallback=False)
+
 
 # GENERAL VARIABLES
 

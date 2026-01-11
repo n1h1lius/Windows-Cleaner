@@ -10,7 +10,11 @@ def cleaner_v1():
 
 def cleaner_v2():
     from Versions.cleaner_v2 import CleanerApp
-    
+
+    app = CleanerApp()
+    app.run()
+
+def force_maximize():
     if sys.platform == "win32":
         import ctypes
         kernel32 = ctypes.windll.kernel32
@@ -18,9 +22,6 @@ def cleaner_v2():
         SW_MAXIMIZE = 3
         hWnd = kernel32.GetConsoleWindow()
         user32.ShowWindow(hWnd, SW_MAXIMIZE)
-
-    app = CleanerApp()
-    app.run()
 
 def check_resolution(max_width=1920, max_height=1024):
 
@@ -40,17 +41,27 @@ def check_resolution(max_width=1920, max_height=1024):
     except Exception:
         return False
 
+def launch_app():
+    from Scripts.config import APP_VERSION
+
+    if APP_VERSION == 1:
+        cleaner_v1()
+
+    elif APP_VERSION == 2:
+        cleaner_v2()
+
 
 if __name__ == "__main__":
 
+    force_maximize()
+
     if check_resolution(): msg.updater_intro = msg.small_res_updater_intro
+
+    from Scripts.config import AUTOUPDATE
+    if AUTOUPDATE:
+        if check_for_updates() == False:
+            print("  ///// Continuing without update... /////\n")
     
-    if check_for_updates() == False:
+    launch_app()
 
-        from Scripts.config import APP_VERSION
 
-        if APP_VERSION == 1:
-            cleaner_v1()
-
-        elif APP_VERSION == 2:
-            cleaner_v2()
