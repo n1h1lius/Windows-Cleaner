@@ -12,135 +12,24 @@ LOCAL_VERSION_FILE = "Data/version.txt"  # Crea este archivo local con "1.1"
 CONFIG_FILE = "Data/config.ini"
 BAT_FILE = "cleaner.bat"  # Ajusta si se llama diferente o path
 
-def merge_ini_text_based(local_path, remote_path):
-    """
-    Merge conservador a nivel texto:
-    - Mantiene el archivo local intacto
-    - Solo añade líneas del remoto que no existan en el local
-    - Intenta insertar en la sección correspondiente
-    - Si no encuentra la sección → añade al final
-    """
-    # Leer ambos como listas de líneas (preservando todo)
-    try:
-        with open(local_path, 'r', encoding='utf-8') as f:
-            local_lines = f.readlines()
-    except FileNotFoundError:
-        # Si no existe local → simplemente copiar remote
-        shutil.copy(remote_path, local_path)
-        print("Config local no existía → copiado completo desde remoto")
-        return
-
-    with open(remote_path, 'r', encoding='utf-8') as f:
-        remote_lines = f.readlines()
-
-    # Normalizamos para comparación (quitamos espacios finales y saltos)
-    def normalize(line):
-        return line.rstrip()
-
-    local_set = {normalize(line) for line in local_lines if line.strip() and not line.strip().startswith(';')}
-
-    new_lines = []
-    current_section = None
-    added_something = False
-
-    # Recorremos el remoto línea a línea
-    for line in remote_lines:
-        stripped = line.strip()
-
-        if not stripped or stripped.startswith(';'):
-            new_lines.append(line)  # comentarios y líneas vacías siempre se mantienen del remoto si estamos añadiendo
-            continue
-
-        if stripped.startswith('[') and stripped.endswith(']'):
-            current_section = stripped
-            new_lines.append(line)
-            continue
-
-        # Es una clave = valor
-        if '=' in stripped:
-            key_part = stripped.split('=', 1)[0].strip()
-
-            # Si ya existe exactamente esa línea (normalizada) → saltamos
-            if normalize(line) in local_set:
-                continue
-
-            # Si la sección actual no está en local → añadimos todo
-            # Pero intentamos insertar en la posición correcta
-            added_something = True
-            new_lines.append(line)
-
-    if not added_something:
-        print("No se detectaron claves nuevas para añadir")
-        return
-
-    # Ahora: insertamos las nuevas líneas en el lugar más adecuado del local
-    # Estrategia simple: añadir al final si no encontramos sección
-    # O después de la última línea de la sección correspondiente
-
-    output_lines = local_lines[:]
-    last_insert_pos = len(output_lines)
-
-    for i, line in enumerate(output_lines):
-        stripped = line.strip()
-        if stripped.startswith('[') and stripped.endswith(']'):
-            if stripped == current_section:
-                # Encontramos la sección → insertamos después de la última línea no vacía de esta sección
-                j = i + 1
-                while j < len(output_lines) and output_lines[j].strip():
-                    j += 1
-                last_insert_pos = j
-                break
-
-    if added_something:
-        # Insertamos las new_lines (sin repetir las que ya estaban)
-        for nl in new_lines:
-            if normalize(nl) not in local_set:
-                output_lines.insert(last_insert_pos, nl)
-                last_insert_pos += 1
-
-        # Backup antes de escribir
-        backup_path = local_path + '.merge_backup'
-        shutil.copy(local_path, backup_path)
-
-        with open(local_path, 'w', encoding='utf-8', newline='') as f:
-            f.writelines(output_lines)
-
-        print(f"Merge completado. Backup en {backup_path}")
-        print("Se añadieron las claves nuevas sin modificar las existentes")
-        return True
-
-def merge_configs(local_path, remote_path):
-    local = configparser.ConfigParser(allow_no_value=True)
-    local.optionxform = str
-    local.read(local_path)
-
-    remote = configparser.ConfigParser(allow_no_value=True)
-    remote.optionxform = str
-    remote.read(remote_path)
-
-    updated = False
-
-    # Añadir secciones nuevas
-    for section in remote.sections():
-        if not local.has_section(section):
-            local.add_section(section)
-            updated = True
-
-    # Añadir solo keys que no existen en local
-    for section in remote.sections():
-        for key in remote.options(section):
-            if not local.has_option(section, key):
-                value = remote.get(section, key, raw=True)
-                local.set(section, key, value)
-                updated = True
-                print(f"[Merge] Nueva clave añadida: [{section}] {key} = {value}")
-
-    if updated:
-        with open(local_path, 'w', encoding='utf-8') as f:
-            local.write(f)
-        print("Config.ini actualizado con nuevas claves (valores antiguos preservados)")
-    else:
-        print("No se añadieron claves nuevas al config.ini")
+def merge_configs(local_ini, remote_ini):
+    local_config = configparser.ConfigParser()
+    local_config.read(local_ini)
+    
+    remote_config = configparser.ConfigParser()
+    remote_config.read(remote_ini)
+    
+    # Añade secciones/keys nuevas del remote al local
+    for section in remote_config.sections():
+        if not local_config.has_section(section):
+            local_config.add_section(section)
+        for key in remote_config.options(section):
+            if not local_config.has_option(section, key) or local_config.get(section, key) == remote_config.get(section, key):
+                local_config.set(section, key, remote_config.get(section, key))
+    
+    # Sobrescribe el local con el mergeado
+    with open(local_ini, "w") as configfile:
+        local_config.write(configfile)
 
 def update_app():
     # Descarga ZIP
@@ -170,7 +59,7 @@ def update_app():
         # Merge config si hay nuevo
         remote_config_path = os.path.join(repo_dir, CONFIG_FILE)
         if os.path.exists(remote_config_path):
-            merge_ini_text_based(CONFIG_FILE, remote_config_path)
+            merge_configs(CONFIG_FILE, remote_config_path)
         
         # Copia todo excepto updater.py
         for item in os.listdir(repo_dir):
@@ -211,7 +100,7 @@ def main():
     if remote_version is None:
         print("No se pudo comprobar versión remota. Continuando con versión local.")
         return False
-    
+        
     elif remote_version != local_version:
         print(f"Nueva versión disponible: {remote_version} (local: {local_version})")
         # Opcional: Preguntar al usuario
@@ -223,7 +112,6 @@ def main():
                 # Relanza el bat
                 subprocess.call(BAT_FILE)
                 sys.exit(0)
-                return True
             else:
                 print("Actualización fallida. Continuando con versión actual.")
                 return False
