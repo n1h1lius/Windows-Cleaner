@@ -27,13 +27,16 @@ BRAVE_PATH = USER_PROFILE + APPDATA_LOCAL + "\\BraveSoftware\\Brave-Browser"
 CHROME_PATH = USER_PROFILE + APPDATA_LOCAL + "\\Google\\Chrome"
 
 DISCORD_PATH = USER_PROFILE +  APPDATA_ROAMING + "\\discord"
+SPOTIFY_PATH = USER_PROFILE +  APPDATA_LOCAL + "\\Spotify"
 
 BROWSERS_PATHS = [
         "\\Cache",
         "\\File System",
         "\\IndexedDB",
         "\\Code Cache",
-        "\\Service Worker"
+        "\\Service Worker",
+        "\\GPU_Cache",
+        "\\blob_storage"
     ]
 
 # Configuración avanzada
@@ -159,6 +162,23 @@ def get_paths_to_clean():
         
         print(Fore.LIGHTGREEN_EX + "///// -> Discord Detected")
     
+    # Spotify
+    # ---------------------------------------------------------------------
+    if os.path.isdir(SPOTIFY_PATH):
+
+        default_path = SPOTIFY_PATH + "\\Default"
+
+        # Basic Folders
+        for path in BROWSERS_PATHS:
+            if os.path.isdir(SPOTIFY_PATH + path): paths.append(SPOTIFY_PATH + path)
+            if os.path.isdir(default_path + path): paths.append(default_path + path)
+        
+        # Profile Folders
+        profiles = get_browser_profiles(SPOTIFY_PATH)
+        paths.extend(profiles[0])
+
+        print(Fore.LIGHTGREEN_EX + f"///// -> Spotify Detected - [{profiles[1]}] Profiles Detected")
+
     wait_before_continue(5)
     return paths
 
