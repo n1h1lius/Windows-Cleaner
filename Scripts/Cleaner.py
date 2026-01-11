@@ -89,7 +89,7 @@ def detect_and_get_paths():
     # ── Microsoft Edge ───────────────────────────────────────────────────────
     if os.path.isdir(p := USER_PROFILE + "\\AppData\\Local\\Microsoft\\Edge"):
         counter = 0
-        detected.append("Microsoft Edge")
+        detected.append("Edge")
         paths.append(p + "\\User Data\\Default")
         counter += 1
 
@@ -109,7 +109,7 @@ def detect_and_get_paths():
     # ── Brave Browser ────────────────────────────────────────────────────────
     if os.path.isdir(p := USER_PROFILE + "\\AppData\\Local\\BraveSoftware\\Brave-Browser"):
         counter = 0
-        detected.append("Brave Browser")
+        detected.append("Brave")
         ud = p + "\\User Data"
         default = ud + "\\Default"
         for bp in BROWSER_FOLDERS:
@@ -129,7 +129,7 @@ def detect_and_get_paths():
     # ── Google Chrome ────────────────────────────────────────────────────────
     if os.path.isdir(p := USER_PROFILE + "\\AppData\\Local\\Google\\Chrome"):
         counter = 0
-        detected.append("Google Chrome")
+        detected.append("Chrome")
         ud = p + "\\User Data"
         default = ud + "\\Default"
 
