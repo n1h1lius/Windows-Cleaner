@@ -22,14 +22,14 @@ DAYS_THRESHOLD = 3
 
 # Folder Categories
 
-folder_categories = ["System Temps", "Edge", "Brave", "Chrome", "Discord"]
+folder_categories = ["System Temps", "Edge", "Brave", "Chrome", "Discord", "Spotify"]
 
 BROWSER_FOLDERS = ["\\Cache", "\\File System", "\\IndexedDB", "\\Code Cache", "\\Service Worker", "\\GPU_Cache", "\\blob_storage"]
 
 PROGRAMS_PATH_NAMES ={
-    "Edge": "Microsoft Edge",
-    "Brave": "Brave Browser",
-    "Chrome": "Google Chrome",
+    "Edge": "Edge",
+    "Brave": "Brave",
+    "Chrome": "Chrome",
     "discord": "Discord",
     "Spotify": "Spotify"
 }

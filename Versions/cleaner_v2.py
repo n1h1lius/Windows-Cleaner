@@ -351,7 +351,7 @@ class CleanerApp(App):
             app_name = "System Temps"
 
             for key in PROGRAMS_PATH_NAMES.keys():
-                if PROGRAMS_PATH_NAMES[key] in path:
+                if key in path:
                     app_name = PROGRAMS_PATH_NAMES[key]
                     break
 
