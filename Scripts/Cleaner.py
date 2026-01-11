@@ -125,6 +125,7 @@ def detect_and_get_paths():
                             counter += 1
         except:
             pass
+        detected_folders["Brave"] = counter
 
     # ── Google Chrome ────────────────────────────────────────────────────────
     if os.path.isdir(p := USER_PROFILE + "\\AppData\\Local\\Google\\Chrome"):
