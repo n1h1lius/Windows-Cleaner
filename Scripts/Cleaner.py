@@ -158,7 +158,7 @@ def detect_and_get_paths():
         for suf in ["\\Cache\\Cache_Data", "\\Code Cache", "\\GPU_Cache"]:
             paths.append(p + suf)
             counter += 1
-        detected_folders["discord"] = counter
+        detected_folders["Discord"] = counter
 
     # ── Spotify (Official Desktop Version) ────────────────────────────────────
     if os.path.isdir(p := USER_PROFILE + "\\AppData\\Roaming\\Spotify"):
