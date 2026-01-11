@@ -139,7 +139,7 @@ class SettingsModal(ModalScreen):
     def create_shortcut(self) -> None:
         shell = win32com.client.Dispatch("WScript.Shell")
         desktop = shell.SpecialFolders("Desktop")
-        project_root = os.path.dirname(os.path.abspath(__file__ + "/../../"))
+        project_root = os.path.dirname(os.path.abspath(__file__ + "/../../../"))
         bat_path = os.path.join(project_root, "WindowsCleaner.bat")
         icon_path = os.path.join(project_root, "Data", "Icon.ico")
         shortcut_path = os.path.join(desktop, "Cleaner.lnk")
@@ -155,7 +155,7 @@ class SettingsModal(ModalScreen):
         startup_folder = os.path.join(os.environ['APPDATA'], 'Microsoft\\Windows\\Start Menu\\Programs\\Startup')
         bat_name = "[N1h1lius]-Cleaner.bat"
         startup_bat_path = os.path.join(startup_folder, bat_name)
-        project_root = os.path.dirname(os.path.abspath(__file__ + "/../../"))
+        project_root = os.path.dirname(os.path.abspath(__file__ + "/../../../"))
         target_bat_path = os.path.join(project_root, "cleaner.bat")
 
         if os.path.exists(startup_bat_path):
