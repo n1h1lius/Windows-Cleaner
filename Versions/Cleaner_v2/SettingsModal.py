@@ -3,6 +3,8 @@ from Scripts.utils import messages as msg
 from Scripts.core.Cleaner import *
 
 import webbrowser
+import win32com.client
+import os
 
 from textual.app import ComposeResult, on
 from textual.containers import Container, Vertical, VerticalScroll, Horizontal
@@ -18,7 +20,9 @@ class SettingsModal(ModalScreen):
 
     #sidebar {
         dock: left;
-        width: 28;
+        width: 30%;
+        max-width: 35;
+        min-width: 20;
         height: 100%;
         background: $panel;
         border: tall $primary;
@@ -37,16 +41,20 @@ class SettingsModal(ModalScreen):
         color: $text-muted;
         background: $panel-darken-1;
         margin: 0 0 2 0;
+        margin-left: 11;
     }
 
     #tasks {
-        height: 1fr;
+        height: 40%;
+        min-height: 6;
+        max-height: 12;
         margin-top: 1;
     }
 
     #buttons-container {
         dock: bottom;
         height: auto;
+        padding: 1;
     }
 
     #settings-container {
@@ -56,19 +64,25 @@ class SettingsModal(ModalScreen):
         padding: 1;
     }
 
-    #booleans, #integers {
-        background: $panel 70%;
-        border: round $primary 60%;
-        padding: 2 3;
-        margin: 1 2 1 0;
+    #booleans, #integers, #special-actions {
+        background: $panel;
+        border: tall $primary;
+        padding: 2;
+        margin: 1;
         height: auto;
     }
 
-    #booleans Label, #integers Label {
-        margin-bottom: 1;
+
+    .section-title {
+        content-align: center middle;
         text-style: bold;
         color: $accent;
+        margin-bottom: 1;
+        padding: 1 0;
+        background: $panel-darken-1;
+        border-bottom: heavy $accent;
     }
+
 
     .setting-row {
         layout: horizontal;
@@ -81,7 +95,7 @@ class SettingsModal(ModalScreen):
         width: 25;
         min-width: 25;
         content-align: right middle;
-        margin-right: 1;
+        margin-right: 2;
         color: $text;
     }
 
@@ -124,9 +138,14 @@ class SettingsModal(ModalScreen):
         with VerticalScroll(id="settings-container"):
             with Horizontal():
                 with Vertical(id="booleans"):
-                    yield Label("Boolean Settings")
+                    yield Label("BOOLEAN SETTINGS", classes="section-title")
+
                     for section in ["Deployment", "MainVars"]:
                         for key in config.options(section):
+
+                            if section == "Deployment" and key == "runonstart":
+                                continue  # ← EVITA EL DUPLICADO
+
                             try:
                                 val = config.getboolean(section, key)
                                 yield Checkbox(
@@ -137,8 +156,16 @@ class SettingsModal(ModalScreen):
                             except ValueError:
                                 pass
 
+                    yield Checkbox(
+                        label="Deployment.runonstart",
+                        value=False,
+                        id="Deployment-runonstart",
+                        disabled=True
+                    )
+
+
                 with Vertical(id="integers"):
-                    yield Label("Integer / Numeric Settings")
+                    yield Label("INPUT SETTINGS", classes="section-title")
                     for section in ["Deployment", "MainVars"]:
                         for key in config.options(section):
                             try:
@@ -154,10 +181,21 @@ class SettingsModal(ModalScreen):
                             except ValueError:
                                 pass
 
+                with Vertical(id="special-actions"):
+                    yield Label("SPECIAL ACTIONS", classes="section-title")
+                    yield Button("Create Shortcut", id="btn-shortcut")
+                    yield Button("Run on Start", id="btn-runstart")
+
         yield Static("Settings - Changes are saved automatically", id="status-bar")
 
     def on_mount(self) -> None:
         self.query_one("#logo-small", Static).update(RichText(msg.logo_ascii, style="bold magenta"))
+        # Cargar estado de runonstart
+        try:
+            runonstart_val = config.getboolean("Deployment", "runonstart")
+            self.query_one("#Deployment-runonstart").value = runonstart_val
+        except:
+            pass
 
     @on(Button.Pressed, "#btn-back")
     def on_back(self) -> None:
@@ -177,7 +215,7 @@ class SettingsModal(ModalScreen):
 
     @on(Checkbox.Changed)
     def on_checkbox_changed(self, event: Checkbox.Changed) -> None:
-        if event.checkbox.id:
+        if event.checkbox.id and event.checkbox.id != "Deployment-runonstart":
             section, key = event.checkbox.id.split("-")
             config.set(section, key, str(event.value).lower())
             with open(ini_file_path, "w") as configfile:
@@ -201,3 +239,52 @@ class SettingsModal(ModalScreen):
     @on(Input.Submitted)
     def on_input_submitted(self, event: Input.Submitted) -> None:
         self.on_input_changed(event)
+
+    @on(Button.Pressed, "#btn-shortcut")
+    def create_shortcut(self) -> None:
+        shell = win32com.client.Dispatch("WScript.Shell")
+        desktop = shell.SpecialFolders("Desktop")
+        project_root = os.path.dirname(os.path.abspath(__file__ + "/../../"))
+        bat_path = os.path.join(project_root, "cleaner.bat")
+        icon_path = os.path.join(project_root, "Data", "Icon.ico")
+        shortcut_path = os.path.join(desktop, "Cleaner.lnk")
+
+        shortcut = shell.CreateShortCut(shortcut_path)
+        shortcut.Targetpath = bat_path
+        shortcut.IconLocation = icon_path
+        shortcut.WorkingDirectory = project_root
+        shortcut.save()
+
+        # To run as admin, this requires additional steps like modifying the link file
+        # For simplicity, assume the bat requests admin or use a VBS wrapper
+
+    @on(Button.Pressed, "#btn-runstart")
+    def toggle_run_on_start(self) -> None:
+        startup_folder = os.path.join(os.environ['APPDATA'], 'Microsoft\\Windows\\Start Menu\\Programs\\Startup')
+        bat_name = "[N1h1lius]-Cleaner.bat"
+        startup_bat_path = os.path.join(startup_folder, bat_name)
+        project_root = os.path.dirname(os.path.abspath(__file__ + "/../../"))
+        target_bat_path = os.path.join(project_root, "cleaner.bat")
+
+        if os.path.exists(startup_bat_path):
+            os.remove(startup_bat_path)
+            runonstart_val = False
+        else:
+            with open(target_bat_path, 'r') as f:
+                template_content = f.readlines()
+            
+            with open(startup_bat_path, 'w') as f:
+                for line in template_content:
+                    if "python main.py" in line:
+                        f.write(f'cd "{project_root}"\n')
+                        f.write(line)
+                    else:
+                        f.write(line)
+
+            runonstart_val = True
+
+        config.set("Deployment", "runonstart", str(runonstart_val).lower())
+        with open(ini_file_path, "w") as configfile:
+            config.write(configfile)
+
+        self.query_one("#Deployment-runonstart").value = runonstart_val
