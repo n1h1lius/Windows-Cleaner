@@ -12,6 +12,27 @@ LOCAL_VERSION_FILE = "Data/version.txt"  # Crea este archivo local con "1.1"
 CONFIG_FILE = "Data/config.ini"
 BAT_FILE = "cleaner.bat"  # Ajusta si se llama diferente o path
 
+def merge_ini_append_only(local_path, remote_path):
+    with open(remote_path, 'r', encoding='utf-8') as f_remote:
+        remote_content = f_remote.read()
+
+    # Solo añadimos si no existe ya la línea (comparación simple)
+    with open(local_path, 'a+', encoding='utf-8') as f_local:
+        f_local.seek(0)
+        local_content = f_local.read()
+
+        for line in remote_content.splitlines(keepends=True):
+            stripped = line.strip()
+            if not stripped or stripped.startswith(';') or '=' not in stripped:
+                continue  # solo nos interesan las claves = valor
+
+            if stripped not in local_content:
+                f_local.write(line)
+                print(f"Añadida al final: {stripped}")
+
+    print("Merge append-only completado")
+    return True
+
 def merge_configs(local_path, remote_path):
     local = configparser.ConfigParser(allow_no_value=True)
     local.optionxform = str
@@ -73,7 +94,7 @@ def update_app():
         # Merge config si hay nuevo
         remote_config_path = os.path.join(repo_dir, CONFIG_FILE)
         if os.path.exists(remote_config_path):
-            merge_configs(CONFIG_FILE, remote_config_path)
+            merge_ini_append_only(CONFIG_FILE, remote_config_path)
         
         # Copia todo excepto updater.py
         for item in os.listdir(repo_dir):
