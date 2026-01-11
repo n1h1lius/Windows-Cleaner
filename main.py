@@ -1,4 +1,5 @@
 import sys
+from Scripts.update import main as check_for_updates
 
 CURRENT_VERSION = 1.1
 
@@ -22,10 +23,13 @@ def cleaner_v2():
 
 if __name__ == "__main__":
 
-    from Scripts.config import APP_VERSION
 
-    if APP_VERSION == 1:
-        cleaner_v1()
+    if check_for_updates() == False:
 
-    elif APP_VERSION == 2:
-        cleaner_v2()
+        from Scripts.config import APP_VERSION
+
+        if APP_VERSION == 1:
+            cleaner_v1()
+
+        elif APP_VERSION == 2:
+            cleaner_v2()
