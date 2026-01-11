@@ -134,13 +134,17 @@ def detect_and_get_paths():
         default = ud + "\\Default"
 
         for bp in BROWSER_FOLDERS:
-            if os.path.isdir(default + bp): paths.append(default + bp) & counter += 1
+            if os.path.isdir(default + bp): 
+                paths.append(default + bp)
+                counter += 1
 
         try:
             for d in os.listdir(ud):
                 if d.startswith("Profile"):
                     for bp in BROWSER_FOLDERS:
-                        if os.path.isdir(os.path.join(ud, d) + bp): paths.append(os.path.join(ud, d) + bp) & counter += 1
+                        if os.path.isdir(os.path.join(ud, d) + bp): 
+                            paths.append(os.path.join(ud, d) + bp)
+                            counter += 1
         except:
             pass
 
@@ -165,19 +169,27 @@ def detect_and_get_paths():
 
         for suf in BROWSER_FOLDERS:
 
-            if os.path.isdir(p + suf): paths.append(p + suf) & counter += 1
-            if os.path.isdir(ud + suf): paths.append(ud + suf) & counter += 1
-            if os.path.isdir(default + suf): paths.append(default + suf) & counter += 1
-        
+            if os.path.isdir(p + suf): 
+                paths.append(p + suf)
+                counter += 1
+            if os.path.isdir(ud + suf): 
+                paths.append(ud + suf)
+                counter += 1
+            if os.path.isdir(default + suf): 
+                paths.append(default + suf)
+                counter += 1
+
         try:
             for d in os.listdir(p):
                 if d.startswith("Profile"):
                     for suf in BROWSER_FOLDERS:
                         prof_path = os.path.join(p, d) + suf
-                        if os.path.isdir(prof_path): paths.append(prof_path) & counter += 1
+                        if os.path.isdir(prof_path): 
+                            paths.append(prof_path)
+                            counter += 1
         except:
             pass
-        
+
         detected_folders["Spotify"] = counter
 
     return [p for p in paths if os.path.exists(p)], detected
