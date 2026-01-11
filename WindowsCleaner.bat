@@ -25,4 +25,4 @@ if '%errorlevel%' NEQ '0' (
     CD /D "%~dp0"
 :--------------------------------------
 
-python main.py --no-startup-mode
+python main.py --main-menu

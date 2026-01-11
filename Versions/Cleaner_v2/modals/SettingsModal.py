@@ -140,7 +140,7 @@ class SettingsModal(ModalScreen):
         shell = win32com.client.Dispatch("WScript.Shell")
         desktop = shell.SpecialFolders("Desktop")
         project_root = os.path.dirname(os.path.abspath(__file__ + "/../../"))
-        bat_path = os.path.join(project_root, "cleaner.bat")
+        bat_path = os.path.join(project_root, "WindowsCleaner.bat")
         icon_path = os.path.join(project_root, "Data", "Icon.ico")
         shortcut_path = os.path.join(desktop, "Cleaner.lnk")
 
@@ -184,5 +184,4 @@ class SettingsModal(ModalScreen):
 
     def on_unmount(self) -> None:
         # Restore main app title when modal is dismissed
-
         self.title = APP_TITLE

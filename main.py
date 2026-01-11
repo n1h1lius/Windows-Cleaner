@@ -1,6 +1,6 @@
-import sys
+import sys, os, time
 import argparse
-import time
+
 
 from Scripts.utils import messages as msg
 from Scripts.core.update import main as check_for_updates
@@ -20,7 +20,7 @@ def parse_args():
 
     # ───────── Arguments ─────────
     parser.add_argument("--update-check", action="store_true", help="Check for updates without launching the application")
-    parser.add_argument("--no-startup-mode", action="store_true", help="Alias: Not launched from Startup")
+    parser.add_argument("--main-menu", action="store_false", help="Launch just cleaner App")
     parser.add_argument("--no-update-check", action="store_true", help="Disable update checking")
     parser.add_argument("--no-force-maximize", action="store_true", help="Do not force maximize the console window on start")
 
@@ -48,8 +48,8 @@ def handle_args():
             print(f"{HEADER}{Fore.LIGHTCYAN_EX}No new updates available. Continuing without update...\n")
     
     # ─────── Shell:Startup ─────────
-    if args.no_startup_mode is False:
-        return "startup"
+    if args.main_menu:
+        return "CleanerApp"
 
     # ─────── Standard Mode ─────────
     return "default"
@@ -106,15 +106,20 @@ def check_resolution(max_width=1920, max_height=1024):
         return False
 
 def launch_app(mode):
-    from Scripts.config import APP_VERSION
+    from Scripts import config
+    from Scripts.config import APP_VERSION, RELEASE_VERSION
 
     if APP_VERSION == 1:
         cleaner_v1()
 
     elif APP_VERSION == 2:
-        if mode == "startup":
+        if mode == "CleanerApp":
+            config.APP_TITLE = f"CleanerApp - v{RELEASE_VERSION}"
+            os.system(f"title {config.APP_TITLE}")
             cleaner_v2()
         elif mode == "default":
+            config.APP_TITLE = f"Windows Cleaner - v{RELEASE_VERSION}"
+            os.system(f"title {config.APP_TITLE}")
             cleaner_v2_1()
 
 
