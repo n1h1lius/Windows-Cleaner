@@ -5,11 +5,11 @@ from Scripts.core.update import main as check_for_updates
 CURRENT_VERSION = 1.1
 
 def cleaner_v1():
-    from Versions.cleaner_v1 import main
+    from Versions.Cleaner_v1.cleaner_v1 import main
     main()
 
 def cleaner_v2():
-    from Versions.cleaner_v2 import CleanerApp
+    from Versions.Cleaner_v2.CleanerApp import CleanerApp
 
     app = CleanerApp()
     app.run()
