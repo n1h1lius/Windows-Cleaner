@@ -161,7 +161,7 @@ def detect_and_get_paths():
         detected_folders["Discord"] = counter
 
     # ── Spotify (Official Desktop Version) ────────────────────────────────────
-    if os.path.isdir(p := USER_PROFILE + "\\AppData\\Roaming\\Spotify"):
+    if os.path.isdir(p := USER_PROFILE + "\\AppData\\Local\\Spotify"):
         counter = 0
         detected.append("Spotify")
 
