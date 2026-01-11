@@ -126,6 +126,7 @@ def main():
                 # Relanza el bat
                 subprocess.call(BAT_FILE)
                 sys.exit(0)
+                return True
             else:
                 print("Actualización fallida. Continuando con versión actual.")
                 return False
