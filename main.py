@@ -56,7 +56,8 @@ def handle_args():
             bat_path = os.path.abspath("cleaner.bat")
         elif mode == "default":
             bat_path = os.path.abspath("WindowsCleaner.bat")
-
+        
+        # Todo: Temporal Patch
         try:
             from Scripts.core.update import opt
             
@@ -76,11 +77,20 @@ def handle_args():
             except Exception as e:
                 print(f"[Updater] Error al actualizar: {e}")
 
+        from Scripts.config import APP_VERSION
 
-        from Scripts.core.update import main as check_for_updates
+        if APP_VERSION == 1:
 
-        if check_for_updates(bat_path) == False:
-            print(f"{HEADER}\n{HEADER}{Fore.LIGHTCYAN_EX}No new updates available. Continuing without update...\n")
+            from Scripts.core.update import main as check_for_updates
+
+            if check_for_updates(bat_path) == False:
+                print(f"{HEADER}\n{HEADER}{Fore.LIGHTCYAN_EX}No new updates available. Continuing without update...\n")
+
+        elif APP_VERSION == 2:
+            from Versions.Cleaner_v2.modals.UpdaterModal import UpdaterApp
+            app = UpdaterApp()
+            app.run()
+
 
     # ─────── Standard Mode ─────────
     return mode
