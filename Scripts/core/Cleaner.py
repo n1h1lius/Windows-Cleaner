@@ -200,24 +200,26 @@ def detect_and_get_paths():
         detected_folders[PROGRAMS_PATH_NAMES["Chrome"]] = counter
     
     # ── Opera (Stable + GX) ────────────────────────────────────────────────
-    opera_paths = [
-        USER_PROFILE + "\\AppData\\Roaming\\Opera Software\\Opera Stable",
-        USER_PROFILE + "\\AppData\\Roaming\\Opera Software\\Opera GX Stable",
-    ]
+    if os.path.isdir(p := USER_PROFILE + "\\AppData\\Roaming\\Opera Software"):
 
-    for base in opera_paths:
-        if os.path.isdir(base):
-            counter = 0
-            name = "Opera GX Stable" if "GX" in base else "Opera Stable"
-            detected.append(PROGRAMS_PATH_NAMES[name])
+        opera_paths = [
+            USER_PROFILE + "\\AppData\\Roaming\\Opera Software\\Opera Stable",
+            USER_PROFILE + "\\AppData\\Roaming\\Opera Software\\Opera GX Stable",
+        ]
 
-            for bp in BROWSER_FOLDERS:
-                full = base + bp
-                if os.path.isdir(full):
-                    paths.append(full)
-                    counter += 1
+        for base in opera_paths:
+            if os.path.isdir(base):
+                counter = 0
+                name = "Opera GX Stable" if "GX" in base else "Opera Stable"
+                detected.append(PROGRAMS_PATH_NAMES[name])
 
-            detected_folders[PROGRAMS_PATH_NAMES[name]] = counter
+                for bp in BROWSER_FOLDERS:
+                    full = base + bp
+                    if os.path.isdir(full):
+                        paths.append(full)
+                        counter += 1
+
+                detected_folders[PROGRAMS_PATH_NAMES[name]] = counter
 
 
     # ── Discord ──────────────────────────────────────────────────────────────
