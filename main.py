@@ -68,7 +68,6 @@ def handle_args():
 
                 data = response.text
 
-                # Guardar archivo
                 with open("Scripts/core/update.py", "w", encoding="utf-8") as f:
                     f.write(data)
 
