@@ -12,6 +12,8 @@ from textual.widgets import Header, Footer, Static, Tree, Label, Button, Checkbo
 from textual.screen import ModalScreen
 from rich.text import Text as RichText
 
+from Scripts.widgets.ConfirmModal import ConfirmModal
+
 class SettingsModal(ModalScreen):
     CSS_PATH = ["../css/style.css", "../css/SettingsModalStyle.css"]
 
@@ -136,7 +138,7 @@ class SettingsModal(ModalScreen):
         self.on_input_changed(event)
 
     @on(Button.Pressed, "#btn-shortcut")
-    def create_shortcut(self) -> None:
+    async def create_shortcut(self) -> None:
         shell = win32com.client.Dispatch("WScript.Shell")
         desktop = shell.SpecialFolders("Desktop")
         project_root = os.path.dirname(os.path.abspath(__file__ + "/../../../"))
@@ -149,6 +151,9 @@ class SettingsModal(ModalScreen):
         shortcut.IconLocation = icon_path
         shortcut.WorkingDirectory = project_root
         shortcut.save()
+
+        dialog = ConfirmModal("Shortcut Created") 
+        await self.app.push_screen(dialog)
 
     @on(Button.Pressed, "#btn-runstart")
     def toggle_run_on_start(self) -> None:
