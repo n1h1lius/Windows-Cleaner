@@ -42,16 +42,21 @@ DAYS_THRESHOLD = config.getint("MainVars", "DaysThreshold", fallback=3)
 
 # ─────── Folders Vars ─────────
 detected_folders = {}
+detected_profiles = {}
 
 BROWSER_FOLDERS = ["\\Cache", "\\File System", "\\IndexedDB", "\\Code Cache", "\\Service Worker", "\\GPU_Cache", "\\blob_storage"]
 UWP_FOLDERS = ["\\LocalCache", "\\LocalState", "\\TempState"]
 
 PROGRAMS_PATH_NAMES ={
-    "Edge": "Edge",
-    "Brave": "Brave",
+    "Edge": "Edge Browser",
+    "Brave": "Brave Browser",
     "Chrome": "Chrome Browser",
-    "Opera GX Stable": "Opera GX",
-    "Opera Stable": "Opera",
+    "Vivaldi": "Vivaldi Browser",
+    "Yandex": "Yandex Browser",
+    "Chromium": "Chromium Browser",
+    "Waterfox": "Waterfox Browser",
+    "Opera GX Stable": "Opera GX Browser",
+    "Opera Stable": "Opera Browser",
     "discord": "Discord",
     "Spotify": "Spotify",
     "SpotifyAB.SpotifyMusic_zpdnekdrzrea0": "Spotify-App"

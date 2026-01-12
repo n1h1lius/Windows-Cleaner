@@ -125,7 +125,8 @@ class CleanerModal(ModalScreen):
             detected_lines.append(
                 f"   [bright_green][+] [bright_magenta]-> "
                 f"[bright_cyan]{m} [bright_green]"
-                f"Detected - [{detected_folders[m]}] Folders"
+                f"Detected - [{detected_folders[m]}] Folders [bright_white]"
+                f"Detected - [{1 if detected_profiles[m] == 0 else detected_profiles[m]}] Profiles"
             )
         log.write(make_boxed_message(self, "DETECTING INSTALLED PROGRAMS", detected_lines, "bright_white"))
         log.refresh()

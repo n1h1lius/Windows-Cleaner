@@ -1,7 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-Funciones de limpieza y detección de carpetas temporales
-"""
 
 from Scripts.config import *
 from Scripts.utils.ui_helpers import make_dynamic_boxed_message
@@ -10,6 +6,9 @@ import os
 import time
 import shutil
 
+# ╔═════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╗
+# ║                                                       CLEANER CORE (V2)                                                         ║
+# ╚═════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╝
 
 def is_file_old(file_path, days_threshold):
     file_age = time.time() - os.path.getmtime(file_path)
@@ -21,7 +20,6 @@ def get_file_size(file_path):
         return round(os.path.getsize(file_path) / (1024 * 1024), 2)
     except:
         return 0.0
-
 
 def manage_general_vars(mode, size=0):
     global stats
@@ -44,10 +42,12 @@ def manage_general_vars(mode, size=0):
         stats["current_mb"] += size
 
 
+def printLog(log, message):
+    log.write(message)
+    log.refresh()
+
 def cleaner(path, log):
-    """
-    Limpieza con caja dinámica que crece línea a línea
-    """
+
     global stats
 
     manage_general_vars("reset")
@@ -62,7 +62,8 @@ def cleaner(path, log):
         border_color=BORDER,
         content_color=CONTENT
     )
-    log.write(header)
+
+    printLog(log, header)
 
     try:
         list_dir = os.listdir(path)
@@ -80,7 +81,7 @@ def cleaner(path, log):
                         f"[bright_yellow][{size:.2f} Mb] [bright_magenta]-> "
                         f"[bright_cyan]{file_path}"
                     )
-                    log.write(make_dynamic_boxed_message(
+                    printLog(log, make_dynamic_boxed_message(
                         self=log.app,
                         state="content",
                         line=content_line,
@@ -98,7 +99,7 @@ def cleaner(path, log):
                         f"[bright_yellow][{size:.2f} Mb] [bright_magenta]-> "
                         f"[bright_cyan]{file_path}"
                     )
-                    log.write(make_dynamic_boxed_message(
+                    printLog(log, make_dynamic_boxed_message(
                         self=log.app,
                         state="content",
                         line=content_line,
@@ -118,9 +119,49 @@ def cleaner(path, log):
         state="footer",
         border_color=BORDER
     )
-    log.write(footer)
-# ── Detección ─────────────────────────────────────────────────────────────────
+
+    printLog(log, footer)
+
+
+# ╔═════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╗
+# ║                                                       PROGRAMS DETECTOR                                                         ║
+# ╚═════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╝
+
+def get_browser_paths(p, browser, paths, detected):
+
+    detected.append(PROGRAMS_PATH_NAMES[browser])
+
+    paths_counter = 0
+    profiles_counter = 0
+
+    # Profile Folders
+    user_data = p + "\\User Data"
+    for folder in os.listdir(user_data):
+        if folder.startswith("Profile"):
+            profiles_counter += 1
+            for browser_folder in BROWSER_FOLDERS:
+                if os.path.isdir(os.path.join(user_data, folder) + browser_folder): 
+                    paths.append(os.path.join(user_data, folder) + browser_folder)
+                    paths_counter += 1
+
+    # Default Folder
+    default = user_data + "\\Default"
+    for browser_folder in BROWSER_FOLDERS:
+        if os.path.isdir(default + browser_folder): 
+            paths.append(default + browser_folder)
+            paths_counter += 1
+    
+    # Update Counters
+    detected_folders[PROGRAMS_PATH_NAMES[browser]] = paths_counter
+    detected_profiles[PROGRAMS_PATH_NAMES[browser]] = profiles_counter
+
+
+
 def detect_and_get_paths():
+
+    detected = []
+
+    # ── Windows 10 + 11 Temp Directories ───────────────────────────────────────────────────────
     paths = [
         "C:\\Windows\\Temp",
         "C:\\Windows\\Prefetch",
@@ -132,73 +173,29 @@ def detect_and_get_paths():
         USER_PROFILE + "\\AppData\\Local\\Microsoft\\Windows\\Explorer"
     ]
 
-    detected = []
+    # ─────────────────────────────────────────────────────────────── BROWSERS ────────────────────────────────────────────────────────────────────────
 
     # ── Microsoft Edge ───────────────────────────────────────────────────────
-    if os.path.isdir(p := USER_PROFILE + "\\AppData\\Local\\Microsoft\\Edge"):
-        counter = 0
-        detected.append(PROGRAMS_PATH_NAMES["Edge"])
-        paths.append(p + "\\User Data\\Default")
-        counter += 1
-
-        try:
-            ud = p + "\\User Data"
-            for d in os.listdir(ud):
-                if d.startswith("Profile"):
-                    prof_path = os.path.join(ud, d)
-                    if os.path.isdir(prof_path): 
-                        paths.append(prof_path)
-                        counter += 1
-        except:
-            pass
-
-        detected_folders[PROGRAMS_PATH_NAMES["Edge"]] = counter
+    if os.path.isdir(p := USER_PROFILE + "\\AppData\\Local\\Microsoft\\Edge"): get_browser_paths(p, "Edge", paths, detected)
 
     # ── Brave Browser ────────────────────────────────────────────────────────
-    if os.path.isdir(p := USER_PROFILE + "\\AppData\\Local\\BraveSoftware\\Brave-Browser"):
-        counter = 0
-        detected.append(PROGRAMS_PATH_NAMES["Brave"])
-        ud = p + "\\User Data"
-        default = ud + "\\Default"
-        for bp in BROWSER_FOLDERS:
-            if os.path.isdir(default + bp): 
-                paths.append(default + bp)
-                counter += 1
-        try:
-            for d in os.listdir(ud):
-                if d.startswith("Profile"):
-                    for bp in BROWSER_FOLDERS:
-                        if os.path.isdir(os.path.join(ud, d) + bp): 
-                            paths.append(os.path.join(ud, d) + bp)
-                            counter += 1
-        except:
-            pass
-        detected_folders[PROGRAMS_PATH_NAMES["Brave"]] = counter
+    if os.path.isdir(p := USER_PROFILE + "\\AppData\\Local\\BraveSoftware\\Brave-Browser"): get_browser_paths(p, "Brave", paths, detected)
 
     # ── Google Chrome ────────────────────────────────────────────────────────
-    if os.path.isdir(p := USER_PROFILE + "\\AppData\\Local\\Google\\Chrome"):
-        counter = 0
-        detected.append(PROGRAMS_PATH_NAMES["Chrome"])
-        ud = p + "\\User Data"
-        default = ud + "\\Default"
+    if os.path.isdir(p := USER_PROFILE + "\\AppData\\Local\\Google\\Chrome"): get_browser_paths(p, "Chrome", paths, detected)
 
-        for bp in BROWSER_FOLDERS:
-            if os.path.isdir(default + bp): 
-                paths.append(default + bp)
-                counter += 1
+    # ──── Vivaldi ─────────────────────────────────────────────────────────── 
+    if os.path.isdir(p := USER_PROFILE + "\\AppData\\Local\\Vivaldi"): get_browser_paths(p, "Vivaldi", paths, detected)
 
-        try:
-            for d in os.listdir(ud):
-                if d.startswith("Profile"):
-                    for bp in BROWSER_FOLDERS:
-                        if os.path.isdir(os.path.join(ud, d) + bp): 
-                            paths.append(os.path.join(ud, d) + bp)
-                            counter += 1
-        except:
-            pass
-
-        detected_folders[PROGRAMS_PATH_NAMES["Chrome"]] = counter
+    # ───── Yandex Browser ─────────────────────────────────────────────────────
+    if os.path.isdir(p := USER_PROFILE + "\\AppData\\Local\\Yandex\\YandexBrowser"): get_browser_paths(p, "Yandex", paths, detected)
     
+    # ───── Chromium ────────────────────────────────────────────────────────
+    if os.path.isdir(p := USER_PROFILE + "\\AppData\\Local\\Chromium"): get_browser_paths(p, "Chromium", paths, detected)
+
+    # ───── Waterfox ─────────────────────────────────────────────────────── 
+    if os.path.isdir(p := USER_PROFILE + "\\AppData\\Local\\Waterfox"): get_browser_paths(p, "Waterfox", paths, detected)
+
     # ── Opera (Stable + GX) ────────────────────────────────────────────────
     if os.path.isdir(p := USER_PROFILE + "\\AppData\\Roaming\\Opera Software"):
 
@@ -209,18 +206,11 @@ def detect_and_get_paths():
 
         for base in opera_paths:
             if os.path.isdir(base):
-                counter = 0
                 name = "Opera GX Stable" if "GX" in base else "Opera Stable"
-                detected.append(PROGRAMS_PATH_NAMES[name])
+                get_browser_paths(base, name, paths, detected)
 
-                for bp in BROWSER_FOLDERS:
-                    full = base + bp
-                    if os.path.isdir(full):
-                        paths.append(full)
-                        counter += 1
 
-                detected_folders[PROGRAMS_PATH_NAMES[name]] = counter
-
+    # ─────────────────────────────────────────────────────────────── SOFTWARE ────────────────────────────────────────────────────────────────────────
 
     # ── Discord ──────────────────────────────────────────────────────────────
     if os.path.isdir(p := USER_PROFILE + "\\AppData\\Roaming\\discord"):
@@ -232,39 +222,13 @@ def detect_and_get_paths():
             counter += 1
 
         detected_folders[PROGRAMS_PATH_NAMES["discord"]] = counter
+        detected_profiles[PROGRAMS_PATH_NAMES["discord"]] = 0
 
     # ── Spotify (Official Desktop Version) ────────────────────────────────────
     if os.path.isdir(p := USER_PROFILE + "\\AppData\\Local\\Spotify"):
-        counter = 0
-        detected.append(PROGRAMS_PATH_NAMES["Spotify"])
+        get_browser_paths(p, "Spotify", paths, detected)
 
-        ud = p + "\\User Data"
-        default = p + "\\Default"
-
-        for suf in BROWSER_FOLDERS:
-
-            if os.path.isdir(p + suf): 
-                paths.append(p + suf)
-                counter += 1
-            if os.path.isdir(ud + suf): 
-                paths.append(ud + suf)
-                counter += 1
-            if os.path.isdir(default + suf): 
-                paths.append(default + suf)
-                counter += 1
-
-        try:
-            for d in os.listdir(p):
-                if d.startswith("Profile"):
-                    for suf in BROWSER_FOLDERS:
-                        prof_path = os.path.join(p, d) + suf
-                        if os.path.isdir(prof_path): 
-                            paths.append(prof_path)
-                            counter += 1
-        except:
-            pass
-
-        detected_folders[PROGRAMS_PATH_NAMES["Spotify"]] = counter
+    # ─────────────────────────────────────────────────────────────── APPS (UWP) ────────────────────────────────────────────────────────────────────────
 
     # ── Spotify (Official UWP Version) ────────────────────────────────────
     if os.path.isdir(p := USER_PROFILE + "\\AppData\\Local\\Packages\\SpotifyAB.SpotifyMusic_zpdnekdrzrea0"):
@@ -277,5 +241,25 @@ def detect_and_get_paths():
                 counter += 1
 
         detected_folders[PROGRAMS_PATH_NAMES["SpotifyAB.SpotifyMusic_zpdnekdrzrea0"]] = counter
+        detected_profiles[PROGRAMS_PATH_NAMES["SpotifyAB.SpotifyMusic_zpdnekdrzrea0"]] = 0
+    
+    # ── Debug Output Log ────────────────────────────────────
+    if DEBUG_MODE:
+        with open("Logs/Core-Cleaner.log", "w") as f:
+            f.write("Detected:\n-------------------------------------\n")
+            for line in detected:
+                f.write(line + "\n")
+            
+            f.write("\nPrograms_path_names:\n-------------------------------------\n")
+            for key in PROGRAMS_PATH_NAMES:
+                f.write(f"{key}: {PROGRAMS_PATH_NAMES[key]}\n")
+            
+            f.write("\nDetected_Folders:\n-------------------------------------\n")
+            for key in detected_folders:
+                f.write(f"{key}: {detected_folders[key]}\n")
+            
+            f.write("\nDetected_Profiles:\n-------------------------------------\n")
+            for key in detected_profiles:
+                f.write(f"{key}: {detected_profiles[key]}\n")
 
     return [p for p in paths if os.path.exists(p)], detected
