@@ -1,7 +1,6 @@
 import os
 import asyncio
 import time
-import datetime
 import requests
 import zipfile
 import shutil
@@ -10,10 +9,10 @@ import configparser
 import subprocess
 from pathlib import Path
 
-from textual.app import App, ComposeResult
-from textual.widgets import Header, Footer, RichLog
+from textual.app import App, ComposeResult, work
+from textual.widgets import Header, Footer, RichLog, Static
 from textual.containers import Vertical, VerticalScroll
-from textual import work  # ← Importante para @work decorator
+from textual import on
 
 from Scripts.utils import messages as msg
 from Scripts.widgets.ConfirmModal import ConfirmModal
@@ -30,17 +29,24 @@ async def merge_configs(local_ini: Path, remote_ini: Path):
     remote_config = configparser.ConfigParser()
     remote_config.read(remote_ini)
     
+    changes = False
     for section in remote_config.sections():
         if not local_config.has_section(section):
             local_config.add_section(section)
+            changes = True
         for key in remote_config.options(section):
-            if not local_config.has_option(section, key) or local_config.get(section, key) == remote_config.get(section, key):
-                local_config.set(section, key, remote_config.get(section, key))
+            remote_val = remote_config.get(section, key)
+            if not local_config.has_option(section, key):
+                local_config.set(section, key, remote_val)
+                changes = True
     
-    with open(local_ini, "w") as f:
-        local_config.write(f)
+    if changes:
+        with open(local_ini, "w", encoding="utf-8") as f:
+            local_config.write(f)
+        return True
+    return False
 
-async def get_remote_version() -> str | None:
+def get_remote_version() -> str | None:
     url = "https://raw.githubusercontent.com/n1h1lius/Windows-Cleaner/main/Data/version.txt"
     try:
         response = requests.get(url, timeout=5)
@@ -51,7 +57,6 @@ async def get_remote_version() -> str | None:
         return None
 
 class UpdateLog(RichLog):
-    """Custom log with nice border"""
     BORDER_TITLE = "Updater Log"
     BORDER_SUBTITLE = "Updating..."
 
@@ -82,11 +87,6 @@ class UpdaterApp(App):
         content-align: center middle;
     }
 
-    #logo-container {
-        height: 6;
-        content-align: center middle;
-    }
-
     #main-log {
         height: 100%;
         background: $panel;
@@ -104,124 +104,147 @@ class UpdaterApp(App):
     """
 
     def compose(self) -> ComposeResult:
-        yield Header(show_clock=True)
+        yield Header("Updater - Windows Cleaner", show_clock=True)
         yield Footer()
 
-        with Vertical(id="main"):
+        with Vertical():
+            yield Static(id="status", markup=True)
             yield VerticalScroll(UpdateLog(), id="main-log")
 
-    def print(self, text: str):
-        log = self.query_one(UpdateLog)
-        log.write(text)
-        log.refresh()               # ← Fuerza redraw inmediato
-        self.refresh()              # ← Refresca toda la app (opcional pero útil)
-
     def on_mount(self) -> None:
-        self.print(msg.updater_intro)
-        self.print("[cyan]Checking for updates...[/]")
-        self.check_for_updates()    # ← Llamada directa (no worker aquí)
+        self.query_one("#status").update("[cyan]Inicializando comprobación...[/]")
+        self.check_updates()
+
+    def print(self, text: str):
+        try:
+            log = self.query_one(UpdateLog)
+            log.write(text)
+            log.scroll_end(animate=False)
+            log.refresh()
+            self.refresh()
+        except:
+            pass
 
     @work(thread=True, exclusive=True)
-    async def check_for_updates(self):
-        await asyncio.sleep(1.5)
+    async def check_updates(self):
+        await asyncio.sleep(1)
+
+        self.call_from_thread(self.print, msg.updater_intro)
+        self.call_from_thread(self.print, "[cyan]Comprobando actualizaciones...[/]")
 
         if not LOCAL_VERSION_FILE.exists():
-            self.call_from_thread(self.print, "[yellow]Local version file not found. Skipping update.[/]")
-            self.call_from_thread(self.after_update_check, False)
+            self.call_from_thread(self.print, "[yellow]Archivo de versión local no encontrado.[/]")
+            self.call_from_thread(self.after_check, False)
             return
 
-        with open(LOCAL_VERSION_FILE, "r") as f:
-            local_version = f.read().strip()
+        local_version = LOCAL_VERSION_FILE.read_text(encoding="utf-8").strip()
+        self.call_from_thread(self.print, f"[cyan]Versión local:[/] [white]{local_version}[/]")
 
-        self.call_from_thread(self.print, f"[cyan]Local Version:[/] [white]{local_version}[/]")
-
-        remote_version = await get_remote_version()
-
+        remote_version = get_remote_version()
         if remote_version is None:
-            self.call_from_thread(self.print, "[yellow]Could not fetch remote version. Skipping.[/]")
-            self.call_from_thread(self.after_update_check, False)
+            self.call_from_thread(self.print, "[yellow]No se pudo obtener versión remota.[/]")
+            self.call_from_thread(self.after_check, False)
             return
 
-        self.call_from_thread(self.print, f"[cyan]Remote Version:[/] [white]{remote_version}[/]")
+        self.call_from_thread(self.print, f"[cyan]Versión remota:[/] [white]{remote_version}[/]")
 
-        if remote_version != local_version:
-            self.call_from_thread(self.print, f"[green]New version available: {remote_version}[/]")
+        if remote_version == local_version:
+            self.call_from_thread(self.print, "[bold green]Estás al día.[/]")
+            self.call_from_thread(self.after_check, False)
+            return
 
-            # Confirmación modal (síncrona)
-            confirmed = await self.push_screen_wait(ConfirmModal("Do you want to update?", title="UPDATE"))
-            
+        # Delegamos la pregunta al hilo principal
+        self.call_from_thread(self._ask_for_update, remote_version)
+
+    def _ask_for_update(self, remote_version: str):
+        """Método llamado desde el hilo principal para mostrar el modal"""
+        self.print(f"[bold green]¡Nueva versión disponible! {remote_version}[/]")
+
+        async def show_modal():
+            await asyncio.sleep(0.2)  # Pequeño retraso para estabilizar contexto
+            confirmed = await self.push_screen_wait(ConfirmModal(
+                message="¿Quieres actualizar ahora?",
+                title="Actualización disponible"
+            ))
             if confirmed:
-                self.call_from_thread(self.print, "[bold green]Starting update...[/]")
-                await self.perform_update()
+                self.print("[bold green]Iniciando actualización...[/]")
+                await self.perform_update(remote_version)
             else:
-                self.call_from_thread(self.print, "[yellow]Update cancelled by user.[/]")
-                self.call_from_thread(self.after_update_check, False)
-        else:
-            self.call_from_thread(self.print, "[green]You are already up to date![/]")
-            self.call_from_thread(self.after_update_check, False)
+                self.print("[yellow]Actualización cancelada.[/]")
+                self.after_check(False)
 
-    async def after_update_check(self, updated: bool):
-        await asyncio.sleep(1.5)
-        
+        self.run_worker(show_modal, exclusive=True)
+
+    async def perform_update(self, new_version: str):
+        self.print("[cyan]Descargando paquete...[/]")
+
+        try:
+            response = requests.get(REPO_URL, timeout=30)
+            if response.status_code != 200:
+                self.print("[bold red]Fallo al descargar.[/]")
+                self.after_check(False)
+                return
+
+            with tempfile.TemporaryDirectory() as tmp_dir:
+                zip_path = Path(tmp_dir) / "repo.zip"
+                zip_path.write_bytes(response.content)
+
+                extract_dir = Path(tmp_dir) / "extract"
+                extract_dir.mkdir(exist_ok=True)
+
+                with zipfile.ZipFile(zip_path) as z:
+                    z.extractall(extract_dir)
+
+                repo_dir = extract_dir / "Windows-Cleaner-main"
+                if not repo_dir.exists():
+                    self.print("[bold red]Carpeta no encontrada en ZIP.[/]")
+                    self.after_check(False)
+                    return
+
+                if CONFIG_FILE.exists():
+                    backup_path = CONFIG_FILE.with_suffix(".bak")
+                    shutil.copy(CONFIG_FILE, backup_path)
+                    self.print(f"[cyan]Backup creado: {backup_path.name}[/]")
+
+                remote_config_path = repo_dir / CONFIG_FILE.name
+                if remote_config_path.exists():
+                    if await merge_configs(CONFIG_FILE, remote_config_path):
+                        self.print("[green]Config fusionada[/]")
+                    else:
+                        self.print("[dim]No había cambios nuevos en config[/]")
+
+                self.print("[cyan]Copiando archivos...[/]")
+                for item in repo_dir.iterdir():
+                    if item.name == Path(__file__).name:  # No sobrescribir este updater
+                        continue
+                    dest = Path.cwd() / item.name
+                    if item.is_dir():
+                        if dest.exists():
+                            shutil.rmtree(dest)
+                        shutil.copytree(item, dest)
+                    else:
+                        shutil.copy2(item, dest)
+
+            LOCAL_VERSION_FILE.write_text(new_version, encoding="utf-8")
+            self.print("[green]Versión local actualizada[/]")
+
+            self.after_check(True)
+
+        except Exception as e:
+            self.print(f"[bold red]Error: {str(e)}[/]")
+            self.after_check(False)
+
+    def after_check(self, updated: bool):
         if updated:
-            self.print("[bold green]Update completed successfully![/]")
-            self.print("[yellow]Restarting application...[/]")
-            await asyncio.sleep(2)
+            self.print("[bold green]¡Actualización completada![/]")
+            self.print("[yellow]Reiniciando en 3 segundos...[/]")
+            time.sleep(3)
+            subprocess.Popen(["cleaner.bat"])  # Ajusta según tu launcher
         else:
-            self.print("[dim]No update performed. Exiting...[/]")
-            await asyncio.sleep(2)
-        
+            self.print("[dim]Saliendo...[/]")
+            time.sleep(2)
+
         self.exit(updated)
-
-    @work(thread=True, exclusive=True)
-    async def perform_update(self):
-        self.call_from_thread(self.print("[cyan]Downloading update package...[/]"))
-        response = requests.get(REPO_URL)
-        if response.status_code != 200:
-            self.call_from_thread(self.print("[bold red]Failed to download update package.[/]"))
-            self.after_update_check(False)
-            return
-
-        with tempfile.TemporaryDirectory() as tmp_dir:
-            zip_path = os.path.join(tmp_dir, "repo.zip")
-            with open(zip_path, "wb") as f:
-                f.write(response.content)
-
-            extract_dir = os.path.join(tmp_dir, "extract")
-            os.makedirs(extract_dir)
-
-            with zipfile.ZipFile(zip_path, "r") as zip_ref:
-                zip_ref.extractall(extract_dir)
-
-            repo_dir = os.path.join(extract_dir, "Windows-Cleaner-main")
-
-            if CONFIG_FILE.exists():
-                shutil.copy(CONFIG_FILE, str(CONFIG_FILE) + ".bak")
-                self.call_from_thread(self.print("[cyan]Config backup created[/]"))
-
-            remote_config = os.path.join(repo_dir, str(CONFIG_FILE))
-            if os.path.exists(remote_config):
-                await merge_configs(CONFIG_FILE, Path(remote_config))
-                self.call_from_thread(self.print("[green]Config merged successfully[/]"))
-
-            self.call_from_thread(self.print("[cyan]Copying files...[/]"))
-            for item in os.listdir(repo_dir):
-                src = os.path.join(repo_dir, item)
-                dst = os.path.join(os.getcwd(), item)
-                if os.path.isdir(src):
-                    if os.path.exists(dst):
-                        shutil.rmtree(dst)
-                    shutil.copytree(src, dst)
-                else:
-                    shutil.copy2(src, dst)
-
-        remote_version = await get_remote_version()
-        if remote_version:
-            with open(LOCAL_VERSION_FILE, "w") as f:
-                f.write(remote_version)
-            self.call_from_thread(self.print("[green]Local version updated[/]"))
-
-        self.after_update_check(True)
 
 
 if __name__ == "__main__":
