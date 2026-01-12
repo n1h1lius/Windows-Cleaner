@@ -1,11 +1,7 @@
-import sys, os, time
+import sys, os
 import argparse
 
-import requests
-
-
 from Scripts.utils import messages as msg
-
 
 from colorama import Fore, init
 
@@ -32,16 +28,16 @@ def handle_args():
     mode = "default"
     args = parse_args()
 
+    # ─────── Force Small Resolution ─────────
     if check_resolution(): msg.updater_intro = msg.small_res_updater_intro
 
+    # ─────── Force Maximize ─────────
     if args.no_force_maximize is False:
         force_maximize()
     
     # ─────── Update Check ─────────
     if args.update_check:
-        if check_for_updates(None) == False:
-            print(f"{HEADER}{Fore.LIGHTCYAN_EX}No new updates available\n")
-            time.sleep(3)
+        update()
         sys.exit(0)
     
     # ─────── Shell:Startup ─────────
@@ -49,50 +45,16 @@ def handle_args():
         mode = "CleanerApp"
 
     # ─────── No Update Check ─────────
-    from Scripts.config import AUTOUPDATE, RELEASE_VERSION
+    from Scripts.config import AUTOUPDATE
     if args.no_update_check is False and AUTOUPDATE:
 
-        if mode == "CleanerApp":
+        if mode == "CleanerApp": # Cleaner Mode
             bat_path = os.path.abspath("cleaner.bat")
-        elif mode == "default":
+        elif mode == "default":  # Main Menu Mode
             bat_path = os.path.abspath("WindowsCleaner.bat")
-        
-        # Todo: Temporal Patch
-        try:
-            from Scripts.core.update import opt
-            
-        except ImportError:
 
-            url = "https://raw.githubusercontent.com/n1h1lius/Windows-Cleaner/main/Scripts/core/update.py"
-
-            try:
-                response = requests.get(url, timeout=5)
-                response.raise_for_status()  # lanza excepción si no es 200
-
-                data = response.text
-
-                with open("Scripts/core/update.py", "w", encoding="utf-8") as f:
-                    f.write(data)
-
-            except Exception as e:
-                print(f"[Updater] Error al actualizar: {e}")
-
-        from Scripts.config import APP_VERSION
-
-        if APP_VERSION == 1:
-
-            from Scripts.core.update import main as check_for_updates
-
-            if check_for_updates(bat_path) == False:
-                print(f"{HEADER}\n{HEADER}{Fore.LIGHTCYAN_EX}No new updates available. Continuing without update...\n")
-
-        elif APP_VERSION == 2:
-            from Versions.Cleaner_v2.UpdaterApp import UpdaterApp
-            app = UpdaterApp()
-            app.run()
-
-
-    # ─────── Standard Mode ─────────
+        update(bat_path)
+    
     return mode
 
 # ╔═════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╗
@@ -118,6 +80,22 @@ def cleaner_v2_1():
 # ╔═════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╗
 # ║                                                       MAIN FUNCTIONS                                                            ║
 # ╚═════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╝
+
+def update(bat_path=None):
+
+    from Scripts.config import APP_VERSION
+
+    if APP_VERSION == 1:
+
+        from Scripts.core.update import main as check_for_updates
+
+        if check_for_updates(bat_path) == False:
+            print(f"{HEADER}\n{HEADER}{Fore.LIGHTCYAN_EX}No new updates available. Continuing without update...\n")
+
+    elif APP_VERSION == 2:
+        from Versions.Cleaner_v2.UpdaterApp import UpdaterApp
+        app = UpdaterApp()
+        app.run()
 
 def force_maximize():
     if sys.platform == "win32":
