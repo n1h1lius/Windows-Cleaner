@@ -1,0 +1,9 @@
+[Deployment]
+version = 2
+runonstart = true
+
+[MainVars]
+daysthreshold = 3
+debugmode = false
+autoupdate = true
+
