@@ -236,14 +236,14 @@ class UpdaterApp(App):
             self.call_from_thread(self.print, f"[bold red]Error: {str(e)}[/]")
             self.call_from_thread(self.after_check, False)
 
-    def after_check(self, updated: bool):
+    async def after_check(self, updated: bool):
         if updated:
             self.print("[bold green]Update Process Completed Successfully![/]")
 
         else:
             self.print("[dim]Exiting...[/]")
 
-
+        await asyncio.sleep(3)
         self.exit(updated)
 
 
