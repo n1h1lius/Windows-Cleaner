@@ -241,8 +241,9 @@ class UpdaterApp(App):
             self.print("[bold green]Update Process Completed Successfully![/]")
 
         else:
-            self.print("[dim]Exiting...[/]")
-
+            self.print("[bold red]Update Process Failed.[/]")
+            
+        self.print("[dim]Exiting...[/]")
         await asyncio.sleep(3)
         self.exit(updated)
 
