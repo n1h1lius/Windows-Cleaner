@@ -135,32 +135,32 @@ class UpdaterModal(ModalScreen):
     async def check_updates(self):
         await asyncio.sleep(1)
 
-        self.call_from_thread(self.print, msg.updater_intro)
-        self.call_from_thread(self.print, "[cyan]Checking local version...[/]")
+        self.app.call_from_thread(self.print, msg.updater_intro)
+        self.app.call_from_thread(self.print, "[cyan]Checking local version...[/]")
 
         if not LOCAL_VERSION_FILE.exists():
-            self.call_from_thread(self.print, "[yellow]Local Version File not Found.[/]")
-            self.call_from_thread(self.after_check, False)
+            self.app.call_from_thread(self.print, "[yellow]Local Version File not Found.[/]")
+            self.app.call_from_thread(self.after_check, False)
             return
 
         local_version = LOCAL_VERSION_FILE.read_text(encoding="utf-8").strip()
-        self.call_from_thread(self.print, f"[cyan]Local Version:[/] [white]{local_version}[/]")
+        self.app.call_from_thread(self.print, f"[cyan]Local Version:[/] [white]{local_version}[/]")
 
         remote_version = get_remote_version()
         if remote_version is None:
-            self.call_from_thread(self.print, "[yellow]Remote Version File not Found.[/]")
-            self.call_from_thread(self.after_check, False)
+            self.app.call_from_thread(self.print, "[yellow]Remote Version File not Found.[/]")
+            self.app.call_from_thread(self.after_check, False)
             return
 
-        self.call_from_thread(self.print, f"[cyan]Remote Version:[/] [white]{remote_version}[/]")
+        self.app.call_from_thread(self.print, f"[cyan]Remote Version:[/] [white]{remote_version}[/]")
 
         if remote_version == local_version:
-            self.call_from_thread(self.print, "[bold green]You're up to date![/]")
-            self.call_from_thread(self.after_check, False)
+            self.app.call_from_thread(self.print, "[bold green]You're up to date![/]")
+            self.app.call_from_thread(self.after_check, False)
             return
 
         # Delegar modal al hilo principal
-        self.call_from_thread(self._show_update_prompt, remote_version)
+        self.app.call_from_thread(self._show_update_prompt, remote_version)
 
     def _show_update_prompt(self, remote_version: str):
         """Llamado desde hilo principal para mostrar modal"""
@@ -183,13 +183,13 @@ class UpdaterModal(ModalScreen):
 
     @work(thread=True, exclusive=True)
     async def perform_update(self, new_version: str):
-        self.call_from_thread(self.print, "[cyan]Downloading update...[/]")
+        self.app.call_from_thread(self.print, "[cyan]Downloading update...[/]")
 
         try:
             response = requests.get(REPO_URL, timeout=30)
             if response.status_code != 200:
-                self.call_from_thread(self.print, "[bold red]Eror downloading update.[/]")
-                self.call_from_thread(self.after_check, False)
+                self.app.call_from_thread(self.print, "[bold red]Eror downloading update.[/]")
+                self.app.call_from_thread(self.after_check, False)
                 return
 
             with tempfile.TemporaryDirectory() as tmp_dir:
@@ -204,23 +204,23 @@ class UpdaterModal(ModalScreen):
 
                 repo_dir = extract_dir / "Windows-Cleaner-main"
                 if not repo_dir.exists():
-                    self.call_from_thread(self.print, "[bold red]Can't find update files.[/]")
-                    self.call_from_thread(self.after_check, False)
+                    self.app.call_from_thread(self.print, "[bold red]Can't find update files.[/]")
+                    self.app.call_from_thread(self.after_check, False)
                     return
 
                 if CONFIG_FILE.exists():
                     backup_path = CONFIG_FILE.with_suffix(".bak")
                     shutil.copy(CONFIG_FILE, backup_path)
-                    self.call_from_thread(self.print, f"[cyan]Created Backup: {backup_path.name}[/]")
+                    self.app.call_from_thread(self.print, f"[cyan]Created Backup: {backup_path.name}[/]")
 
                 remote_config_path = repo_dir / CONFIG_FILE.name
                 if remote_config_path.exists():
                     if merge_configs(CONFIG_FILE, remote_config_path):  # síncrono
-                        self.call_from_thread(self.print, "[green]Config File Data Merged Successfully[/]")
+                        self.app.call_from_thread(self.print, "[green]Config File Data Merged Successfully[/]")
                     else:
-                        self.call_from_thread(self.print, "[dim]No changes in Config File[/]")
+                        self.app.call_from_thread(self.print, "[dim]No changes in Config File[/]")
 
-                self.call_from_thread(self.print, "[cyan]Copying files...[/]")
+                self.app.call_from_thread(self.print, "[cyan]Copying files...[/]")
                 for item in repo_dir.iterdir():
                     if item.name == Path(__file__).name:
                         continue
@@ -233,13 +233,13 @@ class UpdaterModal(ModalScreen):
                         shutil.copy2(item, dest)
 
             LOCAL_VERSION_FILE.write_text(new_version, encoding="utf-8")
-            self.call_from_thread(self.print, "[green]Local Version Updated Successfully[/]")
+            self.app.call_from_thread(self.print, "[green]Local Version Updated Successfully[/]")
 
-            self.call_from_thread(self.after_check, True)
+            self.app.call_from_thread(self.after_check, True)
 
         except Exception as e:
-            self.call_from_thread(self.print, f"[bold red]Error: {str(e)}[/]")
-            self.call_from_thread(self.after_check, False)
+            self.app.call_from_thread(self.print, f"[bold red]Error: {str(e)}[/]")
+            self.app.call_from_thread(self.after_check, False)
 
     async def after_check(self, updated: bool):
         if updated:
