@@ -137,7 +137,7 @@ def detect_and_get_paths():
     # ── Microsoft Edge ───────────────────────────────────────────────────────
     if os.path.isdir(p := USER_PROFILE + "\\AppData\\Local\\Microsoft\\Edge"):
         counter = 0
-        detected.append("Edge")
+        detected.append(PROGRAMS_PATH_NAMES["Edge"])
         paths.append(p + "\\User Data\\Default")
         counter += 1
 
@@ -152,12 +152,12 @@ def detect_and_get_paths():
         except:
             pass
 
-        detected_folders["Edge"] = counter
+        detected_folders[PROGRAMS_PATH_NAMES["Edge"]] = counter
 
     # ── Brave Browser ────────────────────────────────────────────────────────
     if os.path.isdir(p := USER_PROFILE + "\\AppData\\Local\\BraveSoftware\\Brave-Browser"):
         counter = 0
-        detected.append("Brave")
+        detected.append(PROGRAMS_PATH_NAMES["Brave"])
         ud = p + "\\User Data"
         default = ud + "\\Default"
         for bp in BROWSER_FOLDERS:
@@ -173,12 +173,12 @@ def detect_and_get_paths():
                             counter += 1
         except:
             pass
-        detected_folders["Brave"] = counter
+        detected_folders[PROGRAMS_PATH_NAMES["Brave"]] = counter
 
     # ── Google Chrome ────────────────────────────────────────────────────────
     if os.path.isdir(p := USER_PROFILE + "\\AppData\\Local\\Google\\Chrome"):
         counter = 0
-        detected.append("Chrome")
+        detected.append(PROGRAMS_PATH_NAMES["Chrome"])
         ud = p + "\\User Data"
         default = ud + "\\Default"
 
@@ -197,21 +197,44 @@ def detect_and_get_paths():
         except:
             pass
 
-        detected_folders["Chrome"] = counter
+        detected_folders[PROGRAMS_PATH_NAMES["Chrome"]] = counter
+    
+    # ── Opera (Stable + GX) ────────────────────────────────────────────────
+    opera_paths = [
+        USER_PROFILE + "\\AppData\\Roaming\\Opera Software\\Opera Stable",
+        USER_PROFILE + "\\AppData\\Roaming\\Opera Software\\Opera GX Stable",
+    ]
+
+    for base in opera_paths:
+        if os.path.isdir(base):
+            counter = 0
+            name = "Opera GX Stable" if "GX" in base else "Opera Stable"
+            detected.append(PROGRAMS_PATH_NAMES[name])
+
+            for bp in BROWSER_FOLDERS:
+                full = base + bp
+                if os.path.isdir(full):
+                    paths.append(full)
+                    counter += 1
+
+            detected_folders[PROGRAMS_PATH_NAMES[name]] = counter
+
 
     # ── Discord ──────────────────────────────────────────────────────────────
     if os.path.isdir(p := USER_PROFILE + "\\AppData\\Roaming\\discord"):
         counter = 0
-        detected.append("Discord")
+        detected.append(PROGRAMS_PATH_NAMES["discord"])
+
         for suf in ["\\Cache\\Cache_Data", "\\Code Cache", "\\GPU_Cache"]:
             paths.append(p + suf)
             counter += 1
-        detected_folders["Discord"] = counter
+
+        detected_folders[PROGRAMS_PATH_NAMES["discord"]] = counter
 
     # ── Spotify (Official Desktop Version) ────────────────────────────────────
     if os.path.isdir(p := USER_PROFILE + "\\AppData\\Local\\Spotify"):
         counter = 0
-        detected.append("Spotify")
+        detected.append(PROGRAMS_PATH_NAMES["Spotify"])
 
         ud = p + "\\User Data"
         default = p + "\\Default"
@@ -239,6 +262,18 @@ def detect_and_get_paths():
         except:
             pass
 
-        detected_folders["Spotify"] = counter
+        detected_folders[PROGRAMS_PATH_NAMES["Spotify"]] = counter
+
+    # ── Spotify (Official UWP Version) ────────────────────────────────────
+    if os.path.isdir(p := USER_PROFILE + "\\AppData\\Local\\Packages\\SpotifyAB.SpotifyMusic_zpdnekdrzrea0"):
+        counter = 0
+        detected.append(PROGRAMS_PATH_NAMES["SpotifyAB.SpotifyMusic_zpdnekdrzrea0"])
+
+        for suf in UWP_FOLDERS:
+            if os.path.isdir(p + suf): 
+                paths.append(p + suf)
+                counter += 1
+
+        detected_folders[PROGRAMS_PATH_NAMES["SpotifyAB.SpotifyMusic_zpdnekdrzrea0"]] = counter
 
     return [p for p in paths if os.path.exists(p)], detected

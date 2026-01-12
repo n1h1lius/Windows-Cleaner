@@ -34,13 +34,17 @@ DAYS_THRESHOLD = config.getint("MainVars", "DaysThreshold", fallback=3)
 folder_categories = ["System Temps", "Edge", "Brave", "Chrome", "Discord", "Spotify"]
 
 BROWSER_FOLDERS = ["\\Cache", "\\File System", "\\IndexedDB", "\\Code Cache", "\\Service Worker", "\\GPU_Cache", "\\blob_storage"]
+UWP_FOLDERS = ["\\LocalCache", "\\LocalState", "\\TempState"]
 
 PROGRAMS_PATH_NAMES ={
     "Edge": "Edge",
     "Brave": "Brave",
-    "Chrome": "Chrome",
+    "Chrome": "Chrome Browser",
+    "Opera GX Stable": "Opera GX",
+    "Opera Stable": "Opera",
     "discord": "Discord",
-    "Spotify": "Spotify"
+    "Spotify": "Spotify",
+    "SpotifyAB.SpotifyMusic_zpdnekdrzrea0": "Spotify-App"
 }
 
 detected_folders = {}
