@@ -13,6 +13,7 @@ from textual.screen import ModalScreen
 from rich.text import Text as RichText
 
 from Scripts.widgets.ConfirmModal import ConfirmModal
+from Scripts.widgets.MessageBox import MessageBox
 
 class SettingsModal(ModalScreen):
     CSS_PATH = ["../css/style.css", "../css/SettingsModalStyle.css"]
@@ -137,6 +138,7 @@ class SettingsModal(ModalScreen):
     def on_input_submitted(self, event: Input.Submitted) -> None:
         self.on_input_changed(event)
 
+    # ── Create Shortcut Button ───────────────────────────────────────────────────────
     @on(Button.Pressed, "#btn-shortcut")
     async def create_shortcut(self) -> None:
         shell = win32com.client.Dispatch("WScript.Shell")
@@ -152,11 +154,12 @@ class SettingsModal(ModalScreen):
         shortcut.WorkingDirectory = project_root
         shortcut.save()
 
-        dialog = ConfirmModal("Shortcut Created") 
+        dialog = MessageBox("Shortcut Created", mode="success") 
         await self.app.push_screen(dialog)
 
+    # ── Run On Start Button ───────────────────────────────────────────────────────
     @on(Button.Pressed, "#btn-runstart")
-    def toggle_run_on_start(self) -> None:
+    async def toggle_run_on_start(self) -> None:
         startup_folder = os.path.join(os.environ['APPDATA'], 'Microsoft\\Windows\\Start Menu\\Programs\\Startup')
         bat_name = "[N1h1lius]-Cleaner.bat"
         startup_bat_path = os.path.join(startup_folder, bat_name)
@@ -182,10 +185,15 @@ class SettingsModal(ModalScreen):
             runonstart_val = True
 
         config.set("Deployment", "runonstart", str(runonstart_val).lower())
+
         with open(ini_file_path, "w") as configfile:
             config.write(configfile)
 
         self.query_one("#Deployment-runonstart").value = runonstart_val
+
+        message = "Run on Start Disabled" if runonstart_val else "Run on Start Enabled"
+        dialog = MessageBox(message, mode="success") 
+        await self.app.push_screen(dialog)
 
     def on_unmount(self) -> None:
         # Restore main app title when modal is dismissed
