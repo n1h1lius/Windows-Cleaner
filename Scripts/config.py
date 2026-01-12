@@ -8,12 +8,14 @@ ini_file_path = "Data/config.ini"
 config = configparser.ConfigParser()
 config.read(ini_file_path, encoding="utf-8")
 
+def get_release_version():
+    with open("Data/version.txt", "r") as vf:
+        return str(vf.read().strip())
 
-RELEASE_VERSION = "1.1"
+
+RELEASE_VERSION = get_release_version()
 APP_TITLE = ""
 
-with open("Data/version.txt", "r") as vf:
-    RELEASE_VERSION = str(vf.read().strip())
 
 AUTOUPDATE = config.getboolean("MainVars", "AutoUpdate", fallback=True)
 DEBUG_MODE = config.getboolean("MainVars", "DebugMode", fallback=False)
