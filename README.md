@@ -81,7 +81,6 @@ MIT License — see [LICENSE](LICENSE)
 
 ## Author
 
-Created with ❤️ by **@Opus_hund** (Marco Aurelio)  
 https://github.com/n1h1lius
 
 ---
