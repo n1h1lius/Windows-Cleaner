@@ -72,10 +72,8 @@ def update_app():
         if os.path.exists(remote_config_path):
             merge_configs(CONFIG_FILE, remote_config_path)
         
-        # Copia todo excepto updater.py
+        # Copia todo 
         for item in os.listdir(repo_dir):
-            if item == "updater.py":
-                continue
             src = os.path.join(repo_dir, item)
             dst = os.path.join(os.getcwd(), item)
             if os.path.isdir(src):
