@@ -113,7 +113,7 @@ class UpdaterApp(App):
             yield VerticalScroll(UpdateLog(), id="main-log")
 
     def on_mount(self) -> None:
-        self.query_one("#status").update("[cyan]Inicializando comprobación...[/]")
+        self.query_one("#status").update("[cyan]Checking for updates...[/]")
         self.check_updates()
 
     def print(self, text: str):
@@ -124,33 +124,33 @@ class UpdaterApp(App):
             log.refresh()
             self.refresh()
         except Exception as e:
-            print(f"Error al imprimir en log: {e}")  # Fallback a consola si falla UI
+            print(f"Can't print log: {e}")  # Fallback a consola si falla UI
 
     @work(thread=True, exclusive=True)
     async def check_updates(self):
         await asyncio.sleep(1)
 
         self.call_from_thread(self.print, msg.updater_intro)
-        self.call_from_thread(self.print, "[cyan]Comprobando actualizaciones...[/]")
+        self.call_from_thread(self.print, "[cyan]Checking local version...[/]")
 
         if not LOCAL_VERSION_FILE.exists():
-            self.call_from_thread(self.print, "[yellow]Archivo de versión local no encontrado.[/]")
+            self.call_from_thread(self.print, "[yellow]Local Version File not Found.[/]")
             self.call_from_thread(self.after_check, False)
             return
 
         local_version = LOCAL_VERSION_FILE.read_text(encoding="utf-8").strip()
-        self.call_from_thread(self.print, f"[cyan]Versión local:[/] [white]{local_version}[/]")
+        self.call_from_thread(self.print, f"[cyan]Local Version:[/] [white]{local_version}[/]")
 
         remote_version = get_remote_version()
         if remote_version is None:
-            self.call_from_thread(self.print, "[yellow]No se pudo obtener versión remota.[/]")
+            self.call_from_thread(self.print, "[yellow]Remote Version File not Found.[/]")
             self.call_from_thread(self.after_check, False)
             return
 
-        self.call_from_thread(self.print, f"[cyan]Versión remota:[/] [white]{remote_version}[/]")
+        self.call_from_thread(self.print, f"[cyan]Remote Version:[/] [white]{remote_version}[/]")
 
         if remote_version == local_version:
-            self.call_from_thread(self.print, "[bold green]Estás al día.[/]")
+            self.call_from_thread(self.print, "[bold green]You're up to date![/]")
             self.call_from_thread(self.after_check, False)
             return
 
@@ -159,31 +159,31 @@ class UpdaterApp(App):
 
     def _show_update_prompt(self, remote_version: str):
         """Llamado desde hilo principal para mostrar modal"""
-        self.print(f"[bold green]¡Nueva versión disponible! {remote_version}[/]")
+        self.print(f"[bold green]New Version Available! {remote_version}[/]")
 
         async def modal_flow():
             await asyncio.sleep(0.1)  # Pequeño retraso para contexto
             confirmed = await self.push_screen_wait(ConfirmModal(
-                message="¿Quieres actualizar ahora?",
-                title="Actualización disponible"
+                message="Do you want to update?",
+                title="UPDATE AVAILABLE"
             ))
             if confirmed:
-                self.print("[bold green]Iniciando actualización...[/]")
+                self.print("[bold green]Starting update...[/]")
                 self.perform_update(remote_version)
             else:
-                self.print("[yellow]Actualización cancelada.[/]")
+                self.print("[yellow]Update Process Canceled by user.[/]")
                 self.after_check(False)
 
         self.run_worker(modal_flow, exclusive=True)
 
     @work(thread=True, exclusive=True)
     async def perform_update(self, new_version: str):
-        self.call_from_thread(self.print, "[cyan]Descargando paquete...[/]")
+        self.call_from_thread(self.print, "[cyan]Downloading update...[/]")
 
         try:
             response = requests.get(REPO_URL, timeout=30)
             if response.status_code != 200:
-                self.call_from_thread(self.print, "[bold red]Fallo al descargar.[/]")
+                self.call_from_thread(self.print, "[bold red]Eror downloading update.[/]")
                 self.call_from_thread(self.after_check, False)
                 return
 
@@ -199,23 +199,23 @@ class UpdaterApp(App):
 
                 repo_dir = extract_dir / "Windows-Cleaner-main"
                 if not repo_dir.exists():
-                    self.call_from_thread(self.print, "[bold red]Carpeta no encontrada en ZIP.[/]")
+                    self.call_from_thread(self.print, "[bold red]Can't find update files.[/]")
                     self.call_from_thread(self.after_check, False)
                     return
 
                 if CONFIG_FILE.exists():
                     backup_path = CONFIG_FILE.with_suffix(".bak")
                     shutil.copy(CONFIG_FILE, backup_path)
-                    self.call_from_thread(self.print, f"[cyan]Backup creado: {backup_path.name}[/]")
+                    self.call_from_thread(self.print, f"[cyan]Created Backup: {backup_path.name}[/]")
 
                 remote_config_path = repo_dir / CONFIG_FILE.name
                 if remote_config_path.exists():
                     if merge_configs(CONFIG_FILE, remote_config_path):  # síncrono
-                        self.call_from_thread(self.print, "[green]Config fusionada[/]")
+                        self.call_from_thread(self.print, "[green]Config File Data Merged Successfully[/]")
                     else:
-                        self.call_from_thread(self.print, "[dim]No había cambios nuevos[/]")
+                        self.call_from_thread(self.print, "[dim]No changes in Config File[/]")
 
-                self.call_from_thread(self.print, "[cyan]Copiando archivos...[/]")
+                self.call_from_thread(self.print, "[cyan]Copying files...[/]")
                 for item in repo_dir.iterdir():
                     if item.name == Path(__file__).name:
                         continue
@@ -228,7 +228,7 @@ class UpdaterApp(App):
                         shutil.copy2(item, dest)
 
             LOCAL_VERSION_FILE.write_text(new_version, encoding="utf-8")
-            self.call_from_thread(self.print, "[green]Versión local actualizada[/]")
+            self.call_from_thread(self.print, "[green]Local Version Updated Successfully[/]")
 
             self.call_from_thread(self.after_check, True)
 
@@ -238,11 +238,10 @@ class UpdaterApp(App):
 
     def after_check(self, updated: bool):
         if updated:
-            self.print("[bold green]¡Actualización completada![/]")
-            self.print("[yellow]Reiniciando en 3 segundos...[/]")
+            self.print("[bold green]Update Process Completed Successfully![/]")
 
         else:
-            self.print("[dim]Saliendo...[/]")
+            self.print("[dim]Exiting...[/]")
 
 
         self.exit(updated)
