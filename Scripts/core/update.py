@@ -99,20 +99,20 @@ def get_remote_version():
         return None
     
 def main():
-
-    with open(LOCAL_VERSION_FILE, "r") as f:
-        local_version = f.read().strip()
-
-    remote_version = get_remote_version()
-
     print(msg.updater_intro)
     print(HEADER)
-    print(f"{PROMPT}{Fore.LIGHTCYAN_EX}Local Version: {Fore.LIGHTWHITE_EX}{local_version}")
     print(f"{PROMPT}{Fore.LIGHTCYAN_EX}Checking for updates...")
 
     time.sleep(3)  # Pequeña pausa para mejor UX
     if not os.path.exists(LOCAL_VERSION_FILE):
         return False
+    
+    with open(LOCAL_VERSION_FILE, "r") as f:
+        local_version = f.read().strip()
+    
+    remote_version = get_remote_version()
+
+    print(f"{HEADER}\n{PROMPT}{Fore.LIGHTCYAN_EX}Local Version: {Fore.LIGHTWHITE_EX}{local_version}")
 
     if remote_version is None:
         print(f"{ERROR_LOG}{Fore.LIGHTYELLOW_EX}Remote Version could not be fetched. Proceeding without update.")
