@@ -95,13 +95,13 @@ class UpdaterApp(App):
     }
 
     
-    #status-bar {
-        dock: bottom;
-        height: 1;
-        background: $primary-darken-2;
-        content-align: center middle;
-        color: white;
-    }
+#status-bar {
+    dock: bottom;
+    height: 1;
+    background: $primary-darken-2;
+    content-align: center middle;
+    color: white;
+}
     """
 
     def compose(self) -> ComposeResult:
@@ -176,7 +176,7 @@ class UpdaterApp(App):
                 self.perform_update(remote_version)
             else:
                 self.print("[yellow]Update Process Canceled by user.[/]")
-                self.after_check(False)
+                await self.after_check(False)
 
         self.run_worker(modal_flow, exclusive=True)
 
