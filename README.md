@@ -1,8 +1,5 @@
 # Windows-Cleaner
 
-Aquí tienes el contenido completo del **README.md** listo para copiar y pegar directamente en GitHub. Está formateado en Markdown válido, con badges, secciones claras, tablas, listas y bloques de código.
-
-```markdown
 # Windows Cleaner 🧹✨
 
 **A safe, modern, and self-updating Windows cleanup tool with a beautiful terminal UI**
