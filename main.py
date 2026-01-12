@@ -1,9 +1,11 @@
 import sys, os, time
 import argparse
 
+import requests
+
 
 from Scripts.utils import messages as msg
-from Scripts.core.update import main as check_for_updates
+
 
 from colorama import Fore, init
 
@@ -47,13 +49,32 @@ def handle_args():
         mode = "CleanerApp"
 
     # ─────── No Update Check ─────────
-    from Scripts.config import AUTOUPDATE
+    from Scripts.config import AUTOUPDATE, RELEASE_VERSION
     if args.no_update_check is False and AUTOUPDATE:
 
         if mode == "CleanerApp":
             bat_path = os.path.abspath("cleaner.bat")
         elif mode == "default":
             bat_path = os.path.abspath("WindowsCleaner.bat")
+
+        from Scripts.core.update import get_remote_version
+
+        if get_remote_version() != RELEASE_VERSION:
+            url = "https://raw.githubusercontent.com/n1h1lius/Windows-Cleaner/main/Scripts/core/update.py"
+
+            try:
+                response = requests.get(url, timeout=5)
+                response.raise_for_status()  # lanza excepción si no es 200
+
+                # Guardar archivo
+                with open("Scripts/core/update.py", "w", encoding="utf-8") as f:
+                    f.write(data)
+
+            except Exception as e:
+                print(f"[Updater] Error al actualizar: {e}")
+
+
+        from Scripts.core.update import main as check_for_updates
 
         if check_for_updates(bat_path) == False:
             print(f"{HEADER}\n{HEADER}{Fore.LIGHTCYAN_EX}No new updates available. Continuing without update...\n")
