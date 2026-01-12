@@ -9,10 +9,10 @@ import configparser
 import subprocess
 from pathlib import Path
 
-from textual.app import App, ComposeResult, work
+from textual.app import App, ComposeResult
+from textual import work  # ← IMPORT CORRECTO AQUÍ
 from textual.widgets import Header, Footer, RichLog, Static
 from textual.containers import Vertical, VerticalScroll
-from textual import on
 
 from Scripts.utils import messages as msg
 from Scripts.widgets.ConfirmModal import ConfirmModal
@@ -22,7 +22,8 @@ REPO_URL = "https://github.com/n1h1lius/Windows-Cleaner/archive/refs/heads/main.
 LOCAL_VERSION_FILE = Path("Data/version.txt")
 CONFIG_FILE = Path("Data/config.ini")
 
-async def merge_configs(local_ini: Path, remote_ini: Path):
+def merge_configs(local_ini: Path, remote_ini: Path):
+    """Versión síncrona para compatibilidad"""
     local_config = configparser.ConfigParser()
     local_config.read(local_ini)
     
@@ -122,8 +123,8 @@ class UpdaterApp(App):
             log.scroll_end(animate=False)
             log.refresh()
             self.refresh()
-        except:
-            pass
+        except Exception as e:
+            print(f"Error al imprimir en log: {e}")  # Fallback a consola si falla UI
 
     @work(thread=True, exclusive=True)
     async def check_updates(self):
@@ -153,15 +154,15 @@ class UpdaterApp(App):
             self.call_from_thread(self.after_check, False)
             return
 
-        # Delegamos la pregunta al hilo principal
-        self.call_from_thread(self._ask_for_update, remote_version)
+        # Delegar modal al hilo principal
+        self.call_from_thread(self._show_update_prompt, remote_version)
 
-    def _ask_for_update(self, remote_version: str):
-        """Método llamado desde el hilo principal para mostrar el modal"""
+    def _show_update_prompt(self, remote_version: str):
+        """Llamado desde hilo principal para mostrar modal"""
         self.print(f"[bold green]¡Nueva versión disponible! {remote_version}[/]")
 
-        async def show_modal():
-            await asyncio.sleep(0.2)  # Pequeño retraso para estabilizar contexto
+        async def modal_flow():
+            await asyncio.sleep(0.1)  # Pequeño retraso para contexto
             confirmed = await self.push_screen_wait(ConfirmModal(
                 message="¿Quieres actualizar ahora?",
                 title="Actualización disponible"
@@ -173,16 +174,17 @@ class UpdaterApp(App):
                 self.print("[yellow]Actualización cancelada.[/]")
                 self.after_check(False)
 
-        self.run_worker(show_modal, exclusive=True)
+        self.run_worker(modal_flow, exclusive=True)
 
+    @work(thread=True, exclusive=True)
     async def perform_update(self, new_version: str):
-        self.print("[cyan]Descargando paquete...[/]")
+        self.call_from_thread(self.print, "[cyan]Descargando paquete...[/]")
 
         try:
             response = requests.get(REPO_URL, timeout=30)
             if response.status_code != 200:
-                self.print("[bold red]Fallo al descargar.[/]")
-                self.after_check(False)
+                self.call_from_thread(self.print, "[bold red]Fallo al descargar.[/]")
+                self.call_from_thread(self.after_check, False)
                 return
 
             with tempfile.TemporaryDirectory() as tmp_dir:
@@ -197,25 +199,25 @@ class UpdaterApp(App):
 
                 repo_dir = extract_dir / "Windows-Cleaner-main"
                 if not repo_dir.exists():
-                    self.print("[bold red]Carpeta no encontrada en ZIP.[/]")
-                    self.after_check(False)
+                    self.call_from_thread(self.print, "[bold red]Carpeta no encontrada en ZIP.[/]")
+                    self.call_from_thread(self.after_check, False)
                     return
 
                 if CONFIG_FILE.exists():
                     backup_path = CONFIG_FILE.with_suffix(".bak")
                     shutil.copy(CONFIG_FILE, backup_path)
-                    self.print(f"[cyan]Backup creado: {backup_path.name}[/]")
+                    self.call_from_thread(self.print, f"[cyan]Backup creado: {backup_path.name}[/]")
 
                 remote_config_path = repo_dir / CONFIG_FILE.name
                 if remote_config_path.exists():
-                    if await merge_configs(CONFIG_FILE, remote_config_path):
-                        self.print("[green]Config fusionada[/]")
+                    if merge_configs(CONFIG_FILE, remote_config_path):  # síncrono
+                        self.call_from_thread(self.print, "[green]Config fusionada[/]")
                     else:
-                        self.print("[dim]No había cambios nuevos en config[/]")
+                        self.call_from_thread(self.print, "[dim]No había cambios nuevos[/]")
 
-                self.print("[cyan]Copiando archivos...[/]")
+                self.call_from_thread(self.print, "[cyan]Copiando archivos...[/]")
                 for item in repo_dir.iterdir():
-                    if item.name == Path(__file__).name:  # No sobrescribir este updater
+                    if item.name == Path(__file__).name:
                         continue
                     dest = Path.cwd() / item.name
                     if item.is_dir():
@@ -226,13 +228,13 @@ class UpdaterApp(App):
                         shutil.copy2(item, dest)
 
             LOCAL_VERSION_FILE.write_text(new_version, encoding="utf-8")
-            self.print("[green]Versión local actualizada[/]")
+            self.call_from_thread(self.print, "[green]Versión local actualizada[/]")
 
-            self.after_check(True)
+            self.call_from_thread(self.after_check, True)
 
         except Exception as e:
-            self.print(f"[bold red]Error: {str(e)}[/]")
-            self.after_check(False)
+            self.call_from_thread(self.print, f"[bold red]Error: {str(e)}[/]")
+            self.call_from_thread(self.after_check, False)
 
     def after_check(self, updated: bool):
         if updated:
