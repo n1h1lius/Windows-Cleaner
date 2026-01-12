@@ -10,6 +10,7 @@ from Scripts.core.Cleaner import *
 from Scripts.utils.ui_helpers import make_boxed_message
 
 import asyncio
+import random
 import sys
 import webbrowser
 from io import StringIO
@@ -69,6 +70,7 @@ class CleanerApp(App):
     def on_mount(self) -> None:
 
         self.query_one("#logo-small", Static).update(RichText(msg.logo_ascii, style="bold magenta"))
+        self.query_one("#status-bar").update(QUOTES[random.randint(0, len(QUOTES)-1)])
 
         tree = self.query_one(Tree)
         tree.root.expand()

@@ -83,7 +83,6 @@ class MainMenu(App):
         yield Static("Main Menu Started", id="status-bar")
 
     def on_mount(self) -> None:
-
         self.query_one("#logo-small", Static).update(RichText(msg.logo_ascii, style="bold magenta"))
         self.query_one("#status-bar").update(QUOTES[random.randint(0, len(QUOTES)-1)])
 
