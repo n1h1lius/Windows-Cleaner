@@ -116,11 +116,11 @@ def launch_app(mode):
         if mode == "CleanerApp":
             config.APP_TITLE = f"CleanerApp - v{RELEASE_VERSION}"
             os.system(f"title {config.APP_TITLE}")
-            cleaner_v2()
+            cleaner_v2(os.path.abspath("cleaner.bat"))
         elif mode == "default":
             config.APP_TITLE = f"Windows Cleaner - v{RELEASE_VERSION}"
             os.system(f"title {config.APP_TITLE}")
-            cleaner_v2_1()
+            cleaner_v2_1(os.path.abspath("WindowsCleaner.bat"))
 
 
 if __name__ == "__main__":

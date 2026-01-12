@@ -18,9 +18,8 @@ PROMPT = f"{HEADER} {Fore.LIGHTMAGENTA_EX}-> {Fore.RESET}"
 ERROR_LOG = f"{HEADER}\n{PROMPT}{Fore.LIGHTRED_EX}[ ERROR ] "
 
 REPO_URL = "https://github.com/n1h1lius/Windows-Cleaner/archive/refs/heads/main.zip"
-LOCAL_VERSION_FILE = "Data/version.txt" 
-CONFIG_FILE = "Data/config.ini"
-BAT_FILE = "cleaner.bat"  
+LOCAL_VERSION_FILE = "../../Data/version.txt" 
+CONFIG_FILE = "../../Data/config.ini"
 
 def merge_configs(local_ini, remote_ini):
     local_config = configparser.ConfigParser()
@@ -98,7 +97,7 @@ def get_remote_version():
     except Exception:
         return None
     
-def main():
+def main(bat_file):
     print(msg.updater_intro)
     print(HEADER)
     print(f"{PROMPT}{Fore.LIGHTCYAN_EX}Checking for updates...")
@@ -127,7 +126,7 @@ def main():
                 with open(LOCAL_VERSION_FILE, "w") as f:
                     f.write(remote_version)
                 # Relanza el bat
-                subprocess.call(BAT_FILE)
+                subprocess.call(bat_file)
                 sys.exit(0)
             else:
                 print(f"{ERROR_LOG}{Fore.LIGHTYELLOW_EX}Updating Failed. Proceeding with current version.")
