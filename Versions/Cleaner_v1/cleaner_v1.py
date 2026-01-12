@@ -2,6 +2,9 @@ import os
 import shutil
 import time
 import msvcrt
+
+from Scripts.core.Cleaner import detect_and_get_paths
+from Scripts.config import DAYS_THRESHOLD, detected_folders
 from colorama import Fore, Style, init
 
 init(autoreset=True)
@@ -40,7 +43,7 @@ BROWSERS_PATHS = [
     ]
 
 # Configuración avanzada
-DAYS_THRESHOLD = 3  # Antigüedad máxima en días para eliminar archivos None for none
+
 SIZE_THRESHOLD_MB = None  # Tamaño máximo permitido en MB para archivos None for none
 
 # =================================================================================================================
@@ -242,7 +245,7 @@ def main():
 
     print(Fore.GREEN + Style.BRIGHT + "\n///// -> STARTING WINDOWS CLEANER\n\n///// - **********************************************************")
 
-    paths_to_clean = get_paths_to_clean()
+    paths_to_clean = detect_and_get_paths()[0]
 
     for path in paths_to_clean:
 
