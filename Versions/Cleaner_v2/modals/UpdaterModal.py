@@ -1,20 +1,20 @@
-import os
+
 import asyncio
-import time
+import random
 import requests
 import zipfile
 import shutil
 import tempfile
 import configparser
-import subprocess
 from pathlib import Path
 
 from textual.app import App, ComposeResult
-from textual import work  # ← IMPORT CORRECTO AQUÍ
+from textual import work 
 from textual.widgets import Header, Footer, RichLog, Static
 from textual.containers import Vertical, VerticalScroll
 
 from Scripts.utils import messages as msg
+from Scripts.config import *
 from Scripts.widgets.ConfirmModal import ConfirmModal
 
 # Constantes
@@ -77,14 +77,12 @@ class UpdaterApp(App):
     Header {
         background: $primary-darken-2;
         color: white;
-        height: 3;
         content-align: center middle;
     }
 
     Footer {
         background: $primary-darken-2;
         color: white;
-        height: 1;
         content-align: center middle;
     }
 
@@ -96,25 +94,31 @@ class UpdaterApp(App):
         margin: 1 2;
     }
 
-    #status {
-        height: 3;
+    
+    #status-bar {
+        dock: bottom;
+        height: 1;
+        background: $primary-darken-2;
         content-align: center middle;
-        text-style: bold;
-        color: $accent;
+        color: white;
     }
     """
 
     def compose(self) -> ComposeResult:
+
+        self.title = f"UpdaterApp - v{RELEASE_VERSION}"
+
         yield Header(show_clock=True)
         yield Footer()
 
         with Vertical():
-            yield Static(id="status", markup=True)
             yield VerticalScroll(UpdateLog(), id="main-log")
+        
+        yield Static("Status: Starting...", id="status-bar")
 
     def on_mount(self) -> None:
-        self.query_one("#status").update("[cyan]Checking for updates...[/]")
         self.check_updates()
+        self.query_one("#status-bar").update(QUOTES[random.randint(0, len(QUOTES)-1)])
 
     def print(self, text: str):
         try:
