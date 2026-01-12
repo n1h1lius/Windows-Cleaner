@@ -18,8 +18,8 @@ PROMPT = f"{HEADER} {Fore.LIGHTMAGENTA_EX}-> {Fore.RESET}"
 ERROR_LOG = f"{HEADER}\n{PROMPT}{Fore.LIGHTRED_EX}[ ERROR ] "
 
 REPO_URL = "https://github.com/n1h1lius/Windows-Cleaner/archive/refs/heads/main.zip"
-LOCAL_VERSION_FILE = "../../Data/version.txt" 
-CONFIG_FILE = "../../Data/config.ini"
+LOCAL_VERSION_FILE = "Data/version.txt" 
+CONFIG_FILE = "Data/config.ini"
 
 def merge_configs(local_ini, remote_ini):
     local_config = configparser.ConfigParser()
@@ -104,6 +104,7 @@ def main(bat_file):
 
     time.sleep(3)  # Pequeña pausa para mejor UX
     if not os.path.exists(LOCAL_VERSION_FILE):
+        print(f"{ERROR_LOG}{Fore.LIGHTYELLOW_EX}Locale Version could not be fetched. Proceeding without update.")
         return False
     
     with open(LOCAL_VERSION_FILE, "r") as f:

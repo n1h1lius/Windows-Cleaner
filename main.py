@@ -56,7 +56,7 @@ def handle_args():
             bat_path = os.path.abspath("WindowsCleaner.bat")
 
         if check_for_updates(bat_path) == False:
-            print(f"{HEADER}{Fore.LIGHTCYAN_EX}No new updates available. Continuing without update...\n")
+            print(f"{HEADER}\n{HEADER}{Fore.LIGHTCYAN_EX}No new updates available. Continuing without update...\n")
 
     # ─────── Standard Mode ─────────
     return mode
