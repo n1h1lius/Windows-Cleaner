@@ -44,6 +44,7 @@ class CleanerApp(App):
         global APP_TITLE
 
         self.title = f"CleanerApp - v{RELEASE_VERSION}"
+        self.paths, self.detected = detect_and_get_paths()
         APP_TITLE = self.title
 
         yield Header(show_clock=True)
@@ -72,7 +73,7 @@ class CleanerApp(App):
         tree = self.query_one(Tree)
         tree.root.expand()
         self.app_nodes = {}
-        for cat in folder_categories:
+        for cat in self.detected:
             node = tree.root.add(f"[bright_red][ - ][/] {cat}")
             self.app_nodes[cat] = node
 
@@ -111,7 +112,7 @@ class CleanerApp(App):
         log.refresh()
         await asyncio.sleep(1.0)
 
-        paths, detected = detect_and_get_paths()
+        paths, detected = self.paths, self.detected
 
         detected_lines = []
         for m in detected:

@@ -42,6 +42,7 @@ class CleanerModal(ModalScreen):
     current_app = reactive("Preparing...")
 
     def compose(self) -> ComposeResult:
+        self.paths, self.detected = detect_and_get_paths()
         self.title = f"CleanerApp - v{RELEASE_VERSION}"
         yield Header(show_clock=True)
         yield Footer()
@@ -70,7 +71,7 @@ class CleanerModal(ModalScreen):
         tree = self.query_one(Tree)
         tree.root.expand()
         self.app_nodes = {}
-        for cat in folder_categories:
+        for cat in self.detected:
             node = tree.root.add(f"[bright_red][ - ][/] {cat}")
             self.app_nodes[cat] = node
 
@@ -113,7 +114,7 @@ class CleanerModal(ModalScreen):
         log.refresh()
         await asyncio.sleep(1.0)
 
-        paths, detected = detect_and_get_paths()
+        paths, detected = self.paths, self.detected
 
         detected_lines = []
         for m in detected:
