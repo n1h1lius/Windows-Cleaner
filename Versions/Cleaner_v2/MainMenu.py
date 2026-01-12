@@ -17,7 +17,7 @@ from contextlib import contextmanager
 
 from textual.app import App, ComposeResult, on
 from textual.containers import Container, Vertical, VerticalScroll, Horizontal
-from textual.widgets import Header, Footer, Static, RichLog, Tree, Label, Button
+from textual.widgets import Header, Footer, Static, Tree, Label, Button
 from textual.reactive import reactive
 from rich.text import Text as RichText
 
@@ -88,10 +88,12 @@ class MainMenu(App):
 
     @on(Button.Pressed, "#btn-cleaner")
     def open_cleaner(self) -> None:
+        self.query_one("#status-bar").update(QUOTES[random.randint(0, len(QUOTES)-1)])
         self.push_screen(CleanerModal())
     
     @on(Button.Pressed, "#btn-settings")
     def open_settings(self) -> None:
+        self.query_one("#status-bar").update(QUOTES[random.randint(0, len(QUOTES)-1)])
         self.push_screen(SettingsModal())
 
     @on(Button.Pressed, "#btn-github")

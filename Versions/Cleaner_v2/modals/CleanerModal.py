@@ -81,10 +81,12 @@ class CleanerModal(ModalScreen):
 
     @on(Button.Pressed, "#btn-back")
     def on_back(self) -> None:
+        self.query_one("#status-bar").update(QUOTES[random.randint(0, len(QUOTES)-1)])
         self.dismiss()
 
     @on(Button.Pressed, "#btn-settings")
     def open_settings(self) -> None:
+        self.query_one("#status-bar").update(QUOTES[random.randint(0, len(QUOTES)-1)])
         self.app.push_screen(SettingsModal())
 
     @on(Button.Pressed, "#btn-github")
