@@ -9,6 +9,13 @@ import configparser
 import subprocess
 
 from Scripts.utils import messages as msg
+from colorama import Fore, init
+
+init(autoreset=True)
+
+HEADER = f"{Fore.LIGHTRED_EX}  /////"
+PROMPT = f"{HEADER} {Fore.LIGHTMAGENTA_EX}-> {Fore.RESET}"
+ERROR_LOG = f"{HEADER}\n{PROMPT}{Fore.LIGHTRED_EX}[ ERROR ] "
 
 REPO_URL = "https://github.com/n1h1lius/Windows-Cleaner/archive/refs/heads/main.zip"
 LOCAL_VERSION_FILE = "Data/version.txt" 
@@ -38,7 +45,7 @@ def update_app():
     # Descarga ZIP
     response = requests.get(REPO_URL)
     if response.status_code != 200:
-        print("  ///// Update failed: Could not download the update package. /////\n")
+        print(f"{ERROR_LOG}Update failed: Could not download the update package.")
         return False
     
     with tempfile.TemporaryDirectory() as tmp_dir:
@@ -77,7 +84,7 @@ def update_app():
             else:
                 shutil.copy2(src, dst)
     
-    print("\n  ///// Update completed successfully! /////\n")
+    print(f"{HEADER}\n{PROMPT}{Fore.LIGHTGREEN_EX}[ SUCCESS ] {Fore.LIGHTWHITE_EX}Update completed successfully!")
     return True
 
 def get_remote_version():
@@ -92,26 +99,29 @@ def get_remote_version():
         return None
     
 def main():
+
+    with open(LOCAL_VERSION_FILE, "r") as f:
+        local_version = f.read().strip()
+
+    remote_version = get_remote_version()
+
     print(msg.updater_intro)
-    print("  ///// Checking for updates... /////\n")
+    print(HEADER)
+    print(f"{PROMPT}{Fore.LIGHTCYAN_EX}Local Version: {Fore.LIGHTWHITE_EX}{local_version}")
+    print(f"{PROMPT}{Fore.LIGHTCYAN_EX}Checking for updates...")
 
     time.sleep(3)  # Pequeña pausa para mejor UX
     if not os.path.exists(LOCAL_VERSION_FILE):
         return False
-    
-    with open(LOCAL_VERSION_FILE, "r") as f:
-        local_version = f.read().strip()
-    
-    remote_version = get_remote_version()
 
     if remote_version is None:
-        print("  ///// Remote Version could not be fetched. Proceeding without update. /////\n")
+        print(f"{ERROR_LOG}{Fore.LIGHTYELLOW_EX}Remote Version could not be fetched. Proceeding without update.")
         return False
         
     elif remote_version != local_version:
-        print(f"  ///// New Version Available: {remote_version} (local: {local_version})")
+        print(f"{HEADER}\n{PROMPT}{Fore.LIGHTGREEN_EX}[ UPDATE ] {Fore.LIGHTCYAN_EX}New Version Available: {remote_version}")
         # Opcional: Preguntar al usuario
-        if input("  ///// Do you wish to update? [Y/n]: ").lower() != "n":
+        if input(f"{HEADER}\n{PROMPT}{Fore.LIGHTYELLOW_EX}Do you wish to update? [ {Fore.LIGHTGREEN_EX}Y {Fore.LIGHTWHITE_EX}/ {Fore.LIGHTRED_EX}N{Fore.LIGHTYELLOW_EX} ]: ").lower() != "n":
             if update_app():
                 # Actualiza la versión local
                 with open(LOCAL_VERSION_FILE, "w") as f:
@@ -120,7 +130,7 @@ def main():
                 subprocess.call(BAT_FILE)
                 sys.exit(0)
             else:
-                print("  ///// Updating Failed. Proceeding with current version.")
+                print(f"{ERROR_LOG}{Fore.LIGHTYELLOW_EX}Updating Failed. Proceeding with current version.")
                 return False
     
     # Si no actualiza o ya está al día, lanza main.py (o el bat si prefieres)
