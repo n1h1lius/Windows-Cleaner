@@ -175,10 +175,10 @@ class UpdaterApp(App):
 
     @work(thread=True, exclusive=True)
     async def perform_update(self):
-        self.print("[cyan]Downloading update package...[/]")
+        self.call_from_thread(self.print("[cyan]Downloading update package...[/]"))
         response = requests.get(REPO_URL)
         if response.status_code != 200:
-            self.print("[bold red]Failed to download update package.[/]")
+            self.call_from_thread(self.print("[bold red]Failed to download update package.[/]"))
             self.after_update_check(False)
             return
 
@@ -197,14 +197,14 @@ class UpdaterApp(App):
 
             if CONFIG_FILE.exists():
                 shutil.copy(CONFIG_FILE, str(CONFIG_FILE) + ".bak")
-                self.print("[cyan]Config backup created[/]")
+                self.call_from_thread(self.print("[cyan]Config backup created[/]"))
 
             remote_config = os.path.join(repo_dir, str(CONFIG_FILE))
             if os.path.exists(remote_config):
                 await merge_configs(CONFIG_FILE, Path(remote_config))
-                self.print("[green]Config merged successfully[/]")
+                self.call_from_thread(self.print("[green]Config merged successfully[/]"))
 
-            self.print("[cyan]Copying files...[/]")
+            self.call_from_thread(self.print("[cyan]Copying files...[/]"))
             for item in os.listdir(repo_dir):
                 src = os.path.join(repo_dir, item)
                 dst = os.path.join(os.getcwd(), item)
@@ -219,7 +219,7 @@ class UpdaterApp(App):
         if remote_version:
             with open(LOCAL_VERSION_FILE, "w") as f:
                 f.write(remote_version)
-            self.print("[green]Local version updated[/]")
+            self.call_from_thread(self.print("[green]Local version updated[/]"))
 
         self.after_update_check(True)
 
