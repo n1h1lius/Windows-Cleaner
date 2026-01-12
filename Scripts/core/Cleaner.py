@@ -175,28 +175,28 @@ def detect_and_get_paths():
 
     # ─────────────────────────────────────────────────────────────── BROWSERS ────────────────────────────────────────────────────────────────────────
 
-    # ── Microsoft Edge ───────────────────────────────────────────────────────
+    # ────── Microsoft Edge
     if os.path.isdir(p := USER_PROFILE + "\\AppData\\Local\\Microsoft\\Edge"): get_browser_paths(p, "Edge", paths, detected)
 
-    # ── Brave Browser ────────────────────────────────────────────────────────
+    # ────── Brave Browser 
     if os.path.isdir(p := USER_PROFILE + "\\AppData\\Local\\BraveSoftware\\Brave-Browser"): get_browser_paths(p, "Brave", paths, detected)
 
-    # ── Google Chrome ────────────────────────────────────────────────────────
+    # ────── Google Chrome 
     if os.path.isdir(p := USER_PROFILE + "\\AppData\\Local\\Google\\Chrome"): get_browser_paths(p, "Chrome", paths, detected)
 
-    # ──── Vivaldi ─────────────────────────────────────────────────────────── 
+    # ────── Vivaldi  
     if os.path.isdir(p := USER_PROFILE + "\\AppData\\Local\\Vivaldi"): get_browser_paths(p, "Vivaldi", paths, detected)
 
-    # ───── Yandex Browser ─────────────────────────────────────────────────────
+    # ────── Yandex Browser 
     if os.path.isdir(p := USER_PROFILE + "\\AppData\\Local\\Yandex\\YandexBrowser"): get_browser_paths(p, "Yandex", paths, detected)
     
-    # ───── Chromium ────────────────────────────────────────────────────────
+    # ────── Chromium 
     if os.path.isdir(p := USER_PROFILE + "\\AppData\\Local\\Chromium"): get_browser_paths(p, "Chromium", paths, detected)
 
-    # ───── Waterfox ─────────────────────────────────────────────────────── 
+    # ────── Waterfox  
     if os.path.isdir(p := USER_PROFILE + "\\AppData\\Local\\Waterfox"): get_browser_paths(p, "Waterfox", paths, detected)
 
-    # ── Opera (Stable + GX) ────────────────────────────────────────────────
+    # ────── Opera (Stable + GX) 
     if os.path.isdir(p := USER_PROFILE + "\\AppData\\Roaming\\Opera Software"):
 
         opera_paths = [

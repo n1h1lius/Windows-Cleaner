@@ -1,16 +1,20 @@
 Detected:
 -------------------------------------
 Edge Browser
-Brave
+Brave Browser
 Discord
 
 Programs_path_names:
 -------------------------------------
 Edge: Edge Browser
-Brave: Brave
+Brave: Brave Browser
 Chrome: Chrome Browser
-Opera GX Stable: Opera GX
-Opera Stable: Opera
+Vivaldi: Vivaldi Browser
+Yandex: Yandex Browser
+Chromium: Chromium Browser
+Waterfox: Waterfox Browser
+Opera GX Stable: Opera GX Browser
+Opera Stable: Opera Browser
 discord: Discord
 Spotify: Spotify
 SpotifyAB.SpotifyMusic_zpdnekdrzrea0: Spotify-App
@@ -18,11 +22,11 @@ SpotifyAB.SpotifyMusic_zpdnekdrzrea0: Spotify-App
 Detected_Folders:
 -------------------------------------
 Edge Browser: 6
-Brave: 74
+Brave Browser: 74
 Discord: 3
 
 Detected_Profiles:
 -------------------------------------
 Edge Browser: 0
-Brave: 13
+Brave Browser: 13
 Discord: 0
