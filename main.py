@@ -148,18 +148,17 @@ def check_resolution(max_width=1920, max_height=1024):
 
 def launch_app(mode):
     from Scripts import config
-    from Scripts.config import APP_VERSION, get_release_version
 
-    if APP_VERSION == 1:
+    if config.APP_VERSION == 1:
         cleaner_v1()
 
-    elif APP_VERSION == 2:
+    elif config.APP_VERSION == 2:
         if mode == "CleanerApp":
-            config.APP_TITLE = f"CleanerApp - v{get_release_version()}"
+            config.APP_TITLE = f"CleanerApp - v{config.get_release_version()}"
             os.system(f"title {config.APP_TITLE}")
             cleaner_v2()
         elif mode == "default":
-            config.APP_TITLE = f"Windows Cleaner - v{get_release_version()}"
+            config.APP_TITLE = f"Windows Cleaner - v{config.get_release_version()}"
             os.system(f"title {config.APP_TITLE}")
             cleaner_v2_1()
 
