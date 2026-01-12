@@ -27,6 +27,7 @@ def parse_args():
     return parser.parse_args()
 
 def handle_args():
+    mode = "default"
     args = parse_args()
 
     if check_resolution(): msg.updater_intro = msg.small_res_updater_intro
@@ -36,23 +37,29 @@ def handle_args():
     
     # ─────── Update Check ─────────
     if args.update_check:
-        if check_for_updates() == False:
+        if check_for_updates(None) == False:
             print(f"{HEADER}{Fore.LIGHTCYAN_EX}No new updates available\n")
             time.sleep(3)
         sys.exit(0)
+    
+    # ─────── Shell:Startup ─────────
+    if args.main_menu:
+        mode = "CleanerApp"
 
     # ─────── No Update Check ─────────
     from Scripts.config import AUTOUPDATE
     if args.no_update_check is False and AUTOUPDATE:
-        if check_for_updates() == False:
+
+        if mode == "CleanerApp":
+            bat_path = os.path.abspath("cleaner.bat")
+        elif mode == "default":
+            bat_path = os.path.abspath("WindowsCleaner.bat")
+
+        if check_for_updates(bat_path) == False:
             print(f"{HEADER}{Fore.LIGHTCYAN_EX}No new updates available. Continuing without update...\n")
-    
-    # ─────── Shell:Startup ─────────
-    if args.main_menu:
-        return "CleanerApp"
 
     # ─────── Standard Mode ─────────
-    return "default"
+    return mode
 
 # ╔═════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╗
 # ║                                                       CLEANER VERSIONS                                                          ║
@@ -116,11 +123,11 @@ def launch_app(mode):
         if mode == "CleanerApp":
             config.APP_TITLE = f"CleanerApp - v{RELEASE_VERSION}"
             os.system(f"title {config.APP_TITLE}")
-            cleaner_v2(os.path.abspath("cleaner.bat"))
+            cleaner_v2()
         elif mode == "default":
             config.APP_TITLE = f"Windows Cleaner - v{RELEASE_VERSION}"
             os.system(f"title {config.APP_TITLE}")
-            cleaner_v2_1(os.path.abspath("WindowsCleaner.bat"))
+            cleaner_v2_1()
 
 
 if __name__ == "__main__":
