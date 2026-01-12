@@ -12,7 +12,9 @@ from textual.widgets import Header, Footer, Static, Tree, Label, Button, Checkbo
 from textual.screen import ModalScreen
 from rich.text import Text as RichText
 
-from Scripts.widgets.ConfirmModal import ConfirmModal
+
+from Versions.Cleaner_v2.modals.UpdaterModal import UpdaterModal
+
 from Scripts.widgets.MessageBox import MessageBox
 
 class SettingsModal(ModalScreen):
@@ -81,6 +83,7 @@ class SettingsModal(ModalScreen):
 
                 with Vertical(id="special-actions"):
                     yield Label("SPECIAL ACTIONS", classes="section-title")
+                    yield Button("Check for Updates", id="btn-updater")
                     yield Button("Create Shortcut", id="btn-shortcut")
                     yield Button("Run on Start", id="btn-runstart")
 
@@ -195,6 +198,11 @@ class SettingsModal(ModalScreen):
         dialog = MessageBox(message, mode="success") 
         await self.app.push_screen(dialog)
 
+    # ── Updater Button ───────────────────────────────────────────────────────
+    @on(Button.Pressed, "#btn-updater")
+    async def open_updater(self) -> None:
+        self.app.push_screen(UpdaterModal())
+    
     def on_unmount(self) -> None:
         # Restore main app title when modal is dismissed
         self.title = APP_TITLE

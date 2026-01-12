@@ -8,11 +8,10 @@ import tempfile
 import configparser
 from pathlib import Path
 
-from textual.app import ComposeResult
+from textual.app import App, ComposeResult
 from textual import work 
 from textual.widgets import Header, Footer, RichLog, Static
 from textual.containers import Vertical, VerticalScroll
-from textual.screen import ModalScreen
 
 from Scripts.utils import messages as msg
 from Scripts.config import *
@@ -69,7 +68,7 @@ class UpdateLog(RichLog):
             wrap=True,
         )
 
-class UpdaterModal(ModalScreen):
+class UpdaterApp(App):
     CSS = """
     Screen {
         background: $surface;
@@ -250,5 +249,9 @@ class UpdaterModal(ModalScreen):
             
         self.print("[dim]Exiting...[/]")
         await asyncio.sleep(3)
-        self.dismiss(updated)
+        self.exit(updated)
 
+
+if __name__ == "__main__":
+    app = UpdaterApp()
+    app.run()

@@ -87,7 +87,7 @@ def handle_args():
                 print(f"{HEADER}\n{HEADER}{Fore.LIGHTCYAN_EX}No new updates available. Continuing without update...\n")
 
         elif APP_VERSION == 2:
-            from Versions.Cleaner_v2.modals.UpdaterModal import UpdaterApp
+            from Versions.Cleaner_v2.UpdaterApp import UpdaterApp
             app = UpdaterApp()
             app.run()
 
