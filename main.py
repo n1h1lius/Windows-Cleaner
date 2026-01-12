@@ -57,9 +57,11 @@ def handle_args():
         elif mode == "default":
             bat_path = os.path.abspath("WindowsCleaner.bat")
 
-        from Scripts.core.update import get_remote_version
+        try:
+            from Scripts.core.update import opt
+            
+        except ImportError:
 
-        if get_remote_version() != RELEASE_VERSION:
             url = "https://raw.githubusercontent.com/n1h1lius/Windows-Cleaner/main/Scripts/core/update.py"
 
             try:

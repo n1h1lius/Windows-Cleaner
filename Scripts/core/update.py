@@ -15,6 +15,8 @@ from colorama import Fore, init
 
 init(autoreset=True)
 
+opt = "opt holder"
+
 HEADER = f"{Fore.LIGHTRED_EX}  /////"
 PROMPT = f"{HEADER} {Fore.LIGHTMAGENTA_EX}-> {Fore.RESET}"
 ERROR_LOG = f"{HEADER}\n{PROMPT}{Fore.LIGHTRED_EX}[ ERROR ] "
