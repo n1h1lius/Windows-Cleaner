@@ -66,6 +66,8 @@ def handle_args():
                 response = requests.get(url, timeout=5)
                 response.raise_for_status()  # lanza excepción si no es 200
 
+                data = response.text
+
                 # Guardar archivo
                 with open("Scripts/core/update.py", "w", encoding="utf-8") as f:
                     f.write(data)
