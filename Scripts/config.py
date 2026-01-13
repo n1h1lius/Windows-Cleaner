@@ -49,7 +49,7 @@ UWP_FOLDERS = ["\\LocalCache", "\\LocalState", "\\TempState"]
 
 LIST_ALL_SCOPES = {
     "Browsers": ["Edge", "Brave", "Chrome", "Firefox", "Vivaldi", "Yandex", "Chromium", "Waterfox", "LibreWolf", "Opera GX Stable", "Opera Stable"],
-    "Software": ["discord", "Spotify", "Telegram-Desktop", "VS-Code"],
+    "Software": ["discord", "Spotify", "Telegram Desktop", "Code"],
     "Apps UWP": ["SpotifyAB.SpotifyMusic_zpdnekdrzrea0", "5319275A.WhatsAppDesktop_cv1g1gvanyjgm"]
 }
 
@@ -70,8 +70,8 @@ PROGRAMS_PATH_NAMES ={
     # ─────── Software
     "discord": "Discord",
     "Spotify": "Spotify",
-    "Telegram-Desktop": "Telegram",
-    "VS-Code": "VS-Code",
+    "Telegram Desktop": "Telegram",
+    "Code": "VS-Code",
 
     # ─────── Apps UWP
     "SpotifyAB.SpotifyMusic_zpdnekdrzrea0": "Spotify-App",

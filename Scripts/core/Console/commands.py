@@ -104,10 +104,13 @@ def list_available_cleaner_scopes():
 
 
     for item in detected:
-        key = next((k for k, v in PROGRAMS_PATH_NAMES.items() if v == item), None)
-        if key in LIST_ALL_SCOPES["Browsers"]: browsers.append(key)
-        elif key in LIST_ALL_SCOPES["Software"]: software.append(key)
-        elif key in LIST_ALL_SCOPES["Apps UWP"]: apps_uwp.append(key)
+        
+        for key in PROGRAMS_PATH_NAMES:
+            if item in PROGRAMS_PATH_NAMES[key]:
+                
+                if key in LIST_ALL_SCOPES["Browsers"]: browsers.append(key)
+                elif key in LIST_ALL_SCOPES["Software"]: software.append(key)
+                elif key in LIST_ALL_SCOPES["Apps UWP"]: apps_uwp.append(key)
 
     all_sections = [
         ("Browsers", browsers),

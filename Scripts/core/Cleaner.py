@@ -108,11 +108,11 @@ def cleaner(path, log):
                     ))
                     manage_general_vars("folder", size)
 
-            except Exception:
-                pass
+            except Exception as e:
+                printLog(log, f" [bright_red][!] Error deleting {file_path} [bright_magenta]-> [bright_cyan]{e}")
 
-    except Exception:
-        pass
+    except Exception as e:
+        printLog(log, f" [bright_red][!] Error deleting {file_path} [bright_magenta]-> [bright_cyan]{e}")
 
     footer = make_dynamic_boxed_message(
         self=log.app,
@@ -129,7 +129,7 @@ def cleaner(path, log):
 
 def get_browser_paths(p, browser, paths, detected):
 
-    detected.append(PROGRAMS_PATH_NAMES[browser]) if PROGRAMS_PATH_NAMES[browser] not in detected else None
+    detected.append(PROGRAMS_PATH_NAMES[browser])
 
     paths_counter = 0
     profiles_counter = 0
@@ -150,6 +150,12 @@ def get_browser_paths(p, browser, paths, detected):
     for browser_folder in BROWSER_FOLDERS:
         if os.path.isdir(default + browser_folder): 
             paths.append(default + browser_folder)
+            paths_counter += 1
+
+    # Root Folder
+    for browser_folder in BROWSER_FOLDERS:
+        if os.path.isdir(p + browser_folder): 
+            paths.append(p + browser_folder)
             paths_counter += 1
     
     # Update Counters
@@ -246,30 +252,30 @@ def detect_and_get_paths():
 
         paths_counter = 0
 
-        detected.append(PROGRAMS_PATH_NAMES["Telegram-Desktop"])
+        detected.append(PROGRAMS_PATH_NAMES["Telegram Desktop"])
 
         for folder in telegram_paths:
             if os.path.isdir(folder):
                 paths.append(folder)
                 paths_counter += 1
 
-        detected_folders[PROGRAMS_PATH_NAMES["Telegram-Desktop"]] = paths_counter
-        detected_profiles[PROGRAMS_PATH_NAMES["Telegram-Desktop"]] = 0
+        detected_folders[PROGRAMS_PATH_NAMES["Telegram Desktop"]] = paths_counter
+        detected_profiles[PROGRAMS_PATH_NAMES["Telegram Desktop"]] = 0
 
     # ────── VS-Code
     if os.path.isdir(p := USER_PROFILE + "\\AppData\\Roaming\\Code"): 
         paths_counter = 0
 
-        get_browser_paths(p, "VS-Code", paths, detected)
+        get_browser_paths(p, "Code", paths, detected)
 
-        extra_folders = ["\\CachedData", "\\DawnCache", "\\DawnGraphiteCache", "\\DawnWebGPUCache", "\\CachedExtensionsVSIXx", "\\CachedExtensions", "\\Service Worker", "\\Backups"]
+        extra_folders = ["\\CachedData", "\\DawnCache", "\\DawnGraphiteCache", "\\DawnWebGPUCache", "\\CachedExtensionVSIXs", "\\CachedExtensions", "\\Service Worker", "\\Backups"]
 
         for folder in extra_folders:
             if os.path.isdir(p + folder):
                 paths.append(p + folder)
                 paths_counter += 1
 
-        detected_folders["VS-Code"] += paths_counter
+        detected_folders[PROGRAMS_PATH_NAMES["Code"]] += paths_counter
 
 
     # ─────────────────────────────────────────────────────────────── APPS (UWP) ────────────────────────────────────────────────────────────────────────
