@@ -26,6 +26,7 @@ def parse_args():
 
     parser.add_argument("--list-all-cleaner-scopes", action=RunCommand, function=cmd.list_all_cleaner_scopes, help="List all cleaner scopes")
     parser.add_argument("--list-available-cleaner-scopes", action=RunCommand, function=cmd.list_available_cleaner_scopes, help="List available cleaner scopes")
+    parser.add_argument("--list-all-params", action=RunCommand, function=lambda: cmd.list_all_params(parser), help="List all params")
 
     return parser.parse_args()
 
