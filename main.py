@@ -20,7 +20,7 @@ def parse_args():
 
     # ───────── Arguments ─────────
     parser.add_argument("--update-check", action="store_true", help="Check for updates without launching the application")
-    parser.add_argument("--main-menu", action="store_false", help="Launch just cleaner App")
+    parser.add_argument("--main-menu", action="store_false", help="Launch the Main Windows Cleaner App")
     parser.add_argument("--no-update-check", action="store_true", help="Disable update checking")
     parser.add_argument("--no-force-maximize", action="store_true", help="Do not force maximize the console window on start")
 
