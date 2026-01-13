@@ -3,30 +3,41 @@ Detected:
 Edge Browser
 Brave Browser
 Discord
+Telegram
+VS-Code
 
 Programs_path_names:
 -------------------------------------
 Edge: Edge Browser
 Brave: Brave Browser
 Chrome: Chrome Browser
+Firefox: Firefox Browser
 Vivaldi: Vivaldi Browser
 Yandex: Yandex Browser
 Chromium: Chromium Browser
 Waterfox: Waterfox Browser
+LibreWolf: LibreWolf Browser
 Opera GX Stable: Opera GX Browser
 Opera Stable: Opera Browser
 discord: Discord
 Spotify: Spotify
+Telegram-Desktop: Telegram
+VS-Code: VS-Code
 SpotifyAB.SpotifyMusic_zpdnekdrzrea0: Spotify-App
+5319275A.WhatsAppDesktop_cv1g1gvanyjgm: Whats-App
 
 Detected_Folders:
 -------------------------------------
 Edge Browser: 6
 Brave Browser: 74
 Discord: 3
+Telegram: 5
+VS-Code: 6
 
 Detected_Profiles:
 -------------------------------------
 Edge Browser: 0
 Brave Browser: 13
 Discord: 0
+Telegram: 0
+VS-Code: 0

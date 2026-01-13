@@ -47,19 +47,35 @@ detected_profiles = {}
 BROWSER_FOLDERS = ["\\Cache", "\\File System", "\\IndexedDB", "\\Code Cache", "\\Service Worker", "\\GPU_Cache", "\\blob_storage"]
 UWP_FOLDERS = ["\\LocalCache", "\\LocalState", "\\TempState"]
 
+LIST_ALL_SCOPES = {
+    "Browsers": ["Edge", "Brave", "Chrome", "Firefox", "Vivaldi", "Yandex", "Chromium", "Waterfox", "LibreWolf", "Opera GX Stable", "Opera Stable"],
+    "Software": ["discord", "Spotify", "Telegram-Desktop", "VS-Code"],
+    "Apps UWP": ["SpotifyAB.SpotifyMusic_zpdnekdrzrea0", "5319275A.WhatsAppDesktop_cv1g1gvanyjgm"]
+}
+
 PROGRAMS_PATH_NAMES ={
+    # ─────── Browsers
     "Edge": "Edge Browser",
     "Brave": "Brave Browser",
     "Chrome": "Chrome Browser",
+    "Firefox": "Firefox Browser",
     "Vivaldi": "Vivaldi Browser",
     "Yandex": "Yandex Browser",
     "Chromium": "Chromium Browser",
     "Waterfox": "Waterfox Browser",
+    "LibreWolf": "LibreWolf Browser",
     "Opera GX Stable": "Opera GX Browser",
     "Opera Stable": "Opera Browser",
+
+    # ─────── Software
     "discord": "Discord",
     "Spotify": "Spotify",
-    "SpotifyAB.SpotifyMusic_zpdnekdrzrea0": "Spotify-App"
+    "Telegram-Desktop": "Telegram",
+    "VS-Code": "VS-Code",
+
+    # ─────── Apps UWP
+    "SpotifyAB.SpotifyMusic_zpdnekdrzrea0": "Spotify-App",
+    "5319275A.WhatsAppDesktop_cv1g1gvanyjgm": "Whats-App"
 }
 
 # ─────── Stats Vars ─────────

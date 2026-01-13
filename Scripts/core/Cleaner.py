@@ -129,20 +129,21 @@ def cleaner(path, log):
 
 def get_browser_paths(p, browser, paths, detected):
 
-    detected.append(PROGRAMS_PATH_NAMES[browser])
+    detected.append(PROGRAMS_PATH_NAMES[browser]) if PROGRAMS_PATH_NAMES[browser] not in detected else None
 
     paths_counter = 0
     profiles_counter = 0
 
     # Profile Folders
     user_data = p + "\\User Data"
-    for folder in os.listdir(user_data):
-        if folder.startswith("Profile"):
-            profiles_counter += 1
-            for browser_folder in BROWSER_FOLDERS:
-                if os.path.isdir(os.path.join(user_data, folder) + browser_folder): 
-                    paths.append(os.path.join(user_data, folder) + browser_folder)
-                    paths_counter += 1
+    if os.path.isdir(user_data):
+        for folder in os.listdir(user_data):
+            if folder.startswith("Profile"):
+                profiles_counter += 1
+                for browser_folder in BROWSER_FOLDERS:
+                    if os.path.isdir(os.path.join(user_data, folder) + browser_folder): 
+                        paths.append(os.path.join(user_data, folder) + browser_folder)
+                        paths_counter += 1
 
     # Default Folder
     default = user_data + "\\Default"
@@ -184,6 +185,9 @@ def detect_and_get_paths():
     # ────── Google Chrome 
     if os.path.isdir(p := USER_PROFILE + "\\AppData\\Local\\Google\\Chrome"): get_browser_paths(p, "Chrome", paths, detected)
 
+    # ────── Firefox
+    if os.path.isdir(p := USER_PROFILE + "\\AppData\\Local\\Mozilla\\Firefox\\Profiles"): get_browser_paths(p, "Firefox", paths, detected)
+
     # ────── Vivaldi  
     if os.path.isdir(p := USER_PROFILE + "\\AppData\\Local\\Vivaldi"): get_browser_paths(p, "Vivaldi", paths, detected)
 
@@ -195,6 +199,9 @@ def detect_and_get_paths():
 
     # ────── Waterfox  
     if os.path.isdir(p := USER_PROFILE + "\\AppData\\Local\\Waterfox"): get_browser_paths(p, "Waterfox", paths, detected)
+
+    # ───── LibreWolf 
+    if os.path.isdir(p := USER_PROFILE + "\\AppData\\Local\\LibreWolf"): get_browser_paths(p, "LibreWolf", paths, detected)
 
     # ────── Opera (Stable + GX) 
     if os.path.isdir(p := USER_PROFILE + "\\AppData\\Roaming\\Opera Software"):
@@ -212,7 +219,7 @@ def detect_and_get_paths():
 
     # ─────────────────────────────────────────────────────────────── SOFTWARE ────────────────────────────────────────────────────────────────────────
 
-    # ── Discord ──────────────────────────────────────────────────────────────
+    # ────── Discord 
     if os.path.isdir(p := USER_PROFILE + "\\AppData\\Roaming\\discord"):
         counter = 0
         detected.append(PROGRAMS_PATH_NAMES["discord"])
@@ -224,13 +231,50 @@ def detect_and_get_paths():
         detected_folders[PROGRAMS_PATH_NAMES["discord"]] = counter
         detected_profiles[PROGRAMS_PATH_NAMES["discord"]] = 0
 
-    # ── Spotify (Official Desktop Version) ────────────────────────────────────
-    if os.path.isdir(p := USER_PROFILE + "\\AppData\\Local\\Spotify"):
-        get_browser_paths(p, "Spotify", paths, detected)
+    # ────── Spotify (Official Desktop Version) 
+    if os.path.isdir(p := USER_PROFILE + "\\AppData\\Local\\Spotify"): get_browser_paths(p, "Spotify", paths, detected)
+
+    # ────── Telegram Desktop
+    if os.path.isdir(p := USER_PROFILE + "\\AppData\\Roaming\\Telegram Desktop"):
+        telegram_paths = [
+            p + "\\tupdates",
+            p + "\\tdata\\dumps",
+            p + "\\tdata\\emoji",
+            p + "\\tdata\\temp",
+            p + "\\tdata\\user_data",
+        ]
+
+        paths_counter = 0
+
+        detected.append(PROGRAMS_PATH_NAMES["Telegram-Desktop"])
+
+        for folder in telegram_paths:
+            if os.path.isdir(folder):
+                paths.append(folder)
+                paths_counter += 1
+
+        detected_folders[PROGRAMS_PATH_NAMES["Telegram-Desktop"]] = paths_counter
+        detected_profiles[PROGRAMS_PATH_NAMES["Telegram-Desktop"]] = 0
+
+    # ────── VS-Code
+    if os.path.isdir(p := USER_PROFILE + "\\AppData\\Roaming\\Code"): 
+        paths_counter = 0
+
+        get_browser_paths(p, "VS-Code", paths, detected)
+
+        extra_folders = ["\\CachedData", "\\DawnCache", "\\DawnGraphiteCache", "\\DawnWebGPUCache", "\\CachedExtensionsVSIXx", "\\CachedExtensions", "\\Service Worker", "\\Backups"]
+
+        for folder in extra_folders:
+            if os.path.isdir(p + folder):
+                paths.append(p + folder)
+                paths_counter += 1
+
+        detected_folders["VS-Code"] += paths_counter
+
 
     # ─────────────────────────────────────────────────────────────── APPS (UWP) ────────────────────────────────────────────────────────────────────────
 
-    # ── Spotify (Official UWP Version) ────────────────────────────────────
+    # ────── Spotify (Official UWP Version) 
     if os.path.isdir(p := USER_PROFILE + "\\AppData\\Local\\Packages\\SpotifyAB.SpotifyMusic_zpdnekdrzrea0"):
         counter = 0
         detected.append(PROGRAMS_PATH_NAMES["SpotifyAB.SpotifyMusic_zpdnekdrzrea0"])
@@ -242,8 +286,12 @@ def detect_and_get_paths():
 
         detected_folders[PROGRAMS_PATH_NAMES["SpotifyAB.SpotifyMusic_zpdnekdrzrea0"]] = counter
         detected_profiles[PROGRAMS_PATH_NAMES["SpotifyAB.SpotifyMusic_zpdnekdrzrea0"]] = 0
+
+    # ────── What's App (Official UWP Version)
+    if os.path.isdir(p := USER_PROFILE + "AppData\\Local\\Packages\\5319275A.WhatsAppDesktop_cv1g1gvanyjgm\\LocalCache\\EBWebView\\Default"): get_browser_paths(p, "5319275A.WhatsAppDesktop_cv1g1gvanyjgm", paths, detected)
     
-    # ── Debug Output Log ────────────────────────────────────
+    
+    # ─────────────────────────────────────────────────────────────── Debug Output Log ───────────────────────────────────────────────────────────────
     if DEBUG_MODE:
         with open("Logs/Core-Cleaner.log", "w") as f:
             f.write("Detected:\n-------------------------------------\n")

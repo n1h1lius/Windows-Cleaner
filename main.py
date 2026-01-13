@@ -2,6 +2,8 @@ import sys, os
 import argparse
 
 from Scripts.utils import messages as msg
+from Scripts.core.Console.actions import RunCommand
+from Scripts.core.Console import commands as cmd
 
 from colorama import Fore, init
 
@@ -21,6 +23,9 @@ def parse_args():
     parser.add_argument("--main-menu", action="store_false", help="Launch just cleaner App")
     parser.add_argument("--no-update-check", action="store_true", help="Disable update checking")
     parser.add_argument("--no-force-maximize", action="store_true", help="Do not force maximize the console window on start")
+
+    parser.add_argument("--list-all-cleaner-scopes", action=RunCommand, function=cmd.list_all_cleaner_scopes, help="List all cleaner scopes")
+    parser.add_argument("--list-available-cleaner-scopes", action=RunCommand, function=cmd.list_available_cleaner_scopes, help="List available cleaner scopes")
 
     return parser.parse_args()
 
