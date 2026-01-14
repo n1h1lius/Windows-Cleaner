@@ -19,6 +19,8 @@ def parse_args():
     parser = argparse.ArgumentParser()
 
     # ───────── Arguments ─────────
+    parser.add_argument("--debug-mode", action="store_true", help="Enable debug mode")
+
     parser.add_argument("--update-check", action="store_true", help="Check for updates without launching the application")
     parser.add_argument("--main-menu", action="store_false", help="Launch the Main Windows Cleaner App")
     parser.add_argument("--no-update-check", action="store_true", help="Disable update checking")
@@ -26,6 +28,7 @@ def parse_args():
 
     parser.add_argument("--list-all-cleaner-scopes", action=RunCommand, function=cmd.list_all_cleaner_scopes, help="List all cleaner scopes")
     parser.add_argument("--list-available-cleaner-scopes", action=RunCommand, function=cmd.list_available_cleaner_scopes, help="List available cleaner scopes")
+    parser.add_argument("--list-all-detected-paths", action=RunCommand, function=cmd.get_all_detected_paths, help="List all detected paths")
     parser.add_argument("--list-all-params", action=RunCommand, function=lambda: cmd.list_all_params(parser), help="List all params")
 
     return parser.parse_args()
@@ -33,6 +36,11 @@ def parse_args():
 def handle_args():
     mode = "default"
     args = parse_args()
+
+    # ─────── Debug Mode ─────────
+    if args.debug_mode:
+        from Scripts.config import DEBUG_MODE
+        DEBUG_MODE = True
 
     # ─────── Force Small Resolution ─────────
     if check_resolution(): msg.updater_intro = msg.small_res_updater_intro
