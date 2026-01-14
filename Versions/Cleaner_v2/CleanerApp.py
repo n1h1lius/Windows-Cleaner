@@ -142,7 +142,7 @@ class CleanerApp(App):
 
             cleaning_lines = [f"     CLEANING: {path}"]
 
-            full_log.append(cleaning_lines)
+            full_log.append(cleaning_lines[0])
 
             log.write(make_boxed_message(self, "", cleaning_lines, "bright_cyan"))
             log.refresh()
@@ -155,7 +155,7 @@ class CleanerApp(App):
                 f"Deleted Folders [{stats['current_folders']}] || "
                 f"Deleted Size in Mb [{stats['current_mb']:.2f}]"
             )
-            full_log.append(cleaned_line)
+            full_log.append("".join(cleaned_line))
             log.write(make_boxed_message(self, "", [cleaned_line], "bright_green"))
             log.refresh()
 
@@ -178,7 +178,9 @@ class CleanerApp(App):
             f"Folders [{stats['total_folders']}] || Size [{stats['total_mb']:.2f} Mb]"
         )
         final_lines.append(f"[bright_white]PRESS ANY KEY TO EXIT[/bright_white]")
-        full_log.extend(final_lines)
+
+        full_log.append(f"\n\nTOTAL CLEANED || Files [{stats['total_files']}] || Folders [{stats['total_folders']}] || Size [{stats['total_mb']:.2f} Mb]")
+
         log.write(make_boxed_message(self, "PROCESS COMPLETED", final_lines, "bright_yellow"))
         log.refresh()
 
