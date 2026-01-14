@@ -133,6 +133,9 @@ def check_resolution(max_width=1920, max_height=1024):
 def launch_app(mode):
     from Scripts import config
 
+    if config.DEBUG_MODE:
+        config.init_logSystem()
+
     if config.APP_VERSION == 1:
         cleaner_v1()
 

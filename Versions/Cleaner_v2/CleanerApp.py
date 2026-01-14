@@ -144,7 +144,8 @@ class CleanerApp(App):
             log.refresh()
 
             cleaner(path, log)
-
+            
+            global stats
             cleaned_line = (
                 f"     CLEANED || Deleted Files [{stats['current_files']}] || "
                 f"Deleted Folders [{stats['current_folders']}] || "

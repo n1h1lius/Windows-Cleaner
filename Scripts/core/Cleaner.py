@@ -20,9 +20,29 @@ def get_file_size(file_path):
         return round(os.path.getsize(file_path) / (1024 * 1024), 2)
     except:
         return 0.0
+    
+previous_managed_var = 0
+previous_managed_size = 0
 
 def manage_general_vars(mode, size=0):
-    global stats
+    global stats, previous_managed_size, previous_managed_var
+
+    if mode == "exception":
+        stats['total_mb'] -= previous_managed_size
+        stats['current_mb'] -= previous_managed_size
+
+        if previous_managed_var == "folder":
+            stats['total_folders'] -= 1
+            stats['current_folders'] -= 1
+
+        elif previous_managed_var == "file":
+            stats['current_files'] -= 1
+            stats['total_files'] -= 1
+
+    
+    else:
+        previous_managed_var = mode
+        previous_managed_size = size
 
     if mode == "reset":
         stats["total_files"] += stats["current_files"]
@@ -40,6 +60,7 @@ def manage_general_vars(mode, size=0):
     elif mode == "file":
         stats["current_files"] += 1
         stats["current_mb"] += size
+    
 
 
 def printLog(log, message):
@@ -48,7 +69,9 @@ def printLog(log, message):
 
 def cleaner(path, log):
 
-    global stats
+    global stats, DEBUG_MODE
+
+    full_log = []
 
     manage_general_vars("reset")
 
@@ -73,6 +96,7 @@ def cleaner(path, log):
                 if os.path.isfile(file_path) or os.path.islink(file_path):
                     if not is_file_old(file_path, DAYS_THRESHOLD):
                         continue
+
                     size = get_file_size(file_path)
                     os.unlink(file_path)
                     
@@ -81,6 +105,7 @@ def cleaner(path, log):
                         f"[bright_yellow][{size:.2f} Mb] [bright_magenta]-> "
                         f"[bright_cyan]{file_path}"
                     )
+
                     printLog(log, make_dynamic_boxed_message(
                         self=log.app,
                         state="content",
@@ -88,10 +113,15 @@ def cleaner(path, log):
                         border_color=BORDER,
                         content_color=CONTENT
                     ))
+
                     manage_general_vars("file", size)
 
+                    full_log.append(f" - [{size:.2f} Mb] Deleted file: {file_path}")
+
                 elif os.path.isdir(file_path):
+
                     size = get_file_size(file_path)
+
                     shutil.rmtree(file_path, ignore_errors=True)
                     
                     content_line = (
@@ -99,6 +129,7 @@ def cleaner(path, log):
                         f"[bright_yellow][{size:.2f} Mb] [bright_magenta]-> "
                         f"[bright_cyan]{file_path}"
                     )
+
                     printLog(log, make_dynamic_boxed_message(
                         self=log.app,
                         state="content",
@@ -106,13 +137,17 @@ def cleaner(path, log):
                         border_color=BORDER,
                         content_color=CONTENT
                     ))
+
                     manage_general_vars("folder", size)
+                    full_log.append(f" - [{size:.2f} Mb] Deleted Folder: {file_path}")
 
             except Exception as e:
-                printLog(log, f" [bright_red][!] Error deleting {file_path} [bright_magenta]-> [bright_cyan]{e}")
+                printLog(log, f"    [bright_red][!] Error deleting {file_path} [bright_magenta]-> [bright_cyan]{e}")
+                full_log.append(f" - [!] Error deleting {file_path} -> {e}")
 
     except Exception as e:
-        printLog(log, f" [bright_red][!] Error deleting {file_path} [bright_magenta]-> [bright_cyan]{e}")
+        printLog(log, f"    [bright_red][!] Error deleting [ {path} ] [bright_magenta]-> [bright_cyan]{e}")
+        full_log.append(f" - [!] Error deleting [ {path} ] -> {e}")
 
     footer = make_dynamic_boxed_message(
         self=log.app,
@@ -122,6 +157,13 @@ def cleaner(path, log):
 
     printLog(log, footer)
 
+    if DEBUG_MODE:
+        with open(f"Logs/Core-Cleaner-Deleted.log", "a", encoding="utf-8") as f:
+            for line in full_log:
+                f.write(line + "\n")
+                f.write(f"Current Files [{stats['current_files']}] - Current Folders [{stats['current_folders']}] - Current MB [{stats['current_mb']}]\n")
+                f.write(f"Total Files [{stats['total_files']}] - Total Folders [{stats['total_folders']}] - Total MB [{stats['total_mb']}]\n\n\n\n")
+
 
 # ╔═════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╗
 # ║                                                       PROGRAMS DETECTOR                                                         ║
@@ -130,6 +172,8 @@ def cleaner(path, log):
 def get_browser_paths(p, browser, paths, detected):
 
     detected.append(PROGRAMS_PATH_NAMES[browser])
+
+    full_log = []
 
     paths_counter = 0
     profiles_counter = 0
@@ -145,6 +189,8 @@ def get_browser_paths(p, browser, paths, detected):
                         paths.append(os.path.join(user_data, folder) + browser_folder)
                         paths_counter += 1
 
+                        full_log.append(os.path.join(user_data, folder) + browser_folder)
+
     # Default Folder
     default = user_data + "\\Default"
     for browser_folder in BROWSER_FOLDERS:
@@ -152,15 +198,26 @@ def get_browser_paths(p, browser, paths, detected):
             paths.append(default + browser_folder)
             paths_counter += 1
 
+            full_log.append(default + browser_folder)
+
     # Root Folder
     for browser_folder in BROWSER_FOLDERS:
         if os.path.isdir(p + browser_folder): 
             paths.append(p + browser_folder)
             paths_counter += 1
+
+            full_log.append(p + browser_folder)
     
     # Update Counters
     detected_folders[PROGRAMS_PATH_NAMES[browser]] = paths_counter
     detected_profiles[PROGRAMS_PATH_NAMES[browser]] = profiles_counter
+
+    if DEBUG_MODE:
+        with open("Logs/Core-Cleaner-Detected.log", "a", encoding="utf-8") as f:
+            f.write(f"Program: {browser} - Folders: {paths_counter} - Profiles: {profiles_counter}\n------------------------------------------------------------------\n")
+            for path in full_log:
+                f.write(path + "\n")
+            f.write("\n\n")
 
 
 
@@ -230,7 +287,7 @@ def detect_and_get_paths():
         counter = 0
         detected.append(PROGRAMS_PATH_NAMES["discord"])
 
-        for suf in ["\\Cache\\Cache_Data", "\\Code Cache", "\\GPU_Cache"]:
+        for suf in ["\\Cache", "\\Code Cache", "\\GPU_Cache"]:
             paths.append(p + suf)
             counter += 1
 
@@ -294,12 +351,13 @@ def detect_and_get_paths():
         detected_profiles[PROGRAMS_PATH_NAMES["SpotifyAB.SpotifyMusic_zpdnekdrzrea0"]] = 0
 
     # ────── What's App (Official UWP Version)
-    if os.path.isdir(p := USER_PROFILE + "AppData\\Local\\Packages\\5319275A.WhatsAppDesktop_cv1g1gvanyjgm\\LocalCache\\EBWebView\\Default"): get_browser_paths(p, "5319275A.WhatsAppDesktop_cv1g1gvanyjgm", paths, detected)
+    if os.path.isdir(p := USER_PROFILE + "\\AppData\\Local\\Packages\\5319275A.WhatsAppDesktop_cv1g1gvanyjgm\\LocalCache\\EBWebView\\Default"): get_browser_paths(p, "5319275A.WhatsAppDesktop_cv1g1gvanyjgm", paths, detected)
     
     
     # ─────────────────────────────────────────────────────────────── Debug Output Log ───────────────────────────────────────────────────────────────
     if DEBUG_MODE:
-        with open("Logs/Core-Cleaner.log", "w") as f:
+
+        with open("Logs/Core-Cleaner.log", "a", encoding="utf-8") as f:
             f.write("Detected:\n-------------------------------------\n")
             for line in detected:
                 f.write(line + "\n")

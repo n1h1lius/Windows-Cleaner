@@ -5,6 +5,7 @@ Brave Browser
 Discord
 Telegram
 VS-Code
+Whats-App
 
 Programs_path_names:
 -------------------------------------
@@ -33,6 +34,7 @@ Brave Browser: 74
 Discord: 3
 Telegram: 5
 VS-Code: 11
+Whats-App: 5
 
 Detected_Profiles:
 -------------------------------------
@@ -41,3 +43,4 @@ Brave Browser: 13
 Discord: 0
 Telegram: 0
 VS-Code: 0
+Whats-App: 0

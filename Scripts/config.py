@@ -113,3 +113,14 @@ QUOTES = [
     "Wealth seems better in an unknown place, such is the poor man’s existence.",
     "The greedy fellow, unless he knows his mind, eats himself into life-long misery."
 ]
+
+# ╔═════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╗
+# ║                                                           LOG SYSTEM                                                            ║
+# ╚═════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╝
+
+def init_logSystem():
+    log_files = ["Core-Cleaner.log", "Core-Cleaner-Deleted.log", "Core-Cleaner-Detected.log"]
+
+    for file in log_files:
+        with open(f"Logs/{file}", "w") as f:
+            f.write("")
