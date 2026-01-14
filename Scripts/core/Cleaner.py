@@ -184,12 +184,10 @@ def get_browser_paths(p, browser, paths, detected):
 
     detected.append(PROGRAMS_PATH_NAMES[browser])
 
-    full_log = []
-
     paths_counter = 0
     profiles_counter = 0
 
-    # Profile Folders
+    # ────── Profile Folders
     user_data = p + "\\User Data"
     if os.path.isdir(user_data):
         for folder in os.listdir(user_data):
@@ -200,26 +198,20 @@ def get_browser_paths(p, browser, paths, detected):
                         paths.append(os.path.join(user_data, folder) + browser_folder)
                         paths_counter += 1
 
-                        full_log.append(os.path.join(user_data, folder) + browser_folder)
-
-    # Default Folder
+     # ────── Default Folder
     default = user_data + "\\Default"
     for browser_folder in BROWSER_FOLDERS:
         if os.path.isdir(default + browser_folder): 
             paths.append(default + browser_folder)
             paths_counter += 1
 
-            full_log.append(default + browser_folder)
-
-    # Root Folder
+    # ────── Root Folder
     for browser_folder in BROWSER_FOLDERS:
         if os.path.isdir(p + browser_folder): 
             paths.append(p + browser_folder)
             paths_counter += 1
-
-            full_log.append(p + browser_folder)
     
-    # Update Counters
+    # ────── Update Counters
     detected_folders[PROGRAMS_PATH_NAMES[browser]] = paths_counter
     detected_profiles[PROGRAMS_PATH_NAMES[browser]] = profiles_counter
 
