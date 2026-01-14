@@ -155,6 +155,7 @@ def cleaner(path, log):
                     full_log.append(f" - [{size:.2f} Mb] Deleted Folder: {file_path}")
 
             except Exception as e:
+                manage_general_vars("exception")
                 printLog(log, f"    [bright_red][!] Error deleting {file_path} [bright_magenta]-> [bright_cyan]{e}")
                 full_log.append(f" - [!] Error deleting {file_path} -> {e}")
 
