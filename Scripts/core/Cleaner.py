@@ -230,7 +230,7 @@ def detect_and_get_paths():
     # ── Windows 10 + 11 Temp Directories ───────────────────────────────────────────────────────
     paths = [
         "C:\\Windows\\Temp",
-        "C:\\Windows\\Prefetch",
+        #"C:\\Windows\\Prefetch",
         "C:\\$Recycle.Bin",
         USER_PROFILE + "\\AppData\\Local\\Temp",
         USER_PROFILE + "\\AppData\\LocalLow\\Temp",

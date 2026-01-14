@@ -1,6 +1,7 @@
 from Scripts.config import *
 
 def get_detected_paths(detected=None, paths=None):
+        """This function returns a list of detected paths and folders for each program detected specially formatted for login and console commands output."""
         
         detected_paths = []
         def find_dict_key(item):

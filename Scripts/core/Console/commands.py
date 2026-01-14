@@ -12,7 +12,6 @@ init(autoreset=True)
 
 HEADER = f"{Fore.LIGHTYELLOW_EX}  ///// {Fore.LIGHTMAGENTA_EX}-> {Fore.RESET}"
 
-
 def list_all_cleaner_scopes():
     """Returns all possible options that cleaner script is able to detect"""
 
@@ -96,7 +95,7 @@ def get_parser_commands(parser):
             continue
             
         cmd_str = ", ".join(action.option_strings)
-        help_text = action.help or "(sin descripción)"
+        help_text = action.help or "[ No Description ]"
         
         # Si es un flag sin valor (store_true/store_false), lo indicamos
         if isinstance(action, argparse._StoreTrueAction):
