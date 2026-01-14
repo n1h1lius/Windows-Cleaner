@@ -40,21 +40,19 @@ class SettingsModal(ModalScreen):
                 with Vertical(id="booleans"):
                     yield Label("BOOLEAN SETTINGS", classes="section-title")
 
-                    for section in INI_SECTIONS:
-                        for key in config.options(section):
+                    boolean_section = INI_SECTIONS["Boolean"]
 
-                            if section == "Deployment" and key == "runonstart":
-                                continue  # ← EVITA EL DUPLICADO
+                    for key in config.options(boolean_section):
 
-                            try:
-                                val = config.getboolean(section, key)
-                                yield Checkbox(
-                                    label=f"{section}.{key}",
-                                    value=val,
-                                    id=f"{section}-{key}"
-                                )
-                            except ValueError:
-                                pass
+                        try:
+                            val = config.getboolean(boolean_section, key)
+                            yield Checkbox(
+                                label=f"{key}",
+                                value=val,
+                                id=f"{boolean_section}-{key}"
+                            )
+                        except ValueError:
+                            pass
 
                     yield Checkbox(
                         label="Deployment.runonstart",
@@ -66,20 +64,32 @@ class SettingsModal(ModalScreen):
 
                 with Vertical(id="integers"):
                     yield Label("INPUT SETTINGS", classes="section-title")
-                    for section in INI_SECTIONS:
-                        for key in config.options(section):
-                            try:
-                                val = config.getint(section, key)
-                                with Container(classes="setting-row"):
-                                    yield Label(f"{section}.{key}", classes="setting-label")
-                                    yield Input(
-                                        value=str(val),
-                                        id=f"{section}-{key}",
-                                        placeholder=str(val),
-                                        type="integer"
-                                    )
-                            except ValueError:
-                                pass
+
+                    input_section = INI_SECTIONS["Input"]
+
+                    with Container(classes="setting-row"):
+                        yield Label(f"Deployment - App Version: ", classes="setting-label")
+                        yield Input(
+                            value=str(APP_VERSION),
+                            id="Deployment-version",
+                            placeholder=str(APP_VERSION),
+                            type="integer",
+                            classes="input-form")
+
+                    for key in config.options(input_section):
+                        try:
+                            val = config.getint(input_section, key)
+                            with Container(classes="setting-row"):
+                                yield Label(f"{key}", classes="setting-label")
+                                yield Input(
+                                    value=str(val),
+                                    id=f"{input_section}-{key}",
+                                    placeholder=str(val),
+                                    type="integer",
+                                    classes="input-form"
+                                )
+                        except ValueError:
+                            pass
 
                 with Vertical(id="special-actions"):
                     yield Label("SPECIAL ACTIONS", classes="section-title")

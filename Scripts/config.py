@@ -12,7 +12,7 @@ config.read(ini_file_path, encoding="utf-8")
 
 AUTOUPDATE = config.getboolean("MainVars", "AutoUpdate", fallback=True)
 DEBUG_MODE = config.getboolean("MainVars", "DebugMode", fallback=False)
-INI_SECTIONS = ["Deployment", "MainVars"]
+INI_SECTIONS = {"Deployment":"Deployment", "Input":"InputVars", "Boolean":"BooleanVars"}
 
 APP_VERSION = int(config["Deployment"]["Version"])
 

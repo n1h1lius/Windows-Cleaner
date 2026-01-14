@@ -41,15 +41,25 @@
     height: auto;
     margin: 1 0;
     align: center middle;
+    border: round rgb(120, 220, 255);
+    background: black;
 }
 
 .setting-label {
     width: 25;
     min-width: 25;
-    content-align: right middle;
+    content-align: center middle;
+    margin-top: 1;
     margin-right: 2;
-    color: $text;
+    color: rgb(120, 220, 255);
 }
+
+.input-form {
+    text-align: center;
+}
+
+
+
 
 Input {
     width: 18;
