@@ -56,7 +56,7 @@ LIST_ALL_SCOPES = {
 PROGRAMS_PATH_NAMES ={
     # ─────── Browsers
     "Edge": "Edge Browser",
-    "Brave": "Brave Browser",
+    "Brave-Browser": "Brave Browser",
     "Chrome": "Chrome Browser",
     "Firefox": "Firefox Browser",
     "Vivaldi": "Vivaldi Browser",
@@ -124,3 +124,18 @@ def init_logSystem():
     for file in log_files:
         with open(f"Logs/{file}", "w") as f:
             f.write("")
+
+
+def cleanerLogSystem(line, output=False):
+    if DEBUG_MODE:
+
+        logs = ["Logs/Cleaner-Output.log", "Logs/Core-Cleaner-Deleted.log"]
+        enter = "\n"
+
+        if output is True:
+            logs.pop(1)
+            enter = "\n\n"
+
+        for log in logs:
+            with open(log, "a", encoding="utf-8") as f:
+                f.write(line + enter)

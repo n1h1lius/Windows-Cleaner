@@ -1,6 +1,8 @@
 
 from Scripts.config import *
+
 from Scripts.utils.ui_helpers import make_dynamic_boxed_message
+from Scripts.utils.Getters import get_detected_paths
 
 import os
 import time
@@ -84,8 +86,6 @@ def cleaner(path, log):
 
     global stats, DEBUG_MODE
 
-    full_log = []
-
     manage_general_vars("reset")
 
     BORDER = "bright_red"
@@ -129,7 +129,7 @@ def cleaner(path, log):
 
                     manage_general_vars("file", size)
 
-                    full_log.append(f" - [{size:.2f} Mb] Deleted file: {file_path}")
+                    cleanerLogSystem(f" - [{size:.2f} Mb] Deleted file: {file_path}")
 
                 elif os.path.isdir(file_path):
 
@@ -152,16 +152,17 @@ def cleaner(path, log):
                     ))
 
                     manage_general_vars("folder", size)
-                    full_log.append(f" - [{size:.2f} Mb] Deleted Folder: {file_path}")
+                    
+                    cleanerLogSystem(f" - [{size:.2f} Mb] Deleted Folder: {file_path}")
 
             except Exception as e:
                 manage_general_vars("exception")
                 printLog(log, f"    [bright_red][!] Error deleting {file_path} [bright_magenta]-> [bright_cyan]{e}")
-                full_log.append(f" - [!] Error deleting {file_path} -> {e}")
+                cleanerLogSystem(f" - [!] Error deleting {file_path} -> {e}")
 
     except Exception as e:
         printLog(log, f"    [bright_red][!] Error deleting [ {path} ] [bright_magenta]-> [bright_cyan]{e}")
-        full_log.append(f" - [!] Error deleting [ {path} ] -> {e}")
+        cleanerLogSystem(f" - [!] Error deleting [ {path} ] -> {e}")
 
     footer = make_dynamic_boxed_message(
         self=log.app,
@@ -171,12 +172,8 @@ def cleaner(path, log):
 
     printLog(log, footer)
 
-    if DEBUG_MODE:
-        with open(f"Logs/Core-Cleaner-Deleted.log", "a", encoding="utf-8") as f:
-            for line in full_log:
-                f.write(line + "\n")
-                f.write(f"Current Files [{stats['current_files']}] - Current Folders [{stats['current_folders']}] - Current MB [{stats['current_mb']}]\n")
-                f.write(f"Total Files [{stats['total_files']}] - Total Folders [{stats['total_folders']}] - Total MB [{stats['total_mb']}]\n\n\n\n")
+        
+
 
 
 # ╔═════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╗
@@ -226,15 +223,6 @@ def get_browser_paths(p, browser, paths, detected):
     detected_folders[PROGRAMS_PATH_NAMES[browser]] = paths_counter
     detected_profiles[PROGRAMS_PATH_NAMES[browser]] = profiles_counter
 
-    if DEBUG_MODE:
-        with open("Logs/Core-Cleaner-Detected.log", "a", encoding="utf-8") as f:
-            f.write(f"Program: {browser} - Folders: {paths_counter} - Profiles: {profiles_counter}\n------------------------------------------------------------------\n")
-            for path in full_log:
-                f.write(path + "\n")
-            f.write("\n\n")
-
-
-
 def detect_and_get_paths():
 
     detected = []
@@ -257,7 +245,7 @@ def detect_and_get_paths():
     if os.path.isdir(p := USER_PROFILE + "\\AppData\\Local\\Microsoft\\Edge"): get_browser_paths(p, "Edge", paths, detected)
 
     # ────── Brave Browser 
-    if os.path.isdir(p := USER_PROFILE + "\\AppData\\Local\\BraveSoftware\\Brave-Browser"): get_browser_paths(p, "Brave", paths, detected)
+    if os.path.isdir(p := USER_PROFILE + "\\AppData\\Local\\BraveSoftware\\Brave-Browser"): get_browser_paths(p, "Brave-Browser", paths, detected)
 
     # ────── Google Chrome 
     if os.path.isdir(p := USER_PROFILE + "\\AppData\\Local\\Google\\Chrome"): get_browser_paths(p, "Chrome", paths, detected)
@@ -347,6 +335,14 @@ def detect_and_get_paths():
                 paths_counter += 1
 
         detected_folders[PROGRAMS_PATH_NAMES["Code"]] += paths_counter
+
+    
+    if DEBUG_MODE:
+
+        for item in get_detected_paths(detected=detected, paths=paths):
+            with open("Logs/Core-Cleaner-Detected.log", "a", encoding="utf-8") as f:
+                f.write(item)
+
 
 
     # ─────────────────────────────────────────────────────────────── APPS (UWP) ────────────────────────────────────────────────────────────────────────

@@ -1,5 +1,5 @@
-Program: Edge - Folders: 6 - Profiles: 0
-------------------------------------------------------------------
+Program: Edge Browser - Folders: 6 - Profiles: 0
+--------------------------------------------------
 C:\Users\moher\AppData\Local\Microsoft\Edge\User Data\Default\Cache
 C:\Users\moher\AppData\Local\Microsoft\Edge\User Data\Default\File System
 C:\Users\moher\AppData\Local\Microsoft\Edge\User Data\Default\IndexedDB
@@ -8,8 +8,8 @@ C:\Users\moher\AppData\Local\Microsoft\Edge\User Data\Default\Service Worker
 C:\Users\moher\AppData\Local\Microsoft\Edge\User Data\Default\blob_storage
 
 
-Program: Brave - Folders: 74 - Profiles: 13
-------------------------------------------------------------------
+Program: Brave Browser - Folders: 74 - Profiles: 13
+--------------------------------------------------
 C:\Users\moher\AppData\Local\BraveSoftware\Brave-Browser\User Data\Profile 1\Cache
 C:\Users\moher\AppData\Local\BraveSoftware\Brave-Browser\User Data\Profile 1\File System
 C:\Users\moher\AppData\Local\BraveSoftware\Brave-Browser\User Data\Profile 1\IndexedDB
@@ -86,20 +86,34 @@ C:\Users\moher\AppData\Local\BraveSoftware\Brave-Browser\User Data\Profile 9\Ser
 C:\Users\moher\AppData\Local\BraveSoftware\Brave-Browser\User Data\Profile 9\blob_storage
 
 
-Program: Code - Folders: 4 - Profiles: 0
-------------------------------------------------------------------
+Program: Discord - Folders: 3 - Profiles: 0
+--------------------------------------------------
+C:\Users\moher\AppData\Roaming\discord\Cache
+C:\Users\moher\AppData\Roaming\discord\Code Cache
+C:\Users\moher\AppData\Roaming\discord\GPU_Cache
+
+
+Program: Telegram - Folders: 5 - Profiles: 0
+--------------------------------------------------
+C:\Users\moher\AppData\Roaming\Telegram Desktop\tupdates
+C:\Users\moher\AppData\Roaming\Telegram Desktop\tdata\dumps
+C:\Users\moher\AppData\Roaming\Telegram Desktop\tdata\emoji
+C:\Users\moher\AppData\Roaming\Telegram Desktop\tdata\temp
+C:\Users\moher\AppData\Roaming\Telegram Desktop\tdata\user_data
+
+
+Program: VS-Code - Folders: 11 - Profiles: 0
+--------------------------------------------------
 C:\Users\moher\AppData\Roaming\Code\Cache
 C:\Users\moher\AppData\Roaming\Code\Code Cache
 C:\Users\moher\AppData\Roaming\Code\Service Worker
 C:\Users\moher\AppData\Roaming\Code\blob_storage
-
-
-Program: 5319275A.WhatsAppDesktop_cv1g1gvanyjgm - Folders: 5 - Profiles: 0
-------------------------------------------------------------------
-C:\Users\moher\AppData\Local\Packages\5319275A.WhatsAppDesktop_cv1g1gvanyjgm\LocalCache\EBWebView\Default\Cache
-C:\Users\moher\AppData\Local\Packages\5319275A.WhatsAppDesktop_cv1g1gvanyjgm\LocalCache\EBWebView\Default\IndexedDB
-C:\Users\moher\AppData\Local\Packages\5319275A.WhatsAppDesktop_cv1g1gvanyjgm\LocalCache\EBWebView\Default\Code Cache
-C:\Users\moher\AppData\Local\Packages\5319275A.WhatsAppDesktop_cv1g1gvanyjgm\LocalCache\EBWebView\Default\Service Worker
-C:\Users\moher\AppData\Local\Packages\5319275A.WhatsAppDesktop_cv1g1gvanyjgm\LocalCache\EBWebView\Default\blob_storage
+C:\Users\moher\AppData\Roaming\Code\CachedData
+C:\Users\moher\AppData\Roaming\Code\DawnCache
+C:\Users\moher\AppData\Roaming\Code\DawnGraphiteCache
+C:\Users\moher\AppData\Roaming\Code\DawnWebGPUCache
+C:\Users\moher\AppData\Roaming\Code\CachedExtensionVSIXs
+C:\Users\moher\AppData\Roaming\Code\Service Worker
+C:\Users\moher\AppData\Roaming\Code\Backups
 
 

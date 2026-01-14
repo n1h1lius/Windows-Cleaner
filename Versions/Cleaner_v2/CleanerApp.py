@@ -124,12 +124,15 @@ class CleanerApp(App):
                 f"[bright_cyan]{m} [bright_green]"
                 f"Detected - [{detected_folders[m]}] Folders"
             )
+
+            cleanerLogSystem(f"[+] -> {m} Detected - [{detected_folders[m]}] Folders", output=True)
+            
         log.write(make_boxed_message(self, "DETECTING INSTALLED PROGRAMS", detected_lines, "bright_white"))
         log.refresh()
 
         await asyncio.sleep(1.0)
 
-        full_log = []
+
         for path in paths:
             app_name = "System Temps"
             for key in PROGRAMS_PATH_NAMES.keys():
@@ -142,11 +145,11 @@ class CleanerApp(App):
 
             cleaning_lines = [f"     CLEANING: {path}"]
 
-            full_log.append(cleaning_lines[0])
+            cleanerLogSystem(cleaning_lines[0], output=True)
 
             log.write(make_boxed_message(self, "", cleaning_lines, "bright_cyan"))
             log.refresh()
-
+            
             cleaner(path, log)
 
             global stats
@@ -155,7 +158,7 @@ class CleanerApp(App):
                 f"Deleted Folders [{stats['current_folders']}] || "
                 f"Deleted Size in Mb [{stats['current_mb']:.2f}]"
             )
-            full_log.append("".join(cleaned_line))
+            cleanerLogSystem("".join(cleaned_line), output=True)
             log.write(make_boxed_message(self, "", [cleaned_line], "bright_green"))
             log.refresh()
 
@@ -179,17 +182,13 @@ class CleanerApp(App):
         )
         final_lines.append(f"[bright_white]PRESS ANY KEY TO EXIT[/bright_white]")
 
-        full_log.append(f"\n\nTOTAL CLEANED || Files [{stats['total_files']}] || Folders [{stats['total_folders']}] || Size [{stats['total_mb']:.2f} Mb]")
+        cleanerLogSystem(f"\n\nTOTAL CLEANED || Files [{stats['total_files']}] || Folders [{stats['total_folders']}] || Size [{stats['total_mb']:.2f} Mb]", output=True)
 
         log.write(make_boxed_message(self, "PROCESS COMPLETED", final_lines, "bright_yellow"))
         log.refresh()
 
         self.query_one("#btn-settings", Button).disabled = False
 
-        if DEBUG_MODE:
-            with open("Logs/Cleaner-Output.log", "a", encoding="utf-8") as f:
-                for line in full_log:
-                    f.write(line + "\n")
 
     def key_any(self):
         self.exit()

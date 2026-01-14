@@ -125,13 +125,16 @@ class CleanerModal(ModalScreen):
             detected_lines.append(
                 f"   [bright_green][+] [bright_magenta]-> "
                 f"[bright_cyan]{m} [bright_green]"
-                f"Detected - [{detected_folders[m]}] Folders [bright_white]"
-                f"Detected - [{1 if detected_profiles[m] == 0 else detected_profiles[m]}] Profiles"
+                f"Detected - [{detected_folders[m]}] Folders"
             )
+
+            cleanerLogSystem(f"[+] -> {m} Detected - [{detected_folders[m]}] Folders", output=True)
+            
         log.write(make_boxed_message(self, "DETECTING INSTALLED PROGRAMS", detected_lines, "bright_white"))
         log.refresh()
 
         await asyncio.sleep(1.0)
+
 
         for path in paths:
             app_name = "System Temps"
@@ -144,16 +147,21 @@ class CleanerModal(ModalScreen):
             self.query_one("#status-bar").update(f"Status: Cleaning {app_name}...")
 
             cleaning_lines = [f"     CLEANING: {path}"]
+
+            cleanerLogSystem(cleaning_lines[0], output=True)
+
             log.write(make_boxed_message(self, "", cleaning_lines, "bright_cyan"))
             log.refresh()
-
+            
             cleaner(path, log)
 
+            global stats
             cleaned_line = (
                 f"     CLEANED || Deleted Files [{stats['current_files']}] || "
                 f"Deleted Folders [{stats['current_folders']}] || "
                 f"Deleted Size in Mb [{stats['current_mb']:.2f}]"
             )
+            cleanerLogSystem("".join(cleaned_line), output=True)
             log.write(make_boxed_message(self, "", [cleaned_line], "bright_green"))
             log.refresh()
 
@@ -176,6 +184,9 @@ class CleanerModal(ModalScreen):
             f"Folders [{stats['total_folders']}] || Size [{stats['total_mb']:.2f} Mb]"
         )
         final_lines.append(f"[bright_white]PRESS ANY KEY TO EXIT[/bright_white]")
+
+        cleanerLogSystem(f"\n\nTOTAL CLEANED || Files [{stats['total_files']}] || Folders [{stats['total_folders']}] || Size [{stats['total_mb']:.2f} Mb]", output=True)
+
         log.write(make_boxed_message(self, "PROCESS COMPLETED", final_lines, "bright_yellow"))
         log.refresh()
 
