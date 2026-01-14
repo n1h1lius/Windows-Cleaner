@@ -119,7 +119,7 @@ QUOTES = [
 # ╚═════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╝
 
 def init_logSystem():
-    log_files = ["Core-Cleaner.log", "Core-Cleaner-Deleted.log", "Core-Cleaner-Detected.log"]
+    log_files = ["Core-Cleaner.log", "Core-Cleaner-Deleted.log", "Core-Cleaner-Detected.log", "Cleaner-Output.log"]
 
     for file in log_files:
         with open(f"Logs/{file}", "w") as f:

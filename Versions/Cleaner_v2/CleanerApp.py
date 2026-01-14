@@ -129,6 +129,7 @@ class CleanerApp(App):
 
         await asyncio.sleep(1.0)
 
+        full_log = []
         for path in paths:
             app_name = "System Temps"
             for key in PROGRAMS_PATH_NAMES.keys():
@@ -140,17 +141,21 @@ class CleanerApp(App):
             self.query_one("#status-bar").update(f"Status: Cleaning {app_name}...")
 
             cleaning_lines = [f"     CLEANING: {path}"]
+
+            full_log.append(cleaning_lines)
+
             log.write(make_boxed_message(self, "", cleaning_lines, "bright_cyan"))
             log.refresh()
 
             cleaner(path, log)
-            
+
             global stats
             cleaned_line = (
                 f"     CLEANED || Deleted Files [{stats['current_files']}] || "
                 f"Deleted Folders [{stats['current_folders']}] || "
                 f"Deleted Size in Mb [{stats['current_mb']:.2f}]"
             )
+            full_log.append(cleaned_line)
             log.write(make_boxed_message(self, "", [cleaned_line], "bright_green"))
             log.refresh()
 
@@ -173,10 +178,16 @@ class CleanerApp(App):
             f"Folders [{stats['total_folders']}] || Size [{stats['total_mb']:.2f} Mb]"
         )
         final_lines.append(f"[bright_white]PRESS ANY KEY TO EXIT[/bright_white]")
+        full_log.extend(final_lines)
         log.write(make_boxed_message(self, "PROCESS COMPLETED", final_lines, "bright_yellow"))
         log.refresh()
 
         self.query_one("#btn-settings", Button).disabled = False
+
+        if DEBUG_MODE:
+            with open("Logs/Cleaner-Output.log", "a", encoding="utf-8") as f:
+                for line in full_log:
+                    f.write(line + "\n")
 
     def key_any(self):
         self.exit()
