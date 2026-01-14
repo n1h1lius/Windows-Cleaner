@@ -10,159 +10,171 @@ Total Files [0] - Total Folders [0] - Total MB [0.0]
 
 
 
- - [0.00 Mb] Deleted Folder: C:\Users\moher\AppData\Local\Temp\18506652-e94c-4142-8d96-d5b1ef8e71e1
-Current Files [0] - Current Folders [5] - Current MB [0.0]
+ - [0.00 Mb] Deleted Folder: C:\$Recycle.Bin\S-1-5-21-2175557846-2714958979-4214015566-1001
+Current Files [0] - Current Folders [1] - Current MB [0.0]
 Total Files [0] - Total Folders [0] - Total MB [0.0]
 
 
 
- - [0.00 Mb] Deleted Folder: C:\Users\moher\AppData\Local\Temp\chrome_url_fetcher_11476_1650626061
-Current Files [0] - Current Folders [5] - Current MB [0.0]
-Total Files [0] - Total Folders [0] - Total MB [0.0]
-
-
-
- - [0.00 Mb] Deleted Folder: C:\Users\moher\AppData\Local\Temp\chrome_url_fetcher_11476_2072272330
-Current Files [0] - Current Folders [5] - Current MB [0.0]
-Total Files [0] - Total Folders [0] - Total MB [0.0]
-
-
-
- - [0.00 Mb] Deleted Folder: C:\Users\moher\AppData\Local\Temp\chrome_url_fetcher_11476_422479930
-Current Files [0] - Current Folders [5] - Current MB [0.0]
-Total Files [0] - Total Folders [0] - Total MB [0.0]
+ - [!] Error deleting C:\Users\moher\AppData\Local\Temp\18506652-e94c-4142-8d96-d5b1ef8e71e1 -> [WinError 32] El proceso no tiene acceso al archivo porque está siendo utilizado por otro proceso: 'C:\\Users\\moher\\AppData\\Local\\Temp\\18506652-e94c-4142-8d96-d5b1ef8e71e1\\codeium\\manager\\locks\\child_lock_1768393237590352200_3286599256151296803'
+Current Files [1] - Current Folders [2] - Current MB [0.01]
+Total Files [0] - Total Folders [1] - Total MB [0.0]
 
 
 
  - [0.00 Mb] Deleted Folder: C:\Users\moher\AppData\Local\Temp\gen_py
-Current Files [0] - Current Folders [5] - Current MB [0.0]
-Total Files [0] - Total Folders [0] - Total MB [0.0]
+Current Files [1] - Current Folders [2] - Current MB [0.01]
+Total Files [0] - Total Folders [1] - Total MB [0.0]
+
+
+
+ - [0.00 Mb] Deleted Folder: C:\Users\moher\AppData\Local\Temp\system-commandline-sentinel-files
+Current Files [1] - Current Folders [2] - Current MB [0.01]
+Total Files [0] - Total Folders [1] - Total MB [0.0]
+
+
+
+ - [0.01 Mb] Deleted file: C:\Users\moher\AppData\Local\Temp\{4653FB25-8C9B-4E69-95D1-63A4E64D4639}.png
+Current Files [1] - Current Folders [2] - Current MB [0.01]
+Total Files [0] - Total Folders [1] - Total MB [0.0]
 
 
 
  - [!] Error deleting C:\Users\moher\AppData\Local\Microsoft\Windows\Explorer\iconcache_16.db -> [WinError 5] Acceso denegado: 'C:\\Users\\moher\\AppData\\Local\\Microsoft\\Windows\\Explorer\\iconcache_16.db'
 Current Files [0] - Current Folders [0] - Current MB [0.0]
-Total Files [0] - Total Folders [5] - Total MB [0.0]
+Total Files [1] - Total Folders [3] - Total MB [0.01]
 
 
 
  - [!] Error deleting C:\Users\moher\AppData\Local\Microsoft\Windows\Explorer\iconcache_32.db -> [WinError 5] Acceso denegado: 'C:\\Users\\moher\\AppData\\Local\\Microsoft\\Windows\\Explorer\\iconcache_32.db'
 Current Files [0] - Current Folders [0] - Current MB [0.0]
-Total Files [0] - Total Folders [5] - Total MB [0.0]
+Total Files [1] - Total Folders [3] - Total MB [0.01]
 
 
 
- - [0.16 Mb] Deleted Folder: C:\Users\moher\AppData\Local\Microsoft\Edge\User Data\Default\Cache\Cache_Data
-Current Files [0] - Current Folders [2] - Current MB [0.16]
-Total Files [0] - Total Folders [5] - Total MB [0.0]
+ - [!] Error deleting C:\Users\moher\AppData\Local\Microsoft\Edge\User Data\Default\Cache\Cache_Data -> [WinError 5] Acceso denegado: 'C:\\Users\\moher\\AppData\\Local\\Microsoft\\Edge\\User Data\\Default\\Cache\\Cache_Data\\data_0'
+Current Files [0] - Current Folders [0] - Current MB [0.0]
+Total Files [1] - Total Folders [3] - Total MB [0.01]
 
 
 
- - [0.00 Mb] Deleted Folder: C:\Users\moher\AppData\Local\Microsoft\Edge\User Data\Default\Cache\No_Vary_Search
-Current Files [0] - Current Folders [2] - Current MB [0.16]
-Total Files [0] - Total Folders [5] - Total MB [0.0]
+ - [!] Error deleting C:\Users\moher\AppData\Local\Microsoft\Edge\User Data\Default\Cache\No_Vary_Search -> [WinError 32] El proceso no tiene acceso al archivo porque está siendo utilizado por otro proceso: 'C:\\Users\\moher\\AppData\\Local\\Microsoft\\Edge\\User Data\\Default\\Cache\\No_Vary_Search\\journal.baj'
+Current Files [0] - Current Folders [0] - Current MB [0.0]
+Total Files [1] - Total Folders [3] - Total MB [0.01]
 
 
 
- - [0.00 Mb] Deleted Folder: C:\Users\moher\AppData\Local\Microsoft\Edge\User Data\Default\Service Worker\Database
+ - [0.00 Mb] Deleted Folder: C:\Users\moher\AppData\Local\Microsoft\Edge\User Data\Default\Code Cache\js
 Current Files [0] - Current Folders [1] - Current MB [0.0]
-Total Files [0] - Total Folders [7] - Total MB [0.16]
+Total Files [1] - Total Folders [3] - Total MB [0.01]
 
 
 
- - [0.08 Mb] Deleted Folder: C:\Users\moher\AppData\Local\BraveSoftware\Brave-Browser\User Data\Profile 4\Cache\Cache_Data
-Current Files [0] - Current Folders [1] - Current MB [0.08]
-Total Files [0] - Total Folders [8] - Total MB [0.16]
+ - [!] Error deleting C:\Users\moher\AppData\Local\Microsoft\Edge\User Data\Default\Service Worker\Database -> [WinError 32] El proceso no tiene acceso al archivo porque está siendo utilizado por otro proceso: 'C:\\Users\\moher\\AppData\\Local\\Microsoft\\Edge\\User Data\\Default\\Service Worker\\Database\\000003.log'
+Current Files [0] - Current Folders [0] - Current MB [0.0]
+Total Files [1] - Total Folders [4] - Total MB [0.01]
 
 
 
- - [0.00 Mb] Deleted Folder: C:\Users\moher\AppData\Local\BraveSoftware\Brave-Browser\User Data\Profile 4\IndexedDB\https_calendar.google.com_0.indexeddb.leveldb
-Current Files [0] - Current Folders [4] - Current MB [0.0]
-Total Files [0] - Total Folders [9] - Total MB [0.24]
+ - [!] Error deleting C:\Users\moher\AppData\Local\BraveSoftware\Brave-Browser\User Data\Profile 4\Cache\Cache_Data -> [WinError 5] Acceso denegado: 'C:\\Users\\moher\\AppData\\Local\\BraveSoftware\\Brave-Browser\\User Data\\Profile 4\\Cache\\Cache_Data\\data_0'
+Current Files [0] - Current Folders [0] - Current MB [0.0]
+Total Files [1] - Total Folders [4] - Total MB [0.01]
 
 
 
- - [0.00 Mb] Deleted Folder: C:\Users\moher\AppData\Local\BraveSoftware\Brave-Browser\User Data\Profile 4\IndexedDB\https_docs.google.com_0.indexeddb.leveldb
-Current Files [0] - Current Folders [4] - Current MB [0.0]
-Total Files [0] - Total Folders [9] - Total MB [0.24]
+ - [!] Error deleting C:\Users\moher\AppData\Local\BraveSoftware\Brave-Browser\User Data\Profile 4\IndexedDB\https_calendar.google.com_0.indexeddb.leveldb -> [WinError 32] El proceso no tiene acceso al archivo porque está siendo utilizado por otro proceso: 'C:\\Users\\moher\\AppData\\Local\\BraveSoftware\\Brave-Browser\\User Data\\Profile 4\\IndexedDB\\https_calendar.google.com_0.indexeddb.leveldb\\000004.log'
+Current Files [0] - Current Folders [0] - Current MB [0.0]
+Total Files [1] - Total Folders [4] - Total MB [0.01]
 
 
 
- - [0.00 Mb] Deleted Folder: C:\Users\moher\AppData\Local\BraveSoftware\Brave-Browser\User Data\Profile 4\IndexedDB\https_drive.google.com_0.indexeddb.leveldb
-Current Files [0] - Current Folders [4] - Current MB [0.0]
-Total Files [0] - Total Folders [9] - Total MB [0.24]
+ - [!] Error deleting C:\Users\moher\AppData\Local\BraveSoftware\Brave-Browser\User Data\Profile 4\IndexedDB\https_docs.google.com_0.indexeddb.leveldb -> [WinError 32] El proceso no tiene acceso al archivo porque está siendo utilizado por otro proceso: 'C:\\Users\\moher\\AppData\\Local\\BraveSoftware\\Brave-Browser\\User Data\\Profile 4\\IndexedDB\\https_docs.google.com_0.indexeddb.leveldb\\000003.log'
+Current Files [0] - Current Folders [0] - Current MB [0.0]
+Total Files [1] - Total Folders [4] - Total MB [0.01]
 
 
 
- - [0.00 Mb] Deleted Folder: C:\Users\moher\AppData\Local\BraveSoftware\Brave-Browser\User Data\Profile 4\IndexedDB\https_www.youtube.com_0.indexeddb.leveldb
-Current Files [0] - Current Folders [4] - Current MB [0.0]
-Total Files [0] - Total Folders [9] - Total MB [0.24]
+ - [!] Error deleting C:\Users\moher\AppData\Local\BraveSoftware\Brave-Browser\User Data\Profile 4\IndexedDB\https_drive.google.com_0.indexeddb.leveldb -> [WinError 32] El proceso no tiene acceso al archivo porque está siendo utilizado por otro proceso: 'C:\\Users\\moher\\AppData\\Local\\BraveSoftware\\Brave-Browser\\User Data\\Profile 4\\IndexedDB\\https_drive.google.com_0.indexeddb.leveldb\\000003.log'
+Current Files [0] - Current Folders [0] - Current MB [0.0]
+Total Files [1] - Total Folders [4] - Total MB [0.01]
 
 
 
- - [0.00 Mb] Deleted Folder: C:\Users\moher\AppData\Local\BraveSoftware\Brave-Browser\User Data\Profile 4\Service Worker\Database
+ - [!] Error deleting C:\Users\moher\AppData\Local\BraveSoftware\Brave-Browser\User Data\Profile 4\IndexedDB\https_www.youtube.com_0.indexeddb.leveldb -> [WinError 32] El proceso no tiene acceso al archivo porque está siendo utilizado por otro proceso: 'C:\\Users\\moher\\AppData\\Local\\BraveSoftware\\Brave-Browser\\User Data\\Profile 4\\IndexedDB\\https_www.youtube.com_0.indexeddb.leveldb\\000003.log'
+Current Files [0] - Current Folders [0] - Current MB [0.0]
+Total Files [1] - Total Folders [4] - Total MB [0.01]
+
+
+
+ - [!] Error deleting C:\Users\moher\AppData\Local\BraveSoftware\Brave-Browser\User Data\Profile 4\Service Worker\Database -> [WinError 32] El proceso no tiene acceso al archivo porque está siendo utilizado por otro proceso: 'C:\\Users\\moher\\AppData\\Local\\BraveSoftware\\Brave-Browser\\User Data\\Profile 4\\Service Worker\\Database\\000003.log'
+Current Files [0] - Current Folders [0] - Current MB [0.0]
+Total Files [1] - Total Folders [4] - Total MB [0.01]
+
+
+
+ - [!] Error deleting C:\Users\moher\AppData\Roaming\discord\Cache\Cache_Data -> [WinError 5] Acceso denegado: 'C:\\Users\\moher\\AppData\\Roaming\\discord\\Cache\\Cache_Data\\data_0'
+Current Files [0] - Current Folders [0] - Current MB [0.0]
+Total Files [1] - Total Folders [4] - Total MB [0.01]
+
+
+
+ - [!] Error deleting C:\Users\moher\AppData\Roaming\Code\Cache\Cache_Data -> [WinError 5] Acceso denegado: 'C:\\Users\\moher\\AppData\\Roaming\\Code\\Cache\\Cache_Data\\data_0'
+Current Files [0] - Current Folders [0] - Current MB [0.0]
+Total Files [1] - Total Folders [4] - Total MB [0.01]
+
+
+
+ - [!] Error deleting C:\Users\moher\AppData\Roaming\Code\Cache\No_Vary_Search -> [WinError 32] El proceso no tiene acceso al archivo porque está siendo utilizado por otro proceso: 'C:\\Users\\moher\\AppData\\Roaming\\Code\\Cache\\No_Vary_Search\\journal.baj'
+Current Files [0] - Current Folders [0] - Current MB [0.0]
+Total Files [1] - Total Folders [4] - Total MB [0.01]
+
+
+
+ - [!] Error deleting C:\Users\moher\AppData\Roaming\Code\Service Worker\Database -> [WinError 32] El proceso no tiene acceso al archivo porque está siendo utilizado por otro proceso: 'C:\\Users\\moher\\AppData\\Roaming\\Code\\Service Worker\\Database\\000003.log'
+Current Files [0] - Current Folders [0] - Current MB [0.0]
+Total Files [1] - Total Folders [4] - Total MB [0.01]
+
+
+
+ - [0.00 Mb] Deleted Folder: C:\Users\moher\AppData\Roaming\Code\CachedData\94e8ae2b28cb5cc932b86e1070569c4463565c37
 Current Files [0] - Current Folders [1] - Current MB [0.0]
-Total Files [0] - Total Folders [13] - Total MB [0.24]
+Total Files [1] - Total Folders [4] - Total MB [0.01]
 
 
 
- - [0.31 Mb] Deleted Folder: C:\Users\moher\AppData\Roaming\discord\Cache\Cache_Data
-Current Files [0] - Current Folders [1] - Current MB [0.31]
-Total Files [0] - Total Folders [14] - Total MB [0.24]
-
-
-
- - [0.00 Mb] Deleted Folder: C:\Users\moher\AppData\Roaming\Code\Cache\Cache_Data
-Current Files [0] - Current Folders [2] - Current MB [0.0]
-Total Files [0] - Total Folders [15] - Total MB [0.55]
-
-
-
- - [0.00 Mb] Deleted Folder: C:\Users\moher\AppData\Roaming\Code\Cache\No_Vary_Search
-Current Files [0] - Current Folders [2] - Current MB [0.0]
-Total Files [0] - Total Folders [15] - Total MB [0.55]
-
-
-
- - [0.00 Mb] Deleted Folder: C:\Users\moher\AppData\Roaming\Code\Service Worker\Database
-Current Files [0] - Current Folders [1] - Current MB [0.0]
-Total Files [0] - Total Folders [17] - Total MB [0.55]
-
-
-
- - [0.00 Mb] Deleted Folder: C:\Users\moher\AppData\Roaming\Code\Service Worker\Database
-Current Files [0] - Current Folders [1] - Current MB [0.0]
-Total Files [0] - Total Folders [18] - Total MB [0.55]
+ - [!] Error deleting C:\Users\moher\AppData\Roaming\Code\Service Worker\Database -> [WinError 32] El proceso no tiene acceso al archivo porque está siendo utilizado por otro proceso: 'C:\\Users\\moher\\AppData\\Roaming\\Code\\Service Worker\\Database\\000003.log'
+Current Files [0] - Current Folders [0] - Current MB [0.0]
+Total Files [1] - Total Folders [5] - Total MB [0.01]
 
 
 
  - [0.00 Mb] Deleted Folder: C:\Users\moher\AppData\Roaming\Code\Backups\5895e78a4d6deb8e18fedc4b2c5cad1f
 Current Files [0] - Current Folders [1] - Current MB [0.0]
-Total Files [0] - Total Folders [19] - Total MB [0.55]
+Total Files [1] - Total Folders [5] - Total MB [0.01]
 
 
 
- - [0.09 Mb] Deleted Folder: C:\Users\moher\AppData\Local\Packages\5319275A.WhatsAppDesktop_cv1g1gvanyjgm\LocalCache\EBWebView\Default\Cache\Cache_Data
-Current Files [0] - Current Folders [2] - Current MB [0.09]
-Total Files [0] - Total Folders [20] - Total MB [0.55]
+ - [!] Error deleting C:\Users\moher\AppData\Local\Packages\5319275A.WhatsAppDesktop_cv1g1gvanyjgm\LocalCache\EBWebView\Default\Cache\Cache_Data -> [WinError 5] Acceso denegado: 'C:\\Users\\moher\\AppData\\Local\\Packages\\5319275A.WhatsAppDesktop_cv1g1gvanyjgm\\LocalCache\\EBWebView\\Default\\Cache\\Cache_Data\\data_0'
+Current Files [0] - Current Folders [0] - Current MB [0.0]
+Total Files [1] - Total Folders [6] - Total MB [0.01]
 
 
 
- - [0.00 Mb] Deleted Folder: C:\Users\moher\AppData\Local\Packages\5319275A.WhatsAppDesktop_cv1g1gvanyjgm\LocalCache\EBWebView\Default\Cache\No_Vary_Search
-Current Files [0] - Current Folders [2] - Current MB [0.09]
-Total Files [0] - Total Folders [20] - Total MB [0.55]
+ - [!] Error deleting C:\Users\moher\AppData\Local\Packages\5319275A.WhatsAppDesktop_cv1g1gvanyjgm\LocalCache\EBWebView\Default\Cache\No_Vary_Search -> [WinError 32] El proceso no tiene acceso al archivo porque está siendo utilizado por otro proceso: 'C:\\Users\\moher\\AppData\\Local\\Packages\\5319275A.WhatsAppDesktop_cv1g1gvanyjgm\\LocalCache\\EBWebView\\Default\\Cache\\No_Vary_Search\\journal.baj'
+Current Files [0] - Current Folders [0] - Current MB [0.0]
+Total Files [1] - Total Folders [6] - Total MB [0.01]
 
 
 
- - [0.19 Mb] Deleted Folder: C:\Users\moher\AppData\Local\Packages\5319275A.WhatsAppDesktop_cv1g1gvanyjgm\LocalCache\EBWebView\Default\IndexedDB\https_web.whatsapp.com_0.indexeddb.leveldb
-Current Files [0] - Current Folders [1] - Current MB [0.19]
-Total Files [0] - Total Folders [22] - Total MB [0.64]
+ - [!] Error deleting C:\Users\moher\AppData\Local\Packages\5319275A.WhatsAppDesktop_cv1g1gvanyjgm\LocalCache\EBWebView\Default\IndexedDB\https_web.whatsapp.com_0.indexeddb.leveldb -> [WinError 32] El proceso no tiene acceso al archivo porque está siendo utilizado por otro proceso: 'C:\\Users\\moher\\AppData\\Local\\Packages\\5319275A.WhatsAppDesktop_cv1g1gvanyjgm\\LocalCache\\EBWebView\\Default\\IndexedDB\\https_web.whatsapp.com_0.indexeddb.leveldb\\008863.ldb'
+Current Files [0] - Current Folders [0] - Current MB [0.0]
+Total Files [1] - Total Folders [6] - Total MB [0.01]
 
 
 
- - [0.00 Mb] Deleted Folder: C:\Users\moher\AppData\Local\Packages\5319275A.WhatsAppDesktop_cv1g1gvanyjgm\LocalCache\EBWebView\Default\Service Worker\Database
-Current Files [0] - Current Folders [1] - Current MB [0.0]
-Total Files [0] - Total Folders [23] - Total MB [0.8300000000000001]
+ - [!] Error deleting C:\Users\moher\AppData\Local\Packages\5319275A.WhatsAppDesktop_cv1g1gvanyjgm\LocalCache\EBWebView\Default\Service Worker\Database -> [WinError 32] El proceso no tiene acceso al archivo porque está siendo utilizado por otro proceso: 'C:\\Users\\moher\\AppData\\Local\\Packages\\5319275A.WhatsAppDesktop_cv1g1gvanyjgm\\LocalCache\\EBWebView\\Default\\Service Worker\\Database\\000004.log'
+Current Files [0] - Current Folders [0] - Current MB [0.0]
+Total Files [1] - Total Folders [6] - Total MB [0.01]
 
 
 

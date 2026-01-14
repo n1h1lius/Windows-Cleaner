@@ -20,7 +20,20 @@ def get_file_size(file_path):
         return round(os.path.getsize(file_path) / (1024 * 1024), 2)
     except:
         return 0.0
-    
+
+def get_dir_size(path):
+    """Calcula tamaño recursivo de una carpeta."""
+    total = 0
+    try:
+        for entry in os.scandir(path):
+            if entry.is_file():
+                total += entry.stat().st_size
+            elif entry.is_dir():
+                total += get_dir_size(entry.path)
+    except Exception:
+        pass  # Ignora si no se puede acceder
+    return round(total / (1024 * 1024), 2)
+
 previous_managed_var = 0
 previous_managed_size = 0
 
@@ -120,9 +133,9 @@ def cleaner(path, log):
 
                 elif os.path.isdir(file_path):
 
-                    size = get_file_size(file_path)
+                    size = get_dir_size(file_path)
 
-                    shutil.rmtree(file_path, ignore_errors=True)
+                    shutil.rmtree(file_path, ignore_errors=False)
                     
                     content_line = (
                         f" [bright_green][+][bright_red] - Deleting folder "
