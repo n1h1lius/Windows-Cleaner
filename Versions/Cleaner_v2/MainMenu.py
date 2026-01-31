@@ -130,7 +130,8 @@ class MainMenu(App):
         self.query_one("#logo-small", Static).update(RichText(msg.logo_ascii, style="bold magenta"))
         self.query_one("#status-bar").update(QUOTES[random.randint(0, len(QUOTES)-1)])
 
-        if UPDATED:
+        from Scripts import config
+        if config.UPDATED:
             print("UPDATED")
             dialog = MessageBox(f"{V2_NAME} Updated Succesfully to version {RELEASE_VERSION}", mode="success") 
             self.push_screen_wait(dialog)
