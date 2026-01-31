@@ -4,6 +4,7 @@ Requires: pip install textual pyfiglet colorama
 Run as Admin!
 """
 
+import subprocess
 from Scripts.config import *
 from Scripts.utils import messages as msg
 from Scripts.core.Cleaner import *
@@ -50,6 +51,7 @@ class MainMenu(App):
         yield Header(show_clock=True)
         yield Footer()
 
+        # ================ SIDEBAR CANVAS ================
         with Container(id="sidebar"):
             yield Static(id="logo-small")
             yield Label("By N1h1lius", id="credit")
@@ -64,17 +66,21 @@ class MainMenu(App):
 
 
 
-        # Tus acciones dentro del mismo recuadro
+        # ================ MAIN CANVAS ================
         with VerticalScroll(id="actions-container"):
 
             with Horizontal():
+                # ================ SYSTEM COLUMN ================
                 with Vertical(id="system"):
                     yield Label("SYSTEM FUNCTIONS", classes="menu-section-title")
                     yield Button("Cleaner", id="btn-cleaner")
+                    yield Button("Debloater", id="btn-debloater")
 
+                # ================ SECURITY COLUMN ================
                 with Vertical(id="security"):
                     yield Label("SECURITY FUNCTIONS", classes="menu-section-title")
 
+                # ================ SPECIAL ACTIONS COLUMN ================
                 with Vertical(id="menu-special-actions"):
                     yield Label("SPECIAL ACTIONS", classes="menu-section-title")
 
@@ -82,15 +88,25 @@ class MainMenu(App):
 
         yield Static("Main Menu Started", id="status-bar")
 
-    def on_mount(self) -> None:
-        self.query_one("#logo-small", Static).update(RichText(msg.logo_ascii, style="bold magenta"))
-        self.query_one("#status-bar").update(QUOTES[random.randint(0, len(QUOTES)-1)])
 
+
+    # ================ SYSTEM BUTTONS ================
     @on(Button.Pressed, "#btn-cleaner")
     def open_cleaner(self) -> None:
         self.query_one("#status-bar").update(QUOTES[random.randint(0, len(QUOTES)-1)])
         self.push_screen(CleanerModal())
-    
+
+    @on(Button.Pressed, "#btn-debloater")
+    def open_debloater(self) -> None:
+            self.query_one("#status-bar").update(QUOTES[random.randint(0, len(QUOTES)-1)])
+            script_path = os.path.join("Scripts", "utils", "debloater", "W10-11_Debloater.bat")
+            
+            try:
+                subprocess.Popen(f'start "" "{script_path}"', shell=True)            
+            except Exception as e:
+                self.query_one("#status-bar").update(f"Error: {str(e)}")
+
+    # ================ LEFT COLUMN BUTTONS ================
     @on(Button.Pressed, "#btn-settings")
     def open_settings(self) -> None:
         self.query_one("#status-bar").update(QUOTES[random.randint(0, len(QUOTES)-1)])
@@ -107,6 +123,11 @@ class MainMenu(App):
     @on(Button.Pressed, "#btn-exit")
     def exit_app(self):
         self.exit()
+
+    # ================ GENERAL EVENTS ================
+    def on_mount(self) -> None:
+        self.query_one("#logo-small", Static).update(RichText(msg.logo_ascii, style="bold magenta"))
+        self.query_one("#status-bar").update(QUOTES[random.randint(0, len(QUOTES)-1)])
 
     def on_resize(self) -> None:
         #self.query_one(RichLog).refresh()
