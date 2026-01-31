@@ -97,21 +97,20 @@ def cleaner_v2_1():
 
 def update(bat_path=None):
 
-    from Scripts.config import APP_VERSION, UPDATED
+    from Scripts import config
 
-    if APP_VERSION == 1:
+    if config.APP_VERSION == 1:
 
         from Scripts.core.update import main as check_for_updates
 
         if check_for_updates(bat_path) == False:
             print(f"{HEADER}\n{HEADER}{Fore.LIGHTCYAN_EX}No new updates available. Continuing without update...\n")
 
-    elif APP_VERSION == 2:
+    elif config.APP_VERSION == 2:
         from Versions.Cleaner_v2.UpdaterApp import UpdaterApp
         app = UpdaterApp()
         app.run()
-        print("UPDATED FROM MAIN PY")
-        UPDATED = True
+        config.UPDATED = True
 
 def force_maximize():
     if sys.platform == "win32":
