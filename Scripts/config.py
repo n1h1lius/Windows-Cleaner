@@ -38,6 +38,7 @@ USER_PROFILE = os.environ.get("USERPROFILE")
 # ─────── App Basic Vars ─────────
 APP_TITLE = ""
 DAYS_THRESHOLD = config.getint("MainVars", "DaysThreshold", fallback=3)
+SMALL_RES = False
 
 
 
@@ -46,8 +47,6 @@ DAYS_THRESHOLD = config.getint("MainVars", "DaysThreshold", fallback=3)
 # ╚═════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╝
 
 # ─────── Folders Vars ─────────
-detected_folders = {}
-detected_profiles = {}
 
 BROWSER_FOLDERS = ["\\Cache", "\\File System", "\\IndexedDB", "\\Code Cache", "\\Service Worker", "\\GPU_Cache", "\\blob_storage"]
 UWP_FOLDERS = ["\\LocalCache", "\\LocalState", "\\TempState"]

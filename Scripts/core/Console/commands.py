@@ -6,7 +6,6 @@ import argparse
 from Scripts.config import *
 from Scripts.core.Cleaner import detect_and_get_paths
 from Scripts.utils.ui_helpers import tree_box
-from Scripts.utils.Getters import get_detected_paths
 
 init(autoreset=True)
 

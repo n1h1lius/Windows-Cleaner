@@ -2,7 +2,6 @@
 from Scripts.config import *
 
 from Scripts.utils.ui_helpers import make_dynamic_boxed_message
-from Scripts.utils.Getters import get_detected_paths
 
 import os
 import time

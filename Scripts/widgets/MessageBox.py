@@ -4,6 +4,8 @@ from textual.widgets import Button, Label, RichLog
 from textual.containers import Horizontal, Vertical, VerticalScroll
 import os
 
+from Scripts import config
+
 class MessageBox(ModalScreen[bool]):
     """
     Regular MessageBox
@@ -51,6 +53,9 @@ class MessageBox(ModalScreen[bool]):
         log: RichLog = self.query_one("#mb-details-area", RichLog)
         log.auto_scroll = False
         log.styles.min_width = self.minWidthForWrapping
+
+        if config.SMALL_RES:
+            log.styles.max_height = 15
 
         log.clear()
 

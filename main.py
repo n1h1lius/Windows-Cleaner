@@ -4,6 +4,7 @@ import argparse
 from Scripts.utils import messages as msg
 from Scripts.core.Console.actions import RunCommand
 from Scripts.core.Console import commands as cmd
+from Scripts import config
 
 from colorama import Fore, init
 
@@ -39,8 +40,7 @@ def handle_args():
 
     # ─────── Debug Mode ─────────
     if args.debug_mode:
-        from Scripts.config import DEBUG_MODE
-        DEBUG_MODE = True
+        config.DEBUG_MODE = True
 
     # ─────── Force Small Resolution ─────────
     if check_resolution(): msg.updater_intro = msg.small_res_updater_intro
@@ -136,7 +136,11 @@ def check_resolution(max_width=1920, max_height=1024):
 
         root.destroy()
 
-        return width < max_width or height < max_height
+        boolean = width < max_width or height < max_height
+
+        config.SMALL_RES = boolean
+
+        return boolean
 
     except Exception:
         return False

@@ -1,5 +1,10 @@
+### 1.4.28c
 
-### 1.4.28
+- Updated Some features
+    · Adjusted MessageBox Max-Height related to smaller resolutions
+
+
+### 1.4.28b
 
 - Added new features
     · Added a way to check Historic Changelog in Settings
