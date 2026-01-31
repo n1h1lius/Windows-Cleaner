@@ -46,6 +46,12 @@ class MainMenu(App):
     def __init__(self, updated_status: bool = False, **kwargs):
         super().__init__(**kwargs)
         self.updated = updated_status  # Guardamos el booleano en la instancia
+        
+        print(f"SELF UPDATED -> {updated_status}")
+        if updated_status:
+            print("UPDATED")
+            dialog = MessageBox(f"{V2_NAME} Updated Succesfully to version {RELEASE_VERSION}", mode="success") 
+            self.push_screen(dialog)
 
     def compose(self) -> ComposeResult:
         global APP_TITLE
@@ -133,12 +139,6 @@ class MainMenu(App):
     def on_mount(self) -> None:
         self.query_one("#logo-small", Static).update(RichText(msg.logo_ascii, style="bold magenta"))
         self.query_one("#status-bar").update(QUOTES[random.randint(0, len(QUOTES)-1)])
-
-        print(f"SELF UPDATED -> {self.updated}")
-        if self.updated:
-            print("UPDATED")
-            dialog = MessageBox(f"{V2_NAME} Updated Succesfully to version {RELEASE_VERSION}", mode="success") 
-            self.push_screen_wait(dialog)
 
     def on_resize(self) -> None:
         #self.query_one(RichLog).refresh()
