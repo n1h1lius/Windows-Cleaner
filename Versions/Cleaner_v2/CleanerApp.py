@@ -22,6 +22,7 @@ from textual.widgets import Header, Footer, Static, RichLog, Tree, Label, Button
 from textual.reactive import reactive
 from rich.text import Text as RichText
 
+from Scripts.widgets.MessageBox import MessageBox
 from Versions.Cleaner_v2.modals.SettingsModal import SettingsModal
 
 
@@ -41,10 +42,15 @@ class CleanerApp(App):
     CSS_PATH = ["css/style.css", "css/CleanerAppStyle.css"]
     current_app = reactive("Preparing...")
 
+    def __init__(self, updated_status: bool = False, **kwargs):
+        super().__init__(**kwargs)
+        self.updated = updated_status
+        self.release_version = get_release_version()
+
     def compose(self) -> ComposeResult:
         global APP_TITLE
 
-        self.title = f"CleanerApp - v{RELEASE_VERSION}"
+        self.title = f"{V2_NAME} - v{self.release_version}"
         self.paths, self.detected = detect_and_get_paths()
         APP_TITLE = self.title
 
@@ -67,10 +73,23 @@ class CleanerApp(App):
 
         yield Static("Status: Starting...", id="status-bar")
 
+    def show_updates(self):
+
+        if self.updated:
+            update_changes_path = os.path.join("Data", "changelog.txt")
+
+            with open(update_changes_path, "r", encoding="utf-8") as f:
+                data = f.readlines()
+
+            dialog = MessageBox(f"{V2_NAME} Updated Succesfully to version {self.release_version}\n\n", mode="success", details=data) 
+            self.push_screen(dialog)
+            
     def on_mount(self) -> None:
 
         self.query_one("#logo-small", Static).update(RichText(msg.logo_ascii, style="bold magenta"))
         self.query_one("#status-bar").update(QUOTES[random.randint(0, len(QUOTES)-1)])
+
+        self.show_updates()
 
         tree = self.query_one(Tree)
         tree.root.expand()

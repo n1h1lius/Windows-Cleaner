@@ -51,7 +51,7 @@ class MainMenu(App):
     def compose(self) -> ComposeResult:
         global APP_TITLE
 
-        self.title = f"Windows Cleaner - v{self.release_version}"
+        self.title = f"{V2_NAME} - v{self.release_version}"
         APP_TITLE = self.title
         
         yield Header(show_clock=True)
