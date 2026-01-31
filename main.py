@@ -87,14 +87,15 @@ def cleaner_v2():
 
 def cleaner_v2_1():
     from Versions.Cleaner_v2.MainMenu import MainMenu
-
-    app = MainMenu()
+    global UPDATED
+    app = MainMenu(UPDATED)
     app.run()
 
 # ╔═════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╗
 # ║                                                       MAIN FUNCTIONS                                                            ║
 # ╚═════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╝
 
+UPDATED = False
 def update(bat_path=None):
 
     from Scripts import config
@@ -110,7 +111,8 @@ def update(bat_path=None):
         from Versions.Cleaner_v2.UpdaterApp import UpdaterApp
         app = UpdaterApp()
         app.run()
-        config.UPDATED = True
+        global UPDATED
+        UPDATED = True
 
 def force_maximize():
     if sys.platform == "win32":

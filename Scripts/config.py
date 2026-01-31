@@ -39,8 +39,6 @@ USER_PROFILE = os.environ.get("USERPROFILE")
 APP_TITLE = ""
 DAYS_THRESHOLD = config.getint("MainVars", "DaysThreshold", fallback=3)
 
-# ─────── Updates Checker ─────────
-UPDATED = False
 
 
 # ╔═════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╗
