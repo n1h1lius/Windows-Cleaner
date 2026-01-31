@@ -87,18 +87,19 @@ def cleaner_v2():
 
 def cleaner_v2_1():
     from Versions.Cleaner_v2.MainMenu import MainMenu
-    global UPDATED
-    app = MainMenu(UPDATED)
+    global IS_SYSTEM_UPDATED
+
+    app = MainMenu(updated_status=IS_SYSTEM_UPDATED)
     app.run()
 
 # ╔═════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╗
 # ║                                                       MAIN FUNCTIONS                                                            ║
 # ╚═════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╝
-
-UPDATED = False
+IS_SYSTEM_UPDATED = False
 def update(bat_path=None):
 
     from Scripts import config
+    global IS_SYSTEM_UPDATED
 
     if config.APP_VERSION == 1:
 
@@ -110,9 +111,8 @@ def update(bat_path=None):
     elif config.APP_VERSION == 2:
         from Versions.Cleaner_v2.UpdaterApp import UpdaterApp
         app = UpdaterApp()
-        app.run()
-        global UPDATED
-        UPDATED = True
+        IS_SYSTEM_UPDATED = app.run()
+
 
 def force_maximize():
     if sys.platform == "win32":
