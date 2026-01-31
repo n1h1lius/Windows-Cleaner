@@ -131,6 +131,7 @@ class MainMenu(App):
         self.query_one("#status-bar").update(QUOTES[random.randint(0, len(QUOTES)-1)])
 
         if UPDATED:
+            print("UPDATED")
             dialog = MessageBox(f"{V2_NAME} Updated Succesfully to version {RELEASE_VERSION}", mode="success") 
             self.push_screen_wait(dialog)
 
