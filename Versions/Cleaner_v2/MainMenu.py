@@ -132,7 +132,7 @@ class MainMenu(App):
 
         if UPDATED:
             dialog = MessageBox(f"{V2_NAME} Updated Succesfully to version {RELEASE_VERSION}", mode="success") 
-            self.app.push_screen_wait(dialog)
+            self.push_screen_wait(dialog)
 
     def on_resize(self) -> None:
         #self.query_one(RichLog).refresh()
