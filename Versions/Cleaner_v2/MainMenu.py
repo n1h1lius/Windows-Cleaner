@@ -45,7 +45,7 @@ class MainMenu(App):
 
     def __init__(self, updated_status: bool = False, **kwargs):
         super().__init__(**kwargs)
-        self.updated = True
+        self.updated = updated_status
         self.release_version = get_release_version()
 
     def compose(self) -> ComposeResult:
