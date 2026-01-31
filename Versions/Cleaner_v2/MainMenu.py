@@ -45,7 +45,7 @@ class MainMenu(App):
 
     def __init__(self, updated_status: bool = False, **kwargs):
         super().__init__(**kwargs)
-        self.updated = updated_status
+        self.updated = True
         self.release_version = get_release_version()
 
     def compose(self) -> ComposeResult:
@@ -140,7 +140,7 @@ class MainMenu(App):
             with open(update_changes_path, "r", encoding="utf-8") as f:
                 data = f.readlines()
 
-            dialog = MessageBox(f"{V2_NAME} Updated Succesfully to version {self.release_version}\n\n" + "\n".join(data), mode="success") 
+            dialog = MessageBox(f"{V2_NAME} Updated Succesfully to version {self.release_version}\n\n", mode="success", details=data) 
             self.push_screen(dialog)
 
     def on_mount(self) -> None:

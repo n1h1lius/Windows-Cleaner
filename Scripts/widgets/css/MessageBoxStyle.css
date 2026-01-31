@@ -13,7 +13,7 @@ MessageBox Vertical.mb-dialog {
     width: 85;
     height: auto;
     max-height: 80vh;
-    padding: 1 2 1 1;          /* ← reduce left padding to 1 or 0 */
+    padding: 1 2 1 1;         
     background: $panel;
     border: tall $primary;
 }
@@ -44,17 +44,35 @@ MessageBox Vertical#mb-dialog-success {
 ==============================================================================
 */
 
-.mb-dialog RichLog#mb-details-area {
+.mb-dialog Label.mb-separator-normal {
     width: 100%;
-    height: 15;
-    min-height: 0;
-    padding: 0 1 0 0;          
-    margin: 0;
-    text-align: left;
-    overflow-y: scroll;
+    text-align: center;
+    text-style: bold;
+    align: center top;
     color: rgb(0, 162, 255);
 }
 
+.mb-dialog Label.mb-separator-success {
+    width: 100%;
+    text-align: center;
+    text-style: bold;
+    align: center top;
+    color: rgb(0, 255, 106);
+}
+
+.mb-dialog RichLog#mb-details-area {
+    width: 100%;
+    height: auto;                    /* or 15, 20, 25... rows */
+    min-height: 10;
+    max-height: 20;
+    margin: 1 0;
+    padding: 1 2 1 2;
+    overflow-y: scroll;             
+    scrollbar-gutter: stable;
+    scrollbar-size: 0 1;              /* or 2 if you want thicker */
+    scrollbar-background: #222;
+    scrollbar-color: #666 #333;
+}
 
 /*
 ==============================================================================
@@ -113,7 +131,6 @@ MessageBox Vertical#mb-dialog-success {
     height: auto;
     text-align: center;
     margin-top: 3;
-    margin-bottom: 3;
     color: $text-muted;
 }
 

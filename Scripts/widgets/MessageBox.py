@@ -32,7 +32,9 @@ class MessageBox(ModalScreen[bool]):
             
             # Si hay detalles, mostramos el RichLog con scroll
             if self.details:
+                yield Label("─────────────────────────────────────────────────────────────────────────────", classes=f"mb-separator-{self.mode}")
                 yield RichLog(highlight=True, markup=True, wrap=False, id="mb-details-area")
+                yield Label("─────────────────────────────────────────────────────────────────────────────", classes=f"mb-separator-{self.mode}")
 
             with Horizontal(classes="mb-buttons"):
                 yield Button(self.buttonName, classes=f"mb-button-{self.mode}")
@@ -42,23 +44,17 @@ class MessageBox(ModalScreen[bool]):
             return
 
         log: RichLog = self.query_one("#mb-details-area", RichLog)
+        log.auto_scroll = False
+
         log.clear()
 
         for line in self.details:
-            # Preserve leading spaces (indentation), strip only trailing \n/\r
-            cleaned = line.rstrip("\r\n")
+            cleaned = line.rstrip("\n")
+            if cleaned.strip():  # skip completely empty lines
+                log.write(cleaned + "\n")
 
-            if not cleaned.strip():  # skip blank lines
-                continue
-
-            log.write(cleaned)
-            log.write("\n")  # explicit newline after each line
-
-        # After all writes: force recompute layout & scroll to end
-        log.styles.align_horizontal = "left"
-        log.styles.scrollbar_visibility = "visible"
-        log.refresh(layout=True)
-        log.scroll_end(animate=False)
+        log.scroll_home(animate=False)
+        log.refresh(layout=True, repaint=True)
 
     def on_button_pressed(self, event: Button.Pressed) -> None:
         self.dismiss(True)
