@@ -110,7 +110,7 @@ def update(bat_path=None):
         from Versions.Cleaner_v2.UpdaterApp import UpdaterApp
         app = UpdaterApp()
         app.run()
-        UPDATED = False
+        UPDATED = True
 
 def force_maximize():
     if sys.platform == "win32":
