@@ -43,8 +43,9 @@ class CleanerModal(ModalScreen):
     current_app = reactive("Preparing...")
 
     def compose(self) -> ComposeResult:
-        self.paths, self.detected = detect_and_get_paths()
-        self.title = f"CleanerApp - v{RELEASE_VERSION}"
+        self.paths_dict = detect_and_get_paths()
+        self.release_version = get_release_version()
+        self.title = f"{V2_NAME} - v{self.release_version}"
         yield Header(show_clock=True)
         yield Footer()
 
@@ -73,7 +74,7 @@ class CleanerModal(ModalScreen):
         tree = self.query_one(Tree)
         tree.root.expand()
         self.app_nodes = {}
-        for cat in self.detected:
+        for cat in self.paths_dict:
             node = tree.root.add(f"[bright_red][ - ][/] {cat}")
             self.app_nodes[cat] = node
 
@@ -118,60 +119,54 @@ class CleanerModal(ModalScreen):
         log.refresh()
         await asyncio.sleep(1.0)
 
-        paths, detected = self.paths, self.detected
+        paths_dict = self.paths_dict
 
         detected_lines = []
-        for m in detected:
+        for m in paths_dict:
             detected_lines.append(
                 f"   [bright_green][+] [bright_magenta]-> "
                 f"[bright_cyan]{m} [bright_green]"
-                f"Detected - [{detected_folders[m]}] Folders"
+                f"Detected - [{paths_dict[m]['detected_folders']}] Folders"
             )
 
-            cleanerLogSystem(f"[+] -> {m} Detected - [{detected_folders[m]}] Folders", output=True)
+            cleanerLogSystem(f"[+] -> {m} Detected - [{paths_dict[m]['detected_folders']}] Folders", output=True)
             
         log.write(make_boxed_message(self, "DETECTING INSTALLED PROGRAMS", detected_lines, "bright_white"))
         log.refresh()
 
         await asyncio.sleep(1.0)
 
-
-        for path in paths:
-            app_name = "System Temps"
-            for key in PROGRAMS_PATH_NAMES.keys():
-                if key in path:
-                    app_name = PROGRAMS_PATH_NAMES[key]
-                    break
-
-            self.current_app = app_name
-            self.query_one("#status-bar").update(f"Status: Cleaning {app_name}...")
-
-            cleaning_lines = [f"     CLEANING: {path}"]
+        for key in paths_dict:
+            self.current_app = key
+            self.query_one("#status-bar").update(f"Status: Cleaning {key}...")
+            cleaning_lines = [f"CLEANING: {key}"]
 
             cleanerLogSystem(cleaning_lines[0], output=True)
 
-            log.write(make_boxed_message(self, "", cleaning_lines, "bright_cyan"))
-            log.refresh()
-            
-            cleaner(path, log)
-
-            global stats
-            cleaned_line = (
-                f"     CLEANED || Deleted Files [{stats['current_files']}] || "
-                f"Deleted Folders [{stats['current_folders']}] || "
-                f"Deleted Size in Mb [{stats['current_mb']:.2f}]"
-            )
-            cleanerLogSystem("".join(cleaned_line), output=True)
-            log.write(make_boxed_message(self, "", [cleaned_line], "bright_green"))
+            log.write(make_dynamic_boxed_message(self=self, state="header", title=cleaning_lines[0], border_color="bright_cyan", content_color="bright_cyan"))
             log.refresh()
 
-            tree = self.query_one(Tree)
-            if app_name in self.app_nodes:
-                node = self.app_nodes[app_name]
-                label = RichText(f"[ + ] {app_name}")
-                label.stylize("green", 0, 5)
-                node.label = label
-                tree.refresh()
+            for path in paths_dict[key]["paths"]:
+
+                cleaner(path, log)
+
+                global stats
+                cleaned_line = (
+                    f"     CLEANED || Deleted Files [{stats['current_files']}] || "
+                    f"Deleted Folders [{stats['current_folders']}] || "
+                    f"Deleted Size in Mb [{stats['current_mb']:.2f}]"
+                )
+                cleanerLogSystem("".join(cleaned_line), output=True)
+                log.write(make_boxed_message(self, "", [cleaned_line], "bright_green"))
+                log.refresh()
+
+                tree = self.query_one(Tree)
+                if key in self.app_nodes:
+                    node = self.app_nodes[key]
+                    label = RichText(f"[ + ] {key}")
+                    label.stylize("green", 0, 5)
+                    node.label = label
+                    tree.refresh()
 
         self.current_app = "Finished"
         self.query_one("#status-bar").update("Process Finished Successfully")

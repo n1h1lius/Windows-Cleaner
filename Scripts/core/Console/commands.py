@@ -25,22 +25,19 @@ def list_all_cleaner_scopes():
 
 def list_available_cleaner_scopes():
     """Returns all available options that cleaner script has detected on the system"""
-    detected = detect_and_get_paths()[1]
+    paths_dict = detect_and_get_paths()
 
     browsers = []
     software = []
     apps_uwp = []
 
-
-    for item in detected:
-        
-        for key in PROGRAMS_PATH_NAMES:
-            if item in PROGRAMS_PATH_NAMES[key]:
+    for key in paths_dict:
+        for browser in PROGRAMS_PATH_NAMES:
+            if key == browser or key in PROGRAMS_PATH_NAMES[browser]:
+                if browser in LIST_ALL_SCOPES["Browsers"]: browsers.append(key)
+                elif browser in LIST_ALL_SCOPES["Software"]: software.append(key)
+                elif browser in LIST_ALL_SCOPES["Apps UWP"]: apps_uwp.append(key)               
                 
-                if key in LIST_ALL_SCOPES["Browsers"]: browsers.append(key)
-                elif key in LIST_ALL_SCOPES["Software"]: software.append(key)
-                elif key in LIST_ALL_SCOPES["Apps UWP"]: apps_uwp.append(key)
-
     all_sections = [
         ("Browsers", browsers),
         ("Software", software),
@@ -50,36 +47,20 @@ def list_available_cleaner_scopes():
     tree_box("AVAILABLE CLEANER SCOPES", all_sections)
 
 def get_all_detected_paths():
-    paths_detected = detect_and_get_paths()
-    detected = get_detected_paths(paths_detected[1], paths_detected[0])
+
+    paths_dict = detect_and_get_paths()
 
     print(f"{Fore.LIGHTYELLOW_EX}  /////\n  ///// {Fore.RESET}")
 
-    for line in detected:
-        if line.startswith("Program: "):
-            opt = line.split("\n")
+    all_sections = []
+    
+    for key in paths_dict:
+        all_sections.append((key, [item for item in paths_dict[key]["paths"]]))
 
-            new_line = ""
-            flag = False
-            for i, item in enumerate(opt[0].split(" ")):
-                if item.startswith("Program") or item.startswith("Folders") or item.startswith("Profiles"):
-                    item = f"{Fore.YELLOW + Style.BRIGHT}{item}"
-                    item2 = f"{Fore.LIGHTRED_EX}[ {Fore.GREEN + Style.BRIGHT}{opt[0].split(" ")[i+1]}{Fore.LIGHTRED_EX} ]{Fore.RESET}"
-                    new_line += item + " " + item2 + " "
-                    flag = True
-                
-                elif flag is False:
-                    new_line += item
+    tree_box("DETECTED PATHS", all_sections)
 
-
-            print(f"{HEADER}{Fore.LIGHTCYAN_EX}{new_line}\n{HEADER}{Fore.LIGHTCYAN_EX}{opt[1]}")
-        
-        elif line == "\n\n":
-            print(f"{Fore.LIGHTYELLOW_EX}  /////\n  ///// {Fore.RESET}")
-
-        else:
-            print(f"{HEADER}{Fore.LIGHTWHITE_EX}{line.strip("\n")}")
-
+    print(f"{Fore.LIGHTYELLOW_EX}  /////\n  ///// {Fore.RESET}")
+   
 
 def get_parser_commands(parser):
     """

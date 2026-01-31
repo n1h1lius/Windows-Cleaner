@@ -180,47 +180,39 @@ def cleaner(path, log):
 # ║                                                       PROGRAMS DETECTOR                                                         ║
 # ╚═════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╝
 
-def get_browser_paths(p, browser, paths, detected):
+def get_browser_paths(p, browser, paths_dict={}):
 
-    detected.append(PROGRAMS_PATH_NAMES[browser])
-
-    paths_counter = 0
-    profiles_counter = 0
+    paths_dict[PROGRAMS_PATH_NAMES[browser]] = {"paths": [], "detected_folders": 0, "detected_profiles": 0}
 
     # ────── Profile Folders
     user_data = p + "\\User Data"
     if os.path.isdir(user_data):
         for folder in os.listdir(user_data):
             if folder.startswith("Profile"):
-                profiles_counter += 1
+                paths_dict[PROGRAMS_PATH_NAMES[browser]]["detected_profiles"] += 1
                 for browser_folder in BROWSER_FOLDERS:
                     if os.path.isdir(os.path.join(user_data, folder) + browser_folder): 
-                        paths.append(os.path.join(user_data, folder) + browser_folder)
-                        paths_counter += 1
+                        paths_dict[PROGRAMS_PATH_NAMES[browser]]["paths"].append(os.path.join(user_data, folder) + browser_folder)
+                        paths_dict[PROGRAMS_PATH_NAMES[browser]]["detected_folders"] += 1
 
      # ────── Default Folder
     default = user_data + "\\Default"
     for browser_folder in BROWSER_FOLDERS:
         if os.path.isdir(default + browser_folder): 
-            paths.append(default + browser_folder)
-            paths_counter += 1
+            paths_dict[PROGRAMS_PATH_NAMES[browser]]["paths"].append(default + browser_folder)
+            paths_dict[PROGRAMS_PATH_NAMES[browser]]["detected_folders"] += 1
 
     # ────── Root Folder
     for browser_folder in BROWSER_FOLDERS:
         if os.path.isdir(p + browser_folder): 
-            paths.append(p + browser_folder)
-            paths_counter += 1
+            paths_dict[PROGRAMS_PATH_NAMES[browser]]["paths"].append(p + browser_folder)
+            paths_dict[PROGRAMS_PATH_NAMES[browser]]["detected_folders"] += 1
     
-    # ────── Update Counters
-    detected_folders[PROGRAMS_PATH_NAMES[browser]] = paths_counter
-    detected_profiles[PROGRAMS_PATH_NAMES[browser]] = profiles_counter
 
 def detect_and_get_paths():
 
-    detected = []
-
     # ── Windows 10 + 11 Temp Directories ───────────────────────────────────────────────────────
-    paths = [
+    system_paths = [
         "C:\\Windows\\Temp",
         #"C:\\Windows\\Prefetch",
         "C:\\$Recycle.Bin",
@@ -231,34 +223,36 @@ def detect_and_get_paths():
         USER_PROFILE + "\\AppData\\Local\\Microsoft\\Windows\\Explorer"
     ]
 
+    paths_dict = {"System": {"paths": system_paths, "detected_folders": 0, "detected_profiles": 0}}
+
     # ─────────────────────────────────────────────────────────────── BROWSERS ────────────────────────────────────────────────────────────────────────
 
     # ────── Microsoft Edge
-    if os.path.isdir(p := USER_PROFILE + "\\AppData\\Local\\Microsoft\\Edge"): get_browser_paths(p, "Edge", paths, detected)
+    if os.path.isdir(p := USER_PROFILE + "\\AppData\\Local\\Microsoft\\Edge"): get_browser_paths(p, "Edge", paths_dict)
 
     # ────── Brave Browser 
-    if os.path.isdir(p := USER_PROFILE + "\\AppData\\Local\\BraveSoftware\\Brave-Browser"): get_browser_paths(p, "Brave-Browser", paths, detected)
+    if os.path.isdir(p := USER_PROFILE + "\\AppData\\Local\\BraveSoftware\\Brave-Browser"): get_browser_paths(p, "Brave-Browser", paths_dict)
 
     # ────── Google Chrome 
-    if os.path.isdir(p := USER_PROFILE + "\\AppData\\Local\\Google\\Chrome"): get_browser_paths(p, "Chrome", paths, detected)
+    if os.path.isdir(p := USER_PROFILE + "\\AppData\\Local\\Google\\Chrome"): get_browser_paths(p, "Chrome", paths_dict)
 
     # ────── Firefox
-    if os.path.isdir(p := USER_PROFILE + "\\AppData\\Local\\Mozilla\\Firefox\\Profiles"): get_browser_paths(p, "Firefox", paths, detected)
+    if os.path.isdir(p := USER_PROFILE + "\\AppData\\Local\\Mozilla\\Firefox\\Profiles"): get_browser_paths(p, "Firefox", paths_dict)
 
     # ────── Vivaldi  
-    if os.path.isdir(p := USER_PROFILE + "\\AppData\\Local\\Vivaldi"): get_browser_paths(p, "Vivaldi", paths, detected)
+    if os.path.isdir(p := USER_PROFILE + "\\AppData\\Local\\Vivaldi"): get_browser_paths(p, "Vivaldi", paths_dict)
 
     # ────── Yandex Browser 
-    if os.path.isdir(p := USER_PROFILE + "\\AppData\\Local\\Yandex\\YandexBrowser"): get_browser_paths(p, "Yandex", paths, detected)
+    if os.path.isdir(p := USER_PROFILE + "\\AppData\\Local\\Yandex\\YandexBrowser"): get_browser_paths(p, "Yandex", paths_dict)
     
     # ────── Chromium 
-    if os.path.isdir(p := USER_PROFILE + "\\AppData\\Local\\Chromium"): get_browser_paths(p, "Chromium", paths, detected)
+    if os.path.isdir(p := USER_PROFILE + "\\AppData\\Local\\Chromium"): get_browser_paths(p, "Chromium", paths_dict)
 
     # ────── Waterfox  
-    if os.path.isdir(p := USER_PROFILE + "\\AppData\\Local\\Waterfox"): get_browser_paths(p, "Waterfox", paths, detected)
+    if os.path.isdir(p := USER_PROFILE + "\\AppData\\Local\\Waterfox"): get_browser_paths(p, "Waterfox", paths_dict)
 
     # ───── LibreWolf 
-    if os.path.isdir(p := USER_PROFILE + "\\AppData\\Local\\LibreWolf"): get_browser_paths(p, "LibreWolf", paths, detected)
+    if os.path.isdir(p := USER_PROFILE + "\\AppData\\Local\\LibreWolf"): get_browser_paths(p, "LibreWolf", paths_dict)
 
     # ────── Opera (Stable + GX) 
     if os.path.isdir(p := USER_PROFILE + "\\AppData\\Roaming\\Opera Software"):
@@ -271,25 +265,22 @@ def detect_and_get_paths():
         for base in opera_paths:
             if os.path.isdir(base):
                 name = "Opera GX Stable" if "GX" in base else "Opera Stable"
-                get_browser_paths(base, name, paths, detected)
+                get_browser_paths(base, name, paths_dict)
 
 
     # ─────────────────────────────────────────────────────────────── SOFTWARE ────────────────────────────────────────────────────────────────────────
 
     # ────── Discord 
     if os.path.isdir(p := USER_PROFILE + "\\AppData\\Roaming\\discord"):
-        counter = 0
-        detected.append(PROGRAMS_PATH_NAMES["discord"])
+        paths_dict[PROGRAMS_PATH_NAMES["discord"]] = {"paths": [], "detected_folders": 0, "detected_profiles": 0}
 
         for suf in ["\\Cache", "\\Code Cache", "\\GPU_Cache"]:
-            paths.append(p + suf)
-            counter += 1
+            paths_dict[PROGRAMS_PATH_NAMES["discord"]]["paths"].append(p + suf)
+            paths_dict[PROGRAMS_PATH_NAMES["discord"]]["detected_folders"] += 1
 
-        detected_folders[PROGRAMS_PATH_NAMES["discord"]] = counter
-        detected_profiles[PROGRAMS_PATH_NAMES["discord"]] = 0
 
     # ────── Spotify (Official Desktop Version) 
-    if os.path.isdir(p := USER_PROFILE + "\\AppData\\Local\\Spotify"): get_browser_paths(p, "Spotify", paths, detected)
+    if os.path.isdir(p := USER_PROFILE + "\\AppData\\Local\\Spotify"): get_browser_paths(p, "Spotify", paths_dict)
 
     # ────── Telegram Desktop
     if os.path.isdir(p := USER_PROFILE + "\\AppData\\Roaming\\Telegram Desktop"):
@@ -301,79 +292,60 @@ def detect_and_get_paths():
             p + "\\tdata\\user_data",
         ]
 
-        paths_counter = 0
-
-        detected.append(PROGRAMS_PATH_NAMES["Telegram Desktop"])
+        paths_dict[PROGRAMS_PATH_NAMES["Telegram Desktop"]] = {"paths": [], "detected_folders": 0, "detected_profiles": 0}
 
         for folder in telegram_paths:
             if os.path.isdir(folder):
-                paths.append(folder)
-                paths_counter += 1
+                paths_dict[PROGRAMS_PATH_NAMES["Telegram Desktop"]]["paths"].append(folder)
+                paths_dict[PROGRAMS_PATH_NAMES["Telegram Desktop"]]["detected_folders"] += 1
 
-        detected_folders[PROGRAMS_PATH_NAMES["Telegram Desktop"]] = paths_counter
-        detected_profiles[PROGRAMS_PATH_NAMES["Telegram Desktop"]] = 0
 
     # ────── VS-Code
     if os.path.isdir(p := USER_PROFILE + "\\AppData\\Roaming\\Code"): 
-        paths_counter = 0
 
-        get_browser_paths(p, "Code", paths, detected)
+        get_browser_paths(p, "Code", paths_dict)
 
         extra_folders = ["\\CachedData", "\\DawnCache", "\\DawnGraphiteCache", "\\DawnWebGPUCache", "\\CachedExtensionVSIXs", "\\CachedExtensions", "\\Service Worker", "\\Backups"]
 
         for folder in extra_folders:
             if os.path.isdir(p + folder):
-                paths.append(p + folder)
-                paths_counter += 1
-
-        detected_folders[PROGRAMS_PATH_NAMES["Code"]] += paths_counter
-
-    
-    if DEBUG_MODE:
-
-        for item in get_detected_paths(detected=detected, paths=paths):
-            with open("Logs/Core-Cleaner-Detected.log", "a", encoding="utf-8") as f:
-                f.write(item)
-
-
+                paths_dict[PROGRAMS_PATH_NAMES["Code"]]["paths"].append(p + folder)
+                paths_dict[PROGRAMS_PATH_NAMES["Code"]]["detected_folders"] += 1
 
     # ─────────────────────────────────────────────────────────────── APPS (UWP) ────────────────────────────────────────────────────────────────────────
 
     # ────── Spotify (Official UWP Version) 
     if os.path.isdir(p := USER_PROFILE + "\\AppData\\Local\\Packages\\SpotifyAB.SpotifyMusic_zpdnekdrzrea0"):
-        counter = 0
-        detected.append(PROGRAMS_PATH_NAMES["SpotifyAB.SpotifyMusic_zpdnekdrzrea0"])
+        paths_dict[PROGRAMS_PATH_NAMES["SpotifyAB.SpotifyMusic_zpdnekdrzrea0"]] = {"paths": [], "detected_folders": 0, "detected_profiles": 0}
 
         for suf in UWP_FOLDERS:
             if os.path.isdir(p + suf): 
-                paths.append(p + suf)
-                counter += 1
-
-        detected_folders[PROGRAMS_PATH_NAMES["SpotifyAB.SpotifyMusic_zpdnekdrzrea0"]] = counter
-        detected_profiles[PROGRAMS_PATH_NAMES["SpotifyAB.SpotifyMusic_zpdnekdrzrea0"]] = 0
+                paths_dict[PROGRAMS_PATH_NAMES["SpotifyAB.SpotifyMusic_zpdnekdrzrea0"]]["paths"].append(p + suf)
+                paths_dict[PROGRAMS_PATH_NAMES["SpotifyAB.SpotifyMusic_zpdnekdrzrea0"]]["detected_folders"] += 1
 
     # ────── What's App (Official UWP Version)
-    if os.path.isdir(p := USER_PROFILE + "\\AppData\\Local\\Packages\\5319275A.WhatsAppDesktop_cv1g1gvanyjgm\\LocalCache\\EBWebView\\Default"): get_browser_paths(p, "5319275A.WhatsAppDesktop_cv1g1gvanyjgm", paths, detected)
+    if os.path.isdir(p := USER_PROFILE + "\\AppData\\Local\\Packages\\5319275A.WhatsAppDesktop_cv1g1gvanyjgm\\LocalCache\\EBWebView\\Default"): get_browser_paths(p, "5319275A.WhatsAppDesktop_cv1g1gvanyjgm", paths_dict)
     
     
     # ─────────────────────────────────────────────────────────────── Debug Output Log ───────────────────────────────────────────────────────────────
+
     if DEBUG_MODE:
 
         with open("Logs/Core-Cleaner.log", "a", encoding="utf-8") as f:
             f.write("Detected:\n-------------------------------------\n")
-            for line in detected:
-                f.write(line + "\n")
+            for key in paths_dict:
+                f.write(f"{key}\n")
             
             f.write("\nPrograms_path_names:\n-------------------------------------\n")
             for key in PROGRAMS_PATH_NAMES:
                 f.write(f"{key}: {PROGRAMS_PATH_NAMES[key]}\n")
             
             f.write("\nDetected_Folders:\n-------------------------------------\n")
-            for key in detected_folders:
-                f.write(f"{key}: {detected_folders[key]}\n")
+            for key in paths_dict:
+                f.write(f"{key}: {paths_dict[key]['detected_folders']}\n")
             
             f.write("\nDetected_Profiles:\n-------------------------------------\n")
-            for key in detected_profiles:
-                f.write(f"{key}: {detected_profiles[key]}\n")
+            for key in paths_dict:
+                f.write(f"{key}: {paths_dict[key]['detected_profiles']}\n")
 
-    return [p for p in paths if os.path.exists(p)], detected
+    return paths_dict

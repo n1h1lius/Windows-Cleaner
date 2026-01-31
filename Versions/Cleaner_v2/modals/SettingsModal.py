@@ -25,6 +25,7 @@ class SettingsModal(ModalScreen):
         yield Header(show_clock=True)
         yield Footer()
 
+        # ================ SIDEBAR CANVAS ================
         with Container(id="sidebar"):
             yield Static(id="logo-small")
             yield Label("By N1h1lius", id="credit")
@@ -35,8 +36,10 @@ class SettingsModal(ModalScreen):
                 yield Button("Twitter", id="btn-twitter")
                 yield Button("Exit", id="btn-exit")
 
+        # ================ CENTRAL CANVAS ================
         with VerticalScroll(id="settings-container"):
             with Horizontal():
+                # ================ BOOLEANS COLUMN (SETTINGS) ================
                 with Vertical(id="booleans"):
                     yield Label("BOOLEAN SETTINGS", classes="section-title")
 
@@ -61,7 +64,7 @@ class SettingsModal(ModalScreen):
                         disabled=True
                     )
 
-
+                # ================ INPUT COLUMN ================
                 with Vertical(id="integers"):
                     yield Label("INPUT SETTINGS", classes="section-title")
 
@@ -90,24 +93,26 @@ class SettingsModal(ModalScreen):
                                 )
                         except ValueError:
                             pass
-
+                # ================ SPECIAL ACTIONS COLUMN ================
                 with Vertical(id="special-actions"):
                     yield Label("SPECIAL ACTIONS", classes="section-title")
                     yield Button("Check for Updates", id="btn-updater")
                     yield Button("Create Shortcut", id="btn-shortcut")
                     yield Button("Run on Start", id="btn-runstart")
+                    yield Button("Check Changelog Historic", id="btn-changelog")
 
         yield Static("Settings - Changes are saved automatically", id="status-bar")
 
+    # ================ GENERAL EVENTS ================
     def on_mount(self) -> None:
         self.query_one("#logo-small", Static).update(RichText(msg.logo_ascii, style="bold magenta"))
-        # Cargar estado de runonstart
         try:
             runonstart_val = config.getboolean("Deployment", "runonstart")
             self.query_one("#Deployment-runonstart").value = runonstart_val
         except:
             pass
 
+    # ================ BUTTONS ================
     @on(Button.Pressed, "#btn-back")
     def on_back(self) -> None:
         self.dismiss()
@@ -212,6 +217,20 @@ class SettingsModal(ModalScreen):
     @on(Button.Pressed, "#btn-updater")
     async def open_updater(self) -> None:
         self.app.push_screen(UpdaterModal())
+
+    # ── Historic Changelog Button ───────────────────────────────────────────────────────
+    @on(Button.Pressed, "#btn-changelog")
+    async def open_historic_changelog(self) -> None:
+
+        update_changes_path = os.path.join("Data", "historic-changelog.txt")
+
+        with open(update_changes_path, "r", encoding="utf-8") as f:
+            data = f.readlines()
+
+        from Scripts import config
+        dialog = MessageBox(f"{V2_NAME} CURRENT VERSION: {config.get_release_version()}\n\n", mode="normal", details=data) 
+        self.app.push_screen(dialog)
+    
     
     def on_unmount(self) -> None:
         # Restore main app title when modal is dismissed

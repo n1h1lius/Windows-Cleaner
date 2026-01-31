@@ -10,8 +10,8 @@ ini_file_path = "Data/config.ini"
 config = configparser.ConfigParser()
 config.read(ini_file_path, encoding="utf-8")
 
-AUTOUPDATE = config.getboolean("MainVars", "AutoUpdate", fallback=True)
-DEBUG_MODE = config.getboolean("MainVars", "DebugMode", fallback=False)
+AUTOUPDATE = config.getboolean("BooleanVars", "autoupdate", fallback=True)
+DEBUG_MODE = config.getboolean("BooleanVars", "debugmode", fallback=False)
 INI_SECTIONS = {"Deployment":"Deployment", "Input":"InputVars", "Boolean":"BooleanVars"}
 
 APP_VERSION = int(config["Deployment"]["Version"])
@@ -53,7 +53,7 @@ BROWSER_FOLDERS = ["\\Cache", "\\File System", "\\IndexedDB", "\\Code Cache", "\
 UWP_FOLDERS = ["\\LocalCache", "\\LocalState", "\\TempState"]
 
 LIST_ALL_SCOPES = {
-    "Browsers": ["Edge", "Brave", "Chrome", "Firefox", "Vivaldi", "Yandex", "Chromium", "Waterfox", "LibreWolf", "Opera GX Stable", "Opera Stable"],
+    "Browsers": ["Edge", "Brave-Browser", "Chrome", "Firefox", "Vivaldi", "Yandex", "Chromium", "Waterfox", "LibreWolf", "Opera GX Stable", "Opera Stable"],
     "Software": ["discord", "Spotify", "Telegram Desktop", "Code"],
     "Apps UWP": ["SpotifyAB.SpotifyMusic_zpdnekdrzrea0", "5319275A.WhatsAppDesktop_cv1g1gvanyjgm"]
 }
