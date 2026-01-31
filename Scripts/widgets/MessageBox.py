@@ -11,29 +11,34 @@ class MessageBox(ModalScreen[bool]):
     @param title: Title to show (Default "Title")
     @param mode: [normal, warning, error, success] (Default "normal")
     @param buttonName: Button text (Default "Accept")
-    @param details: List of details to show (Default None)
+    @param details: List of details to show. Intended for Logging purposes and such (Default None)
+    @param wrapText: Wrap text from RichLog (Default False)
+    @param minWidthForWrapping: Minimum width for wrapping the text (Default 100)
 
     """
     CSS_PATH = os.path.dirname(os.path.abspath(__file__)) + "\\css\\MessageBoxStyle.css"
 
     def __init__(self, message: str, title: str = None, mode: str = "normal", 
-                 buttonName: str = "Accept", details: list = None):
+                 buttonName: str = "Accept", details: list = None, 
+                 wrapText: bool = False, minWidthForWrapping: int = 100):
+        
         super().__init__()
         self.message = message
         self.title_str = title if title is not None else "INFORMATION" if mode == "normal" else mode.upper()
         self.mode = mode
         self.buttonName = buttonName
-        self.details = details # Aquí recibimos la lista (readlines)
+        self.details = details
+        self.wrapText = wrapText
+        self.minWidthForWrapping = minWidthForWrapping
 
     def compose(self):
         with Vertical(classes="mb-dialog", id=f"mb-dialog-{self.mode}"):
             yield Label(self.title_str, classes=f"mb-title-{self.mode}")
             yield Label(self.message, classes="mb-message")
             
-            # Si hay detalles, mostramos el RichLog con scroll
             if self.details:
                 yield Label("─────────────────────────────────────────────────────────────────────────────", classes=f"mb-separator-{self.mode}")
-                yield RichLog(highlight=True, markup=True, wrap=False, id="mb-details-area")
+                yield RichLog(highlight=True, markup=True, wrap=self.wrapText, id="mb-details-area")
                 yield Label("─────────────────────────────────────────────────────────────────────────────", classes=f"mb-separator-{self.mode}")
 
             with Horizontal(classes="mb-buttons"):
@@ -45,6 +50,7 @@ class MessageBox(ModalScreen[bool]):
 
         log: RichLog = self.query_one("#mb-details-area", RichLog)
         log.auto_scroll = False
+        log.styles.min_width = self.minWidthForWrapping
 
         log.clear()
 

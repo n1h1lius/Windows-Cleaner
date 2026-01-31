@@ -10,8 +10,10 @@ MessageBox {
 */
 
 MessageBox Vertical.mb-dialog {
-    width: 85;
+    width: auto;
     height: auto;
+    min-width: 85;
+    max-width: 80vw;
     max-height: 80vh;
     padding: 1 2 1 1;         
     background: $panel;
@@ -60,11 +62,29 @@ MessageBox Vertical#mb-dialog-success {
     color: rgb(0, 255, 106);
 }
 
-.mb-dialog RichLog#mb-details-area {
+.mb-dialog Label.mb-separator-warning {
     width: 100%;
+    text-align: center;
+    text-style: bold;
+    align: center top;
+    color: rgb(255, 255, 0);
+}
+
+.mb-dialog Label.mb-separator-error {
+    width: 100%;
+    text-align: center;
+    text-style: bold;
+    align: center top;
+    color: rgb(255, 0, 0);
+}
+
+.mb-dialog RichLog#mb-details-area {
+    width: auto;
     height: auto;                    /* or 15, 20, 25... rows */
     min-height: 10;
     max-height: 20;
+    min-width: 100;
+    max-width: 80vw;
     margin: 1 0;
     padding: 1 2 1 2;
     overflow-y: scroll;             

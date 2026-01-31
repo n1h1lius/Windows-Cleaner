@@ -6,5 +6,7 @@
     · Updated Console Commands
         - get_all_detected_paths -> It now returns a treeview
         - list_available_cleaner_scopes -> Updated to new paths managing system
-
+    · Updated MessageBox
+        - It now can accept Text Wrapping as a variable.
+        - It now can accept an Integer for min-Width for LogRichLog Box
 
