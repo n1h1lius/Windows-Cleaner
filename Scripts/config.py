@@ -28,12 +28,19 @@ def get_release_version():
 DATA_VERSION_FILE_PATH = "Data/version.txt"
 RELEASE_VERSION = get_release_version()
 
+# ─────── App Name ─────────
+V1_NAME = "CleanerApp"
+V2_NAME = "Windows Cleaner"
+
 # ─────── Environment ─────────
 USER_PROFILE = os.environ.get("USERPROFILE")
 
 # ─────── App Basic Vars ─────────
 APP_TITLE = ""
 DAYS_THRESHOLD = config.getint("MainVars", "DaysThreshold", fallback=3)
+
+# ─────── Updates Checker ─────────
+UPDATED = False
 
 
 # ╔═════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╗

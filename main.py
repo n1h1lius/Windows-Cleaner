@@ -97,7 +97,7 @@ def cleaner_v2_1():
 
 def update(bat_path=None):
 
-    from Scripts.config import APP_VERSION
+    from Scripts.config import APP_VERSION, UPDATED
 
     if APP_VERSION == 1:
 
@@ -110,6 +110,7 @@ def update(bat_path=None):
         from Versions.Cleaner_v2.UpdaterApp import UpdaterApp
         app = UpdaterApp()
         app.run()
+        UPDATED = False
 
 def force_maximize():
     if sys.platform == "win32":
@@ -149,11 +150,11 @@ def launch_app(mode):
 
     elif config.APP_VERSION == 2:
         if mode == "CleanerApp":
-            config.APP_TITLE = f"CleanerApp - v{config.get_release_version()}"
+            config.APP_TITLE = f"{config.V1_NAME} - v{config.get_release_version()}"
             os.system(f"title {config.APP_TITLE}")
             cleaner_v2()
         elif mode == "default":
-            config.APP_TITLE = f"Windows Cleaner - v{config.get_release_version()}"
+            config.APP_TITLE = f"{config.V2_NAME} - v{config.get_release_version()}"
             os.system(f"title {config.APP_TITLE}")
             cleaner_v2_1()
 

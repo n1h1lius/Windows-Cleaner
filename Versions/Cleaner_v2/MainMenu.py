@@ -22,6 +22,7 @@ from textual.widgets import Header, Footer, Static, Tree, Label, Button
 from textual.reactive import reactive
 from rich.text import Text as RichText
 
+from Scripts.widgets.MessageBox import MessageBox
 from Versions.Cleaner_v2.modals.SettingsModal import SettingsModal
 from Versions.Cleaner_v2.modals.CleanerModal import CleanerModal
 
@@ -128,6 +129,10 @@ class MainMenu(App):
     def on_mount(self) -> None:
         self.query_one("#logo-small", Static).update(RichText(msg.logo_ascii, style="bold magenta"))
         self.query_one("#status-bar").update(QUOTES[random.randint(0, len(QUOTES)-1)])
+
+        if UPDATED:
+            dialog = MessageBox(f"{V2_NAME} Updated Succesfully to version {RELEASE_VERSION}", mode="success") 
+            self.app.push_screen_wait(dialog)
 
     def on_resize(self) -> None:
         #self.query_one(RichLog).refresh()
