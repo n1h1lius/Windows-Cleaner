@@ -1,5 +1,21 @@
 
+### 1.4.28
+
+- Added new features
+    · Added a way to check Historic Changelog in Settings
+    · Rewritten all Cleaner code related path managing
+    · Updated Cleaner App
+    · Updated Cleaner Modal
+    · Updated Console Commands
+        - get_all_detected_paths -> It now returns a treeview
+        - list_available_cleaner_scopes -> Updated to new paths managing system
+    · Updated MessageBox
+        - It now can accept Text Wrapping as a variable.
+        - It now can accept an Integer for min-Width for LogRichLog Box
+
+
 ### 1.4.27
+
 - Added new features
     · Windows 10/11 Debloater function Added
     · Message Update box (This one!)
